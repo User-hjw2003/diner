@@ -379,37 +379,26 @@
         // GitHub Pages配置
         // =============================================
         
+        // 使用固定的GitHub Pages地址
+        const GITHUB_PAGES_URL = 'https://user-hjw2003.github.io/diner/';
+        const GITHUB_REPO_URL = 'https://github.com/user-hjw2003/diner';
+        
         // 自动检测当前页面的GitHub Pages地址
         function getGitHubPagesUrl() {
             const currentUrl = window.location.href;
             
-            // 如果是GitHub Pages地址，直接使用
+            // 如果已经在GitHub Pages上，使用当前URL
             if (currentUrl.includes('github.io')) {
                 return currentUrl.split('?')[0]; // 去掉查询参数
             }
             
-            // 否则提示用户部署
-            //return 'https://你的用户名.github.io/pixel-diner/';
-			  return 'https://user-hjw2003.github.io/diner/';
+            // 否则使用预设的GitHub Pages URL
+            return GITHUB_PAGES_URL;
         }
         
         // 获取GitHub仓库地址
         function getGitHubRepoUrl() {
-            const currentUrl = window.location.href;
-            
-            if (currentUrl.includes('github.io')) {
-                // 从GitHub Pages URL转换到仓库URL
-                const url = new URL(currentUrl);
-                const pathParts = url.pathname.split('/');
-                if (pathParts.length >= 3) {
-                    const username = pathParts[1];
-                    const repoName = pathParts[2];
-                    return `https://github.com/${username}/${repoName}`;
-                }
-            }
-            
-            //return 'https://github.com/你的用户名/pixel-diner';
-			  return 'https://user-hjw2003.github.io/diner/';
+            return GITHUB_REPO_URL;
         }
         
         // =============================================
@@ -438,24 +427,49 @@
                 qrImg.alt = 'GitHub点餐二维码';
                 qrImg.title = '扫描二维码进入点餐系统';
                 
-                // 使用Google Chart API生成二维码
-                // 这是最可靠的在线二维码生成方案
-                const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=${encodeURIComponent(githubPagesUrl)}&choe=UTF-8&chld=H|2`;
+                // 使用可靠的二维码生成API - 多个备选方案
+                const qrApis = [
+                    // 方案1: goQR.me (稳定可靠)
+                    `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(githubPagesUrl)}`,
+                    
+                    // 方案2: QuickChart (备用)
+                    `https://quickchart.io/qr?text=${encodeURIComponent(githubPagesUrl)}&size=250&margin=1`,
+                    
+                    // 方案3: Google Charts API (可能需要代理)
+                    `https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=${encodeURIComponent(githubPagesUrl)}&choe=UTF-8&chld=H|2`
+                ];
+                
+                // 使用第一个API
+                const qrUrl = qrApis[0];
                 qrImg.src = qrUrl;
                 
                 // 设置图片加载错误处理
                 qrImg.onerror = function() {
-                    console.log('Google QR API失败，尝试备用方案');
-                    generateFallbackQRCode(qrcodeElement, githubPagesUrl);
+                    console.log('第一个二维码API失败，尝试备用方案');
+                    tryNextQRCodeAPI(qrcodeElement, githubPagesUrl, qrApis.slice(1));
                 };
                 
+                // 设置图片加载成功处理
+                qrImg.onload = function() {
+                    console.log('二维码加载成功');
+                    qrcodeElement.appendChild(qrImg);
+                    
+                    // 保存图片引用以便下载
+                    qrcodeElement._img = qrImg;
+                    qrcodeElement._url = githubPagesUrl;
+                    
+                    showNotification('二维码已生成，请用手机扫描测试');
+                };
+                
+                // 设置超时处理
+                setTimeout(() => {
+                    if (!qrImg.complete) {
+                        console.log('二维码加载超时，尝试备用方案');
+                        qrImg.onerror();
+                    }
+                }, 5000);
+                
                 qrcodeElement.appendChild(qrImg);
-                
-                // 保存图片引用以便下载
-                qrcodeElement._img = qrImg;
-                qrcodeElement._url = githubPagesUrl;
-                
-                showNotification('二维码已生成，请用手机扫描测试');
                 
             } catch (error) {
                 console.error('二维码生成失败:', error);
@@ -463,7 +477,42 @@
             }
         }
         
-        // 备用二维码生成方案
+        // 尝试下一个二维码API
+        function tryNextQRCodeAPI(element, url, apis) {
+            if (apis.length === 0) {
+                // 所有API都失败了，使用备用方案
+                generateFallbackQRCode(element, url);
+                return;
+            }
+            
+            const qrImg = document.createElement('img');
+            qrImg.className = 'qr-image';
+            qrImg.alt = 'GitHub点餐二维码';
+            qrImg.title = '扫描二维码进入点餐系统';
+            
+            // 使用下一个API
+            qrImg.src = apis[0];
+            
+            qrImg.onerror = function() {
+                console.log('二维码API失败，尝试下一个');
+                tryNextQRCodeAPI(element, url, apis.slice(1));
+            };
+            
+            qrImg.onload = function() {
+                console.log('备用二维码API加载成功');
+                element.innerHTML = '';
+                element.appendChild(qrImg);
+                element._img = qrImg;
+                element._url = url;
+                showNotification('使用备用API生成二维码成功');
+            };
+            
+            // 替换图片
+            element.innerHTML = '';
+            element.appendChild(qrImg);
+        }
+        
+        // 备用二维码生成方案 - 使用纯Canvas生成
         function generateFallbackQRCode(element, url) {
             element.innerHTML = '';
             
@@ -488,11 +537,18 @@
             ctx.fillRect(180, 20, 50, 50);
             ctx.fillRect(20, 180, 50, 50);
             
-            // 添加GitHub Octocat标志
-            ctx.fillStyle = '#28a745'; // GitHub绿色
-            ctx.font = 'bold 20px Arial';
+            // 绘制URL文字
+            ctx.fillStyle = '#d32f2f';
+            ctx.font = 'bold 16px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('GitHub', 125, 140);
+            ctx.fillText('GitHub Diner', 125, 140);
+            ctx.font = '12px Arial';
+            ctx.fillText('Scan to Order', 125, 160);
+            
+            // 添加边框
+            ctx.strokeStyle = '#d32f2f';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(10, 10, 230, 230);
             
             element.appendChild(canvas);
             
@@ -500,7 +556,7 @@
             element._canvas = canvas;
             element._url = url;
             
-            showNotification('使用备用方案生成二维码');
+            showNotification('使用本地生成的二维码');
         }
         
         // =============================================
@@ -563,6 +619,11 @@
         function copyUrl() {
             const githubUrlElement = document.getElementById('githubUrl');
             const urlToCopy = githubUrlElement.textContent;
+            
+            if (!urlToCopy || urlToCopy === '正在生成GitHub Pages地址...') {
+                showNotification('请等待二维码生成完成');
+                return;
+            }
             
             navigator.clipboard.writeText(urlToCopy).then(() => {
                 showNotification('链接已复制到剪贴板！');
