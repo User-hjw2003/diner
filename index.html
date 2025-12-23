@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>像素食堂 | GitHub点餐系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', 'DotGothic16', monospace;
+        }
+
+        :root {
+            --primary-color: #d32f2f;
+            --secondary-color: #ffffff;
+            --bg-color: #0f0f0f;
+            --pixel-border: 4px;
+            --grid-color: rgba(255, 255, 255, 0.05);
+            --scanline-color: rgba(0, 255, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--secondary-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 扫描线效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                var(--scanline-color) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 999;
+            animation: scanline 10s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        /* 容器样式 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 标题样式 */
+        .header-title {
+            text-align: center;
+            margin: 20px 0 30px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #000;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--primary-color);
+        }
+
+        /* 二维码区域样式 */
+        .qrcode-section {
+            margin: 40px 0;
+            padding: 30px;
+            background-color: #1a1a1a;
+            text-align: center;
+            border: 4px solid var(--primary-color);
+        }
+
+        .qrcode-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .qrcode {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 280px;
+            height: 280px;
+        }
+
+        .qr-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qrcode-instruction {
+            color: #aaa;
+            font-size: 16px;
+            margin-top: 15px;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        /* URL显示样式 */
+        .url-display {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #222;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .url-text {
+            word-break: break-all;
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        /* 按钮样式 */
+        .pixel-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 10px 5px;
+            font-size: 16px;
+            position: relative;
+            transition: all 0.1s;
+        }
+
+        .pixel-button:active {
+            transform: translate(2px, 2px);
+        }
+
+        .pixel-button::before, .pixel-button::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            box-sizing: content-box;
+        }
+
+        .pixel-button::before {
+            top: -4px;
+            left: 0;
+            border-top: 4px solid white;
+            border-bottom: 4px solid white;
+        }
+
+        .pixel-button::after {
+            left: -4px;
+            top: 0;
+            border-left: 4px solid white;
+            border-right: 4px solid white;
+        }
+
+        /* GitHub状态显示 */
+        .github-status {
+            background: #24292e;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .github-status i {
+            color: #28a745;
+        }
+
+        /* 通知 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .qrcode {
+                width: 250px;
+                height: 250px;
+                padding: 15px;
+            }
+            
+            .qrcode-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .qrcode {
+                width: 200px;
+                height: 200px;
+                padding: 10px;
+            }
+            
+            .qrcode-section {
+                padding: 15px;
+            }
+            
+            .pixel-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题区域 -->
+        <div class="header-title">
+            <h1>像素食堂点餐系统</h1>
+            <p style="color: #aaa; font-size: 18px;">已部署到GitHub Pages</p>
+        </div>
+        
+        <!-- GitHub状态显示 -->
+        <div class="github-status">
+            <i class="fab fa-github"></i>
+            <span>GitHub Pages部署成功！</span>
+        </div>
+        
+        <!-- 二维码区域 -->
+        <div class="qrcode-section">
+            <h2 style="color: var(--primary-color); margin-bottom: 20px;">
+                <i class="fas fa-qrcode"></i> 手机扫码点餐
+            </h2>
+            
+            <!-- 部署信息 -->
+            <div style="margin-bottom: 20px; padding: 15px; background: #1a1a1a; border-radius: 5px;">
+                <p style="color: #4caf50; font-weight: bold;">
+                    <i class="fas fa-cloud"></i> 系统已部署到云端
+                </p>
+                <p style="color: #aaa; margin-top: 10px;">
+                    使用手机扫描下方二维码，即可在手机上浏览菜单并点餐
+                </p>
+            </div>
+            
+            <!-- 二维码容器 -->
+            <div class="qrcode-container">
+                <!-- 二维码将在这里显示 -->
+                <div id="qrcode" class="qrcode">
+                    <!-- 二维码图片 -->
+                </div>
+                
+                <!-- URL显示 -->
+                <div id="urlDisplay" class="url-display">
+                    <p style="color: #aaa; margin-bottom: 5px;">访问地址：</p>
+                    <p id="githubUrl" class="url-text">正在生成GitHub Pages地址...</p>
+                </div>
+                
+                <p class="qrcode-instruction">
+                    将此二维码打印并放置在餐厅桌面<br>
+                    顾客扫码即可进入点餐页面，无需下载APP
+                </p>
+                
+                <!-- 操作按钮 -->
+                <div style="margin-top: 20px;">
+                    <button id="downloadQrBtn" class="pixel-button">
+                        <i class="fas fa-download"></i> 下载二维码
+                    </button>
+                    <button id="copyUrlBtn" class="pixel-button" style="background: #28a745;">
+                        <i class="fas fa-copy"></i> 复制链接
+                    </button>
+                    <button id="refreshQrBtn" class="pixel-button" style="background: #2196f3;">
+                        <i class="fas fa-sync-alt"></i> 刷新二维码
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 使用说明 -->
+            <div style="margin-top: 30px; padding: 20px; background: #1a1a1a; border-radius: 5px;">
+                <h3 style="color: var(--primary-color); margin-bottom: 15px;">
+                    <i class="fas fa-info-circle"></i> 使用说明
+                </h3>
+                <div style="text-align: left; padding-left: 20px;">
+                    <p style="margin: 10px 0; color: #ccc;">1. 手机扫描二维码进入点餐页面</p>
+                    <p style="margin: 10px 0; color: #ccc;">2. 浏览菜单，选择菜品加入购物车</p>
+                    <p style="margin: 10px 0; color: #ccc;">3. 提交订单，查看订单历史</p>
+                    <p style="margin: 10px 0; color: #ccc;">4. 系统会自动保存数据到本地</p>
+                </div>
+            </div>
+            
+            <!-- 技术信息 -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #333;">
+                <p style="color: #666; font-size: 14px;">
+                    <i class="fas fa-server"></i> 技术支持：GitHub Pages静态托管
+                </p>
+                <p style="color: #666; font-size: 14px; margin-top: 5px;">
+                    <i class="fas fa-shield-alt"></i> 数据安全：所有数据存储在用户本地浏览器
+                </p>
+            </div>
+        </div>
+        
+        <!-- GitHub链接 -->
+        <div style="text-align: center; margin-top: 30px; padding: 20px;">
+            <p style="color: #aaa; margin-bottom: 10px;">项目托管在GitHub</p>
+            <a id="githubRepoLink" href="#" target="_blank" style="color: #4caf50; text-decoration: none; font-weight: bold;">
+                <i class="fab fa-github"></i> 查看GitHub仓库
+            </a>
+        </div>
+    </div>
+    
+    <!-- 通知 -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        // =============================================
+        // GitHub Pages配置
+        // =============================================
+        
+        // 自动检测当前页面的GitHub Pages地址
+        function getGitHubPagesUrl() {
+            const currentUrl = window.location.href;
+            
+            // 如果是GitHub Pages地址，直接使用
+            if (currentUrl.includes('github.io')) {
+                return currentUrl.split('?')[0]; // 去掉查询参数
+            }
+            
+            // 否则提示用户部署
+            return 'https://你的用户名.github.io/pixel-diner/';
+        }
+        
+        // 获取GitHub仓库地址
+        function getGitHubRepoUrl() {
+            const currentUrl = window.location.href;
+            
+            if (currentUrl.includes('github.io')) {
+                // 从GitHub Pages URL转换到仓库URL
+                const url = new URL(currentUrl);
+                const pathParts = url.pathname.split('/');
+                if (pathParts.length >= 3) {
+                    const username = pathParts[1];
+                    const repoName = pathParts[2];
+                    return `https://github.com/${username}/${repoName}`;
+                }
+            }
+            
+            return 'https://github.com/你的用户名/pixel-diner';
+        }
+        
+        // =============================================
+        // 二维码生成器
+        // =============================================
+        function generateQRCode() {
+            const qrcodeElement = document.getElementById('qrcode');
+            const githubUrlElement = document.getElementById('githubUrl');
+            const githubRepoLink = document.getElementById('githubRepoLink');
+            
+            // 获取GitHub Pages地址
+            const githubPagesUrl = getGitHubPagesUrl();
+            const githubRepoUrl = getGitHubRepoUrl();
+            
+            // 显示URL
+            githubUrlElement.textContent = githubPagesUrl;
+            githubRepoLink.href = githubRepoUrl;
+            
+            // 清空之前的二维码
+            qrcodeElement.innerHTML = '';
+            
+            try {
+                // 创建二维码图片
+                const qrImg = document.createElement('img');
+                qrImg.className = 'qr-image';
+                qrImg.alt = 'GitHub点餐二维码';
+                qrImg.title = '扫描二维码进入点餐系统';
+                
+                // 使用Google Chart API生成二维码
+                // 这是最可靠的在线二维码生成方案
+                const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=${encodeURIComponent(githubPagesUrl)}&choe=UTF-8&chld=H|2`;
+                qrImg.src = qrUrl;
+                
+                // 设置图片加载错误处理
+                qrImg.onerror = function() {
+                    console.log('Google QR API失败，尝试备用方案');
+                    generateFallbackQRCode(qrcodeElement, githubPagesUrl);
+                };
+                
+                qrcodeElement.appendChild(qrImg);
+                
+                // 保存图片引用以便下载
+                qrcodeElement._img = qrImg;
+                qrcodeElement._url = githubPagesUrl;
+                
+                showNotification('二维码已生成，请用手机扫描测试');
+                
+            } catch (error) {
+                console.error('二维码生成失败:', error);
+                generateFallbackQRCode(qrcodeElement, githubPagesUrl);
+            }
+        }
+        
+        // 备用二维码生成方案
+        function generateFallbackQRCode(element, url) {
+            element.innerHTML = '';
+            
+            // 创建一个简单的Canvas二维码
+            const canvas = document.createElement('canvas');
+            canvas.width = 250;
+            canvas.height = 250;
+            canvas.style.border = '1px solid #ccc';
+            canvas.style.borderRadius = '5px';
+            
+            const ctx = canvas.getContext('2d');
+            
+            // 清空画布
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 250, 250);
+            
+            // 绘制GitHub风格的二维码
+            ctx.fillStyle = '#24292e'; // GitHub深色
+            
+            // 绘制定位图案
+            ctx.fillRect(20, 20, 50, 50);
+            ctx.fillRect(180, 20, 50, 50);
+            ctx.fillRect(20, 180, 50, 50);
+            
+            // 添加GitHub Octocat标志
+            ctx.fillStyle = '#28a745'; // GitHub绿色
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('GitHub', 125, 140);
+            
+            element.appendChild(canvas);
+            
+            // 保存canvas以便下载
+            element._canvas = canvas;
+            element._url = url;
+            
+            showNotification('使用备用方案生成二维码');
+        }
+        
+        // =============================================
+        // 功能函数
+        // =============================================
+        
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 下载二维码
+        function downloadQRCode() {
+            const qrcodeElement = document.getElementById('qrcode');
+            const img = qrcodeElement.querySelector('img');
+            const canvas = qrcodeElement.querySelector('canvas');
+            
+            if (img && img.src) {
+                try {
+                    const link = document.createElement('a');
+                    const now = new Date();
+                    const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
+                    link.download = `像素食堂二维码_${dateStr}.png`;
+                    link.href = img.src;
+                    link.click();
+                    
+                    showNotification('二维码下载成功！');
+                } catch (error) {
+                    console.error('下载失败:', error);
+                    showNotification('下载失败，请截图保存');
+                }
+            } else if (canvas) {
+                try {
+                    const link = document.createElement('a');
+                    const now = new Date();
+                    const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
+                    link.download = `像素食堂二维码_${dateStr}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    showNotification('二维码下载成功！');
+                } catch (error) {
+                    console.error('下载失败:', error);
+                    showNotification('下载失败，请截图保存');
+                }
+            } else {
+                showNotification('请先生成二维码');
+            }
+        }
+        
+        // 复制URL
+        function copyUrl() {
+            const githubUrlElement = document.getElementById('githubUrl');
+            const urlToCopy = githubUrlElement.textContent;
+            
+            navigator.clipboard.writeText(urlToCopy).then(() => {
+                showNotification('链接已复制到剪贴板！');
+            }).catch(err => {
+                // 备用方案
+                const textArea = document.createElement('textarea');
+                textArea.value = urlToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('链接已复制！');
+            });
+        }
+        
+        // =============================================
+        // 页面初始化
+        // =============================================
+        function initPage() {
+            // 生成二维码
+            generateQRCode();
+            
+            // 绑定按钮事件
+            document.getElementById('downloadQrBtn').addEventListener('click', downloadQRCode);
+            document.getElementById('copyUrlBtn').addEventListener('click', copyUrl);
+            document.getElementById('refreshQrBtn').addEventListener('click', function() {
+                generateQRCode();
+                showNotification('二维码已刷新');
+            });
+            
+            // 检查当前环境
+            const currentUrl = window.location.href;
+            
+            if (currentUrl.startsWith('file://')) {
+                // 本地文件模式
+                showNotification('本地预览模式，请部署到GitHub Pages');
+                
+                // 添加部署提示
+                const tip = document.createElement('div');
+                tip.style.cssText = 'background: #ff9800; color: black; padding: 15px; margin: 15px 0; border-radius: 5px;';
+                tip.innerHTML = `
+                    <p style="font-weight: bold; margin-bottom: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i> 重要提示
+                    </p>
+                    <p>当前为本地预览模式，请按以下步骤部署：</p>
+                    <ol style="text-align: left; margin: 10px 0 10px 20px;">
+                        <li>将本文件上传到GitHub仓库</li>
+                        <li>在仓库设置中启用GitHub Pages</li>
+                        <li>访问生成的URL测试二维码</li>
+                    </ol>
+                `;
+                
+                const qrcodeSection = document.querySelector('.qrcode-section');
+                qrcodeSection.insertBefore(tip, qrcodeSection.firstChild);
+                
+            } else if (currentUrl.includes('github.io')) {
+                // GitHub Pages模式
+                showNotification('GitHub Pages部署成功！');
+                
+                // 添加成功提示
+                const success = document.createElement('div');
+                success.style.cssText = 'background: #4caf50; color: white; padding: 15px; margin: 15px 0; border-radius: 5px;';
+                success.innerHTML = `
+                    <p style="font-weight: bold;">
+                        <i class="fas fa-check-circle"></i> 部署成功！
+                    </p>
+                    <p>系统已成功部署到GitHub Pages，二维码可正常使用。</p>
+                `;
+                
+                const qrcodeSection = document.querySelector('.qrcode-section');
+                qrcodeSection.insertBefore(success, qrcodeSection.firstChild);
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
