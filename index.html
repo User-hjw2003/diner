@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>像素食堂 | GitHub点餐系统</title>
+    <title>像素食堂 | 复古点餐系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入QR Code生成库 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
-        /* 基础样式 */
         * {
             margin: 0;
             padding: 0;
@@ -60,104 +61,22 @@
             100% { background-position: 0 100%; }
         }
 
-        /* 容器样式 */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* 像素边框效果 */
+        .pixel-border {
+            border-style: solid;
+            border-width: var(--pixel-border);
+            border-image-slice: 2;
+            border-image-width: 2;
+            border-image-outset: 0;
+            border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(211, 47, 47)" /></svg>');
+            background-color: var(--bg-color);
         }
 
-        /* 标题样式 */
-        .header-title {
-            text-align: center;
-            margin: 20px 0 30px;
-            width: 100%;
+        .pixel-border-white {
+            border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(255, 255, 255)" /></svg>');
         }
 
-        h1 {
-            font-size: 36px;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 0 #000;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 10px;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background-color: var(--primary-color);
-        }
-
-        /* 二维码区域样式 */
-        .qrcode-section {
-            margin: 40px 0;
-            padding: 30px;
-            background-color: #1a1a1a;
-            text-align: center;
-            border: 4px solid var(--primary-color);
-        }
-
-        .qrcode-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 20px auto;
-            max-width: 500px;
-        }
-
-        .qrcode {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 280px;
-            height: 280px;
-        }
-
-        .qr-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .qrcode-instruction {
-            color: #aaa;
-            font-size: 16px;
-            margin-top: 15px;
-            max-width: 400px;
-            line-height: 1.6;
-        }
-
-        /* URL显示样式 */
-        .url-display {
-            margin: 15px 0;
-            padding: 12px;
-            background-color: #222;
-            border-radius: 5px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .url-text {
-            word-break: break-all;
-            color: #4caf50;
-            font-weight: bold;
-            font-size: 14px;
-            margin: 5px 0;
-        }
-
-        /* 按钮样式 */
+        /* 像素按钮 */
         .pixel-button {
             display: inline-block;
             padding: 12px 24px;
@@ -168,10 +87,11 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin: 10px 5px;
-            font-size: 16px;
             position: relative;
+            text-align: center;
             transition: all 0.1s;
+            font-size: 16px;
+            margin: 5px;
         }
 
         .pixel-button:active {
@@ -200,21 +120,533 @@
             border-right: 4px solid white;
         }
 
-        /* GitHub状态显示 */
-        .github-status {
-            background: #24292e;
+        .pixel-button.secondary {
+            background-color: #333;
+        }
+
+        .pixel-button.active {
+            background-color: var(--primary-color);
+        }
+
+        /* 标题样式 */
+        h1, h2, h3 {
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        h1 {
+            font-size: 36px;
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--primary-color);
+        }
+
+        /* 布局容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        /* 主内容区域 */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 70vh;
+        }
+
+        /* 页面切换 */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* 顾客点餐页面 */
+        .menu-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background-color: #222;
             color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            white-space: nowrap;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .category-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .menu-item {
+            background-color: #1a1a1a;
             padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
+            transition: transform 0.3s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .item-name {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .item-description {
+            color: #aaa;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            min-height: 40px;
+        }
+
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-price {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .add-to-cart {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* 使用说明样式 */
+        .instructions {
+            padding: 20px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            background-color: #1a1a1a;
+        }
+
+        .instructions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .instruction-step {
+            background-color: #222;
+            padding: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .instruction-step h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        /* 二维码区域样式 */
+        .qrcode-section {
+            padding: 25px;
+            background-color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .qrcode-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .qrcode-display {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .qrcode-info {
+            max-width: 400px;
+            text-align: left;
+        }
+
+        .qrcode-info h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .qrcode-info ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .qrcode-info li {
+            margin-bottom: 10px;
+            color: #aaa;
+        }
+
+        .qrcode-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #qrcodeCanvas {
+            width: 200px !important;
+            height: 200px !important;
+        }
+
+        .admin-qrcode-section {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: #1a1a1a;
+        }
+
+        .qrcode-preview-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* 购物车 */
+        .cart-container {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 400px;
+            background-color: #1a1a1a;
+            border-top: 4px solid var(--primary-color);
+            transform: translateY(100%);
+            transition: transform 0.5s;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart-container.open {
+            transform: translateY(0);
+        }
+
+        .cart-header {
+            background-color: var(--primary-color);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h3 {
+            margin: 0;
+            color: white;
+            font-size: 20px;
+        }
+
+        .cart-tabs {
+            display: flex;
+            background-color: #222;
+        }
+
+        .cart-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .cart-tab:hover {
+            background-color: #444;
+        }
+
+        .cart-tab.active {
+            background-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .cart-content {
+            padding: 15px;
+        }
+
+        .cart-tab-content {
+            display: none;
+        }
+
+        .cart-tab-content.active {
+            display: block;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-item-qty {
+            margin: 0 10px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .cart-total {
+            padding: 15px;
+            background-color: #222;
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .cart-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 999;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
         }
 
-        .github-status i {
-            color: #28a745;
+        /* 订单历史 */
+        .order-history-item {
+            background-color: #222;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .order-history-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .order-history-items {
+            margin-top: 10px;
+            padding-left: 10px;
+        }
+
+        .order-history-item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 5px 0;
+            border-bottom: 1px dashed #333;
+        }
+
+        /* 管理后台 */
+        .admin-login {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #222;
+            border: 2px solid #444;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .admin-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .admin-section {
+            margin-bottom: 40px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background-color: #222;
+            border: 2px solid #444;
+            color: white;
+            font-size: 16px;
+        }
+
+        .image-upload-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            margin-top: 10px;
+            border: 2px solid #444;
+            display: none;
+        }
+
+        .orders-list {
+            margin-top: 20px;
+        }
+
+        .order-item {
+            background-color: #222;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .order-items {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
         }
 
         /* 通知 */
@@ -225,6 +657,7 @@
             padding: 15px 20px;
             background-color: var(--primary-color);
             color: white;
+            border-radius: 0;
             z-index: 1001;
             animation: slideIn 0.3s ease;
             display: none;
@@ -237,40 +670,102 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
+            .menu-items {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .cart-container {
+                width: 100%;
             }
             
             h1 {
                 font-size: 28px;
             }
             
-            .qrcode {
-                width: 250px;
-                height: 250px;
-                padding: 15px;
+            .instructions-grid {
+                grid-template-columns: 1fr;
             }
             
-            .qrcode-section {
-                padding: 20px;
+            .qrcode-container {
+                flex-direction: column;
+            }
+            
+            .qrcode-info {
+                text-align: center;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .menu-categories {
+                gap: 5px;
+            }
+            
+            .category-btn {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-width: 70px;
+                flex: 1;
+                max-width: calc(20% - 10px);
+            }
+            
+            .cart-tab {
+                padding: 10px 8px;
+                font-size: 13px;
             }
         }
 
         @media (max-width: 480px) {
-            .qrcode {
-                width: 200px;
-                height: 200px;
-                padding: 10px;
+            .category-btn {
+                font-size: 12px;
+                padding: 6px 8px;
+                min-width: 60px;
             }
             
-            .qrcode-section {
-                padding: 15px;
+            .cart-header h3 {
+                font-size: 18px;
             }
             
-            .pixel-button {
-                padding: 10px 20px;
-                font-size: 14px;
+            .cart-tab {
+                font-size: 12px;
+                padding: 8px 5px;
             }
+        }
+
+        /* 闪烁动画 */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .blink {
+            animation: blink 2s infinite;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-message p {
+            margin: 10px 0;
+        }
+        
+        .order-status {
+            background-color: #d32f2f;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        
+        .order-status.processed {
+            background-color: #4caf50;
         }
     </style>
 </head>
@@ -278,428 +773,1659 @@
     <div class="container">
         <!-- 标题区域 -->
         <div class="header-title">
-            <h1>像素食堂点餐系统</h1>
-            <p style="color: #aaa; font-size: 18px;">已部署到GitHub Pages</p>
+            <h1>复古点餐系统</h1>
         </div>
         
-        <!-- GitHub状态显示 -->
-        <div class="github-status">
-            <i class="fab fa-github"></i>
-            <span>GitHub Pages部署成功！</span>
-        </div>
-        
-        <!-- 二维码区域 -->
-        <div class="qrcode-section">
-            <h2 style="color: var(--primary-color); margin-bottom: 20px;">
-                <i class="fas fa-qrcode"></i> 手机扫码点餐
-            </h2>
-            
-            <!-- 部署信息 -->
-            <div style="margin-bottom: 20px; padding: 15px; background: #1a1a1a; border-radius: 5px;">
-                <p style="color: #4caf50; font-weight: bold;">
-                    <i class="fas fa-cloud"></i> 系统已部署到云端
-                </p>
-                <p style="color: #aaa; margin-top: 10px;">
-                    使用手机扫描下方二维码，即可在手机上浏览菜单并点餐
-                </p>
+        <header>
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <div>
+                    <h2 style="margin: 0;">像素食堂</h2>
+                    <p style="color: #aaa; margin: 0;">像素复古风格餐厅</p>
+                </div>
             </div>
-            
-            <!-- 二维码容器 -->
-            <div class="qrcode-container">
-                <!-- 二维码将在这里显示 -->
-                <div id="qrcode" class="qrcode">
-                    <!-- 二维码图片 -->
+            <div>
+                <button id="viewMenuBtn" class="pixel-button active">顾客点餐</button>
+                <button id="viewAdminBtn" class="pixel-button secondary">管理后台</button>
+            </div>
+        </header>
+
+        <div class="app-container">
+            <!-- 顾客点餐页面 -->
+            <div id="menuPage" class="page active">
+                <h2><i class="fas fa-book"></i> 菜单浏览</h2>
+                
+                <div class="menu-categories">
+                    <button class="category-btn pixel-border active" data-category="all">全部菜品</button>
+                    <button class="category-btn pixel-border" data-category="main">主菜</button>
+                    <button class="category-btn pixel-border" data-category="side">小食</button>
+                    <button class="category-btn pixel-border" data-category="drink">饮品</button>
+                    <button class="category-btn pixel-border" data-category="dessert">甜点</button>
                 </div>
                 
-                <!-- URL显示 -->
-                <div id="urlDisplay" class="url-display">
-                    <p style="color: #aaa; margin-bottom: 5px;">访问地址：</p>
-                    <p id="githubUrl" class="url-text">正在生成GitHub Pages地址...</p>
+                <div class="menu-items" id="menuItemsContainer">
+                    <!-- 菜品将通过JavaScript动态加载 -->
                 </div>
                 
-                <p class="qrcode-instruction">
-                    将此二维码打印并放置在餐厅桌面<br>
-                    顾客扫码即可进入点餐页面，无需下载APP
-                </p>
+                <!-- 使用说明 -->
+                <div class="instructions pixel-border">
+                    <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+                    <div class="instructions-grid">
+                        <div class="instruction-step">
+                            <h4>1. 浏览菜品</h4>
+                            <p>选择分类浏览菜单，点击"加入购物车"选择菜品</p>
+                        </div>
+                        <div class="instruction-step">
+                            <h4>2. 查看购物车</h4>
+                            <p>点击右下角购物车图标查看已选菜品和调整数量</p>
+                        </div>
+                        <div class="instruction-step">
+                            <h4>3. 提交订单</h4>
+                            <p>在购物车中确认订单信息并提交订单</p>
+                        </div>
+                        <div class="instruction-step">
+                            <h4>4. 查看订单</h4>
+                            <p>在购物车中切换到"订单历史"查看已提交的订单</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <!-- 操作按钮 -->
-                <div style="margin-top: 20px;">
-                    <button id="downloadQrBtn" class="pixel-button">
-                        <i class="fas fa-download"></i> 下载二维码
-                    </button>
-                    <button id="copyUrlBtn" class="pixel-button" style="background: #28a745;">
-                        <i class="fas fa-copy"></i> 复制链接
-                    </button>
-                    <button id="refreshQrBtn" class="pixel-button" style="background: #2196f3;">
-                        <i class="fas fa-sync-alt"></i> 刷新二维码
-                    </button>
+                <!-- 手机扫码点餐区域 -->
+                <div class="qrcode-section pixel-border">
+                    <h3><i class="fas fa-mobile-alt"></i> 手机扫码点餐</h3>
+                    <p>使用手机扫描下方二维码，可在手机上点餐</p>
+                    
+                    <div class="qrcode-container">
+                        <div class="qrcode-display pixel-border-white">
+                            <div id="customerQrCode"></div>
+                        </div>
+                        
+                        <div class="qrcode-info">
+                            <h4>手机点餐优势</h4>
+                            <ul>
+                                <li>无需排队，直接扫码点餐</li>
+                                <li>随时随地查看菜单和价格</li>
+                                <li>直接下单，后厨即时接收</li>
+                                <li>支持历史订单查看</li>
+                                <li>自动计算价格，避免错误</li>
+                            </ul>
+                            <p style="color: var(--primary-color); font-weight: bold;">
+                                <i class="fas fa-link"></i> 点餐网址: https://user-hjw2003.github.io/diner/
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="qrcode-actions">
+                        <button id="refreshQrCodeBtn" class="pixel-button secondary">
+                            <i class="fas fa-sync-alt"></i> 刷新二维码
+                        </button>
+                        <button id="saveQrCodeBtn" class="pixel-button secondary">
+                            <i class="fas fa-download"></i> 保存二维码
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <!-- 使用说明 -->
-            <div style="margin-top: 30px; padding: 20px; background: #1a1a1a; border-radius: 5px;">
-                <h3 style="color: var(--primary-color); margin-bottom: 15px;">
-                    <i class="fas fa-info-circle"></i> 使用说明
-                </h3>
-                <div style="text-align: left; padding-left: 20px;">
-                    <p style="margin: 10px 0; color: #ccc;">1. 手机扫描二维码进入点餐页面</p>
-                    <p style="margin: 10px 0; color: #ccc;">2. 浏览菜单，选择菜品加入购物车</p>
-                    <p style="margin: 10px 0; color: #ccc;">3. 提交订单，查看订单历史</p>
-                    <p style="margin: 10px 0; color: #ccc;">4. 系统会自动保存数据到本地</p>
+
+            <!-- 管理后台页面 -->
+            <div id="adminPage" class="page">
+                <!-- 登录界面 -->
+                <div id="adminLogin" class="admin-login pixel-border">
+                    <h2><i class="fas fa-lock"></i> 管理员登录</h2>
+                    <p>请输入管理员密码进入后台</p>
+                    <input type="password" id="adminPassword" class="password-input" placeholder="输入密码">
+                    <button id="loginBtn" class="pixel-button">登录</button>
+                    <p style="margin-top: 20px; color: #aaa; font-size: 14px;">
+                        提示：默认密码为 "pixel123"，您可以在代码中修改
+                    </p>
+                </div>
+                
+                <!-- 管理界面 -->
+                <div id="adminPanel" style="display: none;">
+                    <h2><i class="fas fa-cogs"></i> 菜品管理</h2>
+                    
+                    <div class="admin-controls">
+                        <button id="addItemBtn" class="pixel-button active"><i class="fas fa-plus"></i> 新增菜品</button>
+                        <button id="viewOrdersBtn" class="pixel-button secondary"><i class="fas fa-list"></i> 查看订单</button>
+                        <button id="generateQrCodeBtn" class="pixel-button secondary"><i class="fas fa-qrcode"></i> 生成二维码</button>
+                        <button id="logoutBtn" class="pixel-button secondary"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
+                    </div>
+                    
+                    <!-- 菜品管理表单 -->
+                    <div id="itemFormSection" class="admin-section pixel-border" style="padding: 20px;">
+                        <h3 id="formTitle">新增菜品</h3>
+                        <form id="itemForm">
+                            <input type="hidden" id="itemId">
+                            
+                            <div class="form-group">
+                                <label class="form-label">菜品名称</label>
+                                <input type="text" id="itemName" class="form-input" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">菜品分类</label>
+                                <select id="itemCategory" class="form-input" required>
+                                    <option value="main">主菜</option>
+                                    <option value="side">小食</option>
+                                    <option value="drink">饮品</option>
+                                    <option value="dessert">甜点</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">价格 (元)</label>
+                                <input type="number" id="itemPrice" class="form-input" min="0" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">菜品描述</label>
+                                <textarea id="itemDescription" class="form-input" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">菜品图片</label>
+                                <div class="image-upload-options">
+                                    <button type="button" id="uploadImageBtn" class="pixel-button secondary"><i class="fas fa-upload"></i> 本地上传</button>
+                                    <button type="button" id="useUrlBtn" class="pixel-button secondary"><i class="fas fa-link"></i> 网络图片</button>
+                                </div>
+                                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                                <input type="text" id="imageUrl" class="form-input" placeholder="输入图片URL" style="display: none; margin-top: 10px;">
+                                <img id="imagePreview" class="image-preview" alt="图片预览">
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="pixel-button">保存菜品</button>
+                                <button type="button" id="cancelEditBtn" class="pixel-button secondary">取消</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- 菜品列表 -->
+                    <div id="itemsListSection" class="admin-section">
+                        <h3>菜品列表</h3>
+                        <div id="adminItemsContainer">
+                            <!-- 菜品将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 订单列表 -->
+                    <div id="ordersSection" class="admin-section" style="display: none;">
+                        <h3><i class="fas fa-receipt"></i> 订单列表</h3>
+                        <div id="ordersContainer" class="orders-list">
+                            <!-- 订单将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 二维码生成区域 -->
+                    <div id="qrcodeSection" class="admin-section admin-qrcode-section pixel-border" style="display: none;">
+                        <h3><i class="fas fa-qrcode"></i> 点餐二维码生成</h3>
+                        <p>生成顾客手机扫码点餐的二维码，可打印张贴在餐厅各处</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">点餐网址</label>
+                            <input type="text" id="qrCodeUrl" class="form-input" value="https://user-hjw2003.github.io/diner/" readonly>
+                            <p style="color: #aaa; font-size: 14px; margin-top: 5px;">这是顾客扫码后访问的点餐页面地址</p>
+                        </div>
+                        
+                        <div class="qrcode-preview-container">
+                            <div id="adminQrCode" class="pixel-border-white" style="padding: 15px; background-color: white;"></div>
+                        </div>
+                        
+                        <div class="qrcode-actions">
+                            <button id="generateQrCodeNowBtn" class="pixel-button">
+                                <i class="fas fa-qrcode"></i> 生成二维码
+                            </button>
+                            <button id="downloadQrCodeBtn" class="pixel-button secondary">
+                                <i class="fas fa-download"></i> 下载二维码
+                            </button>
+                            <button id="printQrCodeBtn" class="pixel-button secondary">
+                                <i class="fas fa-print"></i> 打印二维码
+                            </button>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background-color: #222;">
+                            <h4><i class="fas fa-lightbulb"></i> 使用建议</h4>
+                            <ul style="color: #aaa; margin-top: 10px; padding-left: 20px;">
+                                <li>将二维码打印并张贴在餐桌、前台等显眼位置</li>
+                                <li>建议打印尺寸不小于10cm×10cm，确保扫码成功率</li>
+                                <li>定期检查二维码是否清晰可读</li>
+                                <li>可生成不同尺寸二维码用于不同场合</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <!-- 技术信息 -->
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #333;">
-                <p style="color: #666; font-size: 14px;">
-                    <i class="fas fa-server"></i> 技术支持：GitHub Pages静态托管
-                </p>
-                <p style="color: #666; font-size: 14px; margin-top: 5px;">
-                    <i class="fas fa-shield-alt"></i> 数据安全：所有数据存储在用户本地浏览器
-                </p>
-            </div>
-        </div>
-        
-        <!-- GitHub链接 -->
-        <div style="text-align: center; margin-top: 30px; padding: 20px;">
-            <p style="color: #aaa; margin-bottom: 10px;">项目托管在GitHub</p>
-            <a id="githubRepoLink" href="#" target="_blank" style="color: #4caf50; text-decoration: none; font-weight: bold;">
-                <i class="fab fa-github"></i> 查看GitHub仓库
-            </a>
         </div>
     </div>
+
+    <!-- 购物车 -->
+    <button id="cartToggle" class="cart-toggle">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cartCount" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 14px;">0</span>
+    </button>
     
+    <div id="cartContainer" class="cart-container pixel-border">
+        <div class="cart-header">
+            <h3>订单管理</h3>
+            <button id="closeCartBtn" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="cart-tabs">
+            <button class="cart-tab active" data-tab="current">当前订单</button>
+            <button class="cart-tab" data-tab="history">订单历史</button>
+        </div>
+        
+        <!-- 购物车内容区域 -->
+        <div class="cart-content">
+            <!-- 当前订单标签页 -->
+            <div id="currentCartTab" class="cart-tab-content active">
+                <div id="cartItemsContainer">
+                    <!-- 购物车内容将通过JavaScript动态加载 -->
+                </div>
+                <div class="cart-total">
+                    <span>总计:</span>
+                    <span id="cartTotal">0.00</span> 元
+                </div>
+                <div style="padding: 15px 0;">
+                    <button id="submitOrderBtn" class="pixel-button" style="width: 100%;">提交订单</button>
+                </div>
+            </div>
+            
+            <!-- 订单历史标签页 -->
+            <div id="historyCartTab" class="cart-tab-content">
+                <div id="orderHistoryContainer" style="max-height: 400px; overflow-y: auto;">
+                    <!-- 订单历史将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 通知 -->
-    <div id="notification" class="notification">
+    <div id="notification" class="notification pixel-border">
         <span id="notificationText"></span>
     </div>
 
     <script>
-        // =============================================
-        // GitHub Pages配置
-        // =============================================
-        
-        // 使用固定的GitHub Pages地址
-        const GITHUB_PAGES_URL = 'https://user-hjw2003.github.io/diner/';
-        const GITHUB_REPO_URL = 'https://github.com/user-hjw2003/diner';
-        
-        // 自动检测当前页面的GitHub Pages地址
-        function getGitHubPagesUrl() {
-            const currentUrl = window.location.href;
+        // 数据存储
+        const DATA_KEYS = {
+            MENU_ITEMS: 'pixel_diner_menu_items',
+            ORDERS: 'pixel_diner_orders',
+            CUSTOMER_ORDERS: 'pixel_diner_customer_orders',
+            ADMIN_PASSWORD: 'pixel_diner_admin_password',
+            QRCODE_URL: 'pixel_diner_qrcode_url'
+        };
+
+        // 默认菜品数据
+        const DEFAULT_MENU_ITEMS = [
+            {
+                id: 1,
+                name: '像素汉堡',
+                category: 'main',
+                price: 28.00,
+                description: '经典牛肉汉堡搭配特制像素酱',
+                image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 2,
+                name: '复古薯条',
+                category: 'side',
+                price: 12.00,
+                description: '香脆薯条配像素芝士酱',
+                image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 3,
+                name: '像素可乐',
+                category: 'drink',
+                price: 8.00,
+                description: '经典可乐，冰爽解渴',
+                image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 4,
+                name: '复古奶昔',
+                category: 'drink',
+                price: 18.00,
+                description: '香草奶昔配彩色糖粒',
+                image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 5,
+                name: '像素蛋糕',
+                category: 'dessert',
+                price: 22.00,
+                description: '巧克力蛋糕配像素糖霜',
+                image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 6,
+                name: '复古炸鸡',
+                category: 'main',
+                price: 32.00,
+                description: '香脆炸鸡配秘制酱料',
+                image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+            },
+            {
+                id: 7,
+                name: '可乐鸡翅',
+                category: 'main',
+                price: 38.00,
+                description: '现制美味可口，丝滑脆皮',
+                image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+            }
+        ];
+
+        // 默认管理员密码
+        const DEFAULT_ADMIN_PASSWORD = 'pixel123';
+
+        // 点餐网址
+        const ORDER_URL = 'https://user-hjw2003.github.io/diner/';
+
+        // 应用状态
+        const state = {
+            currentPage: 'menu',
+            currentCategory: 'all',
+            cart: [],
+            editingItemId: null,
+            adminLoggedIn: false,
+            imageSourceType: 'upload', // 'upload' 或 'url'
+            currentCartTab: 'current',
+            qrCodeGenerated: false
+        };
+
+        // DOM元素
+        const elements = {
+            // 页面
+            menuPage: document.getElementById('menuPage'),
+            adminPage: document.getElementById('adminPage'),
             
-            // 如果已经在GitHub Pages上，使用当前URL
-            if (currentUrl.includes('github.io')) {
-                return currentUrl.split('?')[0]; // 去掉查询参数
+            // 导航按钮
+            viewMenuBtn: document.getElementById('viewMenuBtn'),
+            viewAdminBtn: document.getElementById('viewAdminBtn'),
+            
+            // 顾客端
+            menuItemsContainer: document.getElementById('menuItemsContainer'),
+            categoryButtons: document.querySelectorAll('.category-btn'),
+            
+            // 二维码相关
+            customerQrCode: document.getElementById('customerQrCode'),
+            adminQrCode: document.getElementById('adminQrCode'),
+            refreshQrCodeBtn: document.getElementById('refreshQrCodeBtn'),
+            saveQrCodeBtn: document.getElementById('saveQrCodeBtn'),
+            generateQrCodeBtn: document.getElementById('generateQrCodeBtn'),
+            generateQrCodeNowBtn: document.getElementById('generateQrCodeNowBtn'),
+            downloadQrCodeBtn: document.getElementById('downloadQrCodeBtn'),
+            printQrCodeBtn: document.getElementById('printQrCodeBtn'),
+            qrCodeUrl: document.getElementById('qrCodeUrl'),
+            qrcodeSection: document.getElementById('qrcodeSection'),
+            
+            // 购物车
+            cartToggle: document.getElementById('cartToggle'),
+            cartContainer: document.getElementById('cartContainer'),
+            closeCartBtn: document.getElementById('closeCartBtn'),
+            cartItemsContainer: document.getElementById('cartItemsContainer'),
+            cartCount: document.getElementById('cartCount'),
+            cartTotal: document.getElementById('cartTotal'),
+            submitOrderBtn: document.getElementById('submitOrderBtn'),
+            cartTabs: document.querySelectorAll('.cart-tab'),
+            orderHistoryContainer: document.getElementById('orderHistoryContainer'),
+            
+            // 管理端登录
+            adminLogin: document.getElementById('adminLogin'),
+            adminPassword: document.getElementById('adminPassword'),
+            loginBtn: document.getElementById('loginBtn'),
+            
+            // 管理端面板
+            adminPanel: document.getElementById('adminPanel'),
+            addItemBtn: document.getElementById('addItemBtn'),
+            viewOrdersBtn: document.getElementById('viewOrdersBtn'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            
+            // 菜品表单
+            itemFormSection: document.getElementById('itemFormSection'),
+            formTitle: document.getElementById('formTitle'),
+            itemForm: document.getElementById('itemForm'),
+            itemId: document.getElementById('itemId'),
+            itemName: document.getElementById('itemName'),
+            itemCategory: document.getElementById('itemCategory'),
+            itemPrice: document.getElementById('itemPrice'),
+            itemDescription: document.getElementById('itemDescription'),
+            uploadImageBtn: document.getElementById('uploadImageBtn'),
+            useUrlBtn: document.getElementById('useUrlBtn'),
+            imageUpload: document.getElementById('imageUpload'),
+            imageUrl: document.getElementById('imageUrl'),
+            imagePreview: document.getElementById('imagePreview'),
+            cancelEditBtn: document.getElementById('cancelEditBtn'),
+            
+            // 菜品列表
+            adminItemsContainer: document.getElementById('adminItemsContainer'),
+            
+            // 订单
+            ordersSection: document.getElementById('ordersSection'),
+            ordersContainer: document.getElementById('ordersContainer'),
+            
+            // 通知
+            notification: document.getElementById('notification'),
+            notificationText: document.getElementById('notificationText')
+        };
+
+        // 初始化应用
+        function initApp() {
+            // 初始化数据
+            initData();
+            
+            // 设置事件监听器
+            setupEventListeners();
+            
+            // 加载初始页面
+            loadMenuPage();
+            
+            // 更新购物车显示
+            updateCartDisplay();
+            
+            // 检查是否有保存的管理员密码
+            const savedPassword = localStorage.getItem(DATA_KEYS.ADMIN_PASSWORD);
+            if (!savedPassword) {
+                localStorage.setItem(DATA_KEYS.ADMIN_PASSWORD, DEFAULT_ADMIN_PASSWORD);
             }
             
-            // 否则使用预设的GitHub Pages URL
-            return GITHUB_PAGES_URL;
+            // 生成顾客端二维码
+            generateCustomerQrCode();
         }
-        
-        // 获取GitHub仓库地址
-        function getGitHubRepoUrl() {
-            return GITHUB_REPO_URL;
-        }
-        
-        // =============================================
-        // 二维码生成器
-        // =============================================
-        function generateQRCode() {
-            const qrcodeElement = document.getElementById('qrcode');
-            const githubUrlElement = document.getElementById('githubUrl');
-            const githubRepoLink = document.getElementById('githubRepoLink');
+
+        // 初始化数据
+        function initData() {
+            // 检查是否有保存的菜品数据
+            const savedItems = localStorage.getItem(DATA_KEYS.MENU_ITEMS);
+            if (!savedItems) {
+                localStorage.setItem(DATA_KEYS.MENU_ITEMS, JSON.stringify(DEFAULT_MENU_ITEMS));
+            }
             
-            // 获取GitHub Pages地址
-            const githubPagesUrl = getGitHubPagesUrl();
-            const githubRepoUrl = getGitHubRepoUrl();
+            // 检查是否有保存的订单数据
+            const savedOrders = localStorage.getItem(DATA_KEYS.ORDERS);
+            if (!savedOrders) {
+                localStorage.setItem(DATA_KEYS.ORDERS, JSON.stringify([]));
+            }
             
-            // 显示URL
-            githubUrlElement.textContent = githubPagesUrl;
-            githubRepoLink.href = githubRepoUrl;
+            // 检查是否有保存的顾客订单数据
+            const savedCustomerOrders = localStorage.getItem(DATA_KEYS.CUSTOMER_ORDERS);
+            if (!savedCustomerOrders) {
+                localStorage.setItem(DATA_KEYS.CUSTOMER_ORDERS, JSON.stringify([]));
+            }
             
-            // 清空之前的二维码
-            qrcodeElement.innerHTML = '';
-            
-            try {
-                // 创建二维码图片
-                const qrImg = document.createElement('img');
-                qrImg.className = 'qr-image';
-                qrImg.alt = 'GitHub点餐二维码';
-                qrImg.title = '扫描二维码进入点餐系统';
-                
-                // 使用可靠的二维码生成API - 多个备选方案
-                const qrApis = [
-                    // 方案1: goQR.me (稳定可靠)
-                    `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(githubPagesUrl)}`,
-                    
-                    // 方案2: QuickChart (备用)
-                    `https://quickchart.io/qr?text=${encodeURIComponent(githubPagesUrl)}&size=250&margin=1`,
-                    
-                    // 方案3: Google Charts API (可能需要代理)
-                    `https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=${encodeURIComponent(githubPagesUrl)}&choe=UTF-8&chld=H|2`
-                ];
-                
-                // 使用第一个API
-                const qrUrl = qrApis[0];
-                qrImg.src = qrUrl;
-                
-                // 设置图片加载错误处理
-                qrImg.onerror = function() {
-                    console.log('第一个二维码API失败，尝试备用方案');
-                    tryNextQRCodeAPI(qrcodeElement, githubPagesUrl, qrApis.slice(1));
-                };
-                
-                // 设置图片加载成功处理
-                qrImg.onload = function() {
-                    console.log('二维码加载成功');
-                    qrcodeElement.appendChild(qrImg);
-                    
-                    // 保存图片引用以便下载
-                    qrcodeElement._img = qrImg;
-                    qrcodeElement._url = githubPagesUrl;
-                    
-                    showNotification('二维码已生成，请用手机扫描测试');
-                };
-                
-                // 设置超时处理
-                setTimeout(() => {
-                    if (!qrImg.complete) {
-                        console.log('二维码加载超时，尝试备用方案');
-                        qrImg.onerror();
-                    }
-                }, 5000);
-                
-                qrcodeElement.appendChild(qrImg);
-                
-            } catch (error) {
-                console.error('二维码生成失败:', error);
-                generateFallbackQRCode(qrcodeElement, githubPagesUrl);
+            // 检查是否有保存的二维码URL
+            const savedQrCodeUrl = localStorage.getItem(DATA_KEYS.QRCODE_URL);
+            if (!savedQrCodeUrl) {
+                localStorage.setItem(DATA_KEYS.QRCODE_URL, ORDER_URL);
             }
         }
-        
-        // 尝试下一个二维码API
-        function tryNextQRCodeAPI(element, url, apis) {
-            if (apis.length === 0) {
-                // 所有API都失败了，使用备用方案
-                generateFallbackQRCode(element, url);
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 页面导航
+            elements.viewMenuBtn.addEventListener('click', () => {
+                switchPage('menu');
+                loadMenuPage();
+            });
+            
+            elements.viewAdminBtn.addEventListener('click', () => {
+                switchPage('admin');
+                loadAdminPage();
+            });
+            
+            // 分类筛选
+            elements.categoryButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 更新活动按钮
+                    elements.categoryButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新当前分类
+                    state.currentCategory = this.dataset.category;
+                    
+                    // 重新加载菜单
+                    loadMenuItems();
+                });
+            });
+            
+            // 购物车
+            elements.cartToggle.addEventListener('click', toggleCart);
+            elements.closeCartBtn.addEventListener('click', toggleCart);
+            elements.submitOrderBtn.addEventListener('click', submitOrder);
+            
+            // 购物车标签页切换
+            elements.cartTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    switchCartTab(tabId);
+                });
+            });
+            
+            // 二维码功能
+            elements.refreshQrCodeBtn.addEventListener('click', generateCustomerQrCode);
+            elements.saveQrCodeBtn.addEventListener('click', saveQrCodeImage);
+            elements.generateQrCodeBtn.addEventListener('click', showQrCodeGenerator);
+            elements.generateQrCodeNowBtn.addEventListener('click', generateAdminQrCode);
+            elements.downloadQrCodeBtn.addEventListener('click', downloadQrCodeImage);
+            elements.printQrCodeBtn.addEventListener('click', printQrCode);
+            
+            // 管理端登录
+            elements.loginBtn.addEventListener('click', adminLogin);
+            elements.adminPassword.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    adminLogin();
+                }
+            });
+            
+            // 管理端操作
+            elements.addItemBtn.addEventListener('click', showAddItemForm);
+            elements.viewOrdersBtn.addEventListener('click', toggleOrdersView);
+            elements.logoutBtn.addEventListener('click', adminLogout);
+            
+            // 菜品表单
+            elements.itemForm.addEventListener('submit', saveMenuItem);
+            elements.cancelEditBtn.addEventListener('click', cancelEdit);
+            elements.uploadImageBtn.addEventListener('click', () => switchImageSource('upload'));
+            elements.useUrlBtn.addEventListener('click', () => switchImageSource('url'));
+            elements.imageUpload.addEventListener('change', handleImageUpload);
+            elements.imageUrl.addEventListener('input', updateImagePreviewFromUrl);
+            
+            // 关闭通知
+            elements.notification.addEventListener('click', function() {
+                this.style.display = 'none';
+            });
+        }
+
+        // 生成顾客端二维码
+        function generateCustomerQrCode() {
+            const url = localStorage.getItem(DATA_KEYS.QRCODE_URL) || ORDER_URL;
+            
+            // 清空容器
+            elements.customerQrCode.innerHTML = '';
+            
+            // 生成二维码
+            new QRCode(elements.customerQrCode, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // 标记二维码已生成
+            state.qrCodeGenerated = true;
+        }
+
+        // 生成管理端二维码
+        function generateAdminQrCode() {
+            const url = elements.qrCodeUrl.value.trim() || ORDER_URL;
+            
+            // 保存URL到本地存储
+            localStorage.setItem(DATA_KEYS.QRCODE_URL, url);
+            
+            // 清空容器
+            elements.adminQrCode.innerHTML = '';
+            
+            // 生成二维码
+            new QRCode(elements.adminQrCode, {
+                text: url,
+                width: 250,
+                height: 250,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // 标记二维码已生成
+            state.qrCodeGenerated = true;
+            
+            // 更新顾客端二维码
+            generateCustomerQrCode();
+            
+            // 显示成功消息
+            showNotification('二维码生成成功！');
+        }
+
+        // 显示二维码生成器
+        function showQrCodeGenerator() {
+            // 隐藏其他部分
+            elements.itemFormSection.style.display = 'none';
+            elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'block';
+            
+            // 更新按钮状态
+            elements.addItemBtn.classList.remove('active');
+            elements.addItemBtn.classList.add('secondary');
+            elements.viewOrdersBtn.classList.remove('active');
+            elements.viewOrdersBtn.classList.add('secondary');
+            elements.generateQrCodeBtn.classList.remove('secondary');
+            elements.generateQrCodeBtn.classList.add('active');
+            
+            // 如果二维码已生成，重新生成
+            if (state.qrCodeGenerated) {
+                generateAdminQrCode();
+            }
+            
+            // 滚动到二维码区域
+            elements.qrcodeSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 保存二维码图片
+        function saveQrCodeImage() {
+            const canvas = elements.customerQrCode.querySelector('canvas');
+            if (!canvas) {
+                showNotification('请先生成二维码');
                 return;
             }
             
-            const qrImg = document.createElement('img');
-            qrImg.className = 'qr-image';
-            qrImg.alt = 'GitHub点餐二维码';
-            qrImg.title = '扫描二维码进入点餐系统';
+            const link = document.createElement('a');
+            link.download = '像素食堂点餐二维码.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
             
-            // 使用下一个API
-            qrImg.src = apis[0];
+            showNotification('二维码图片已保存');
+        }
+
+        // 下载管理端二维码图片
+        function downloadQrCodeImage() {
+            const canvas = elements.adminQrCode.querySelector('canvas');
+            if (!canvas) {
+                showNotification('请先生成二维码');
+                return;
+            }
             
-            qrImg.onerror = function() {
-                console.log('二维码API失败，尝试下一个');
-                tryNextQRCodeAPI(element, url, apis.slice(1));
+            const link = document.createElement('a');
+            link.download = '像素食堂点餐二维码.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            showNotification('二维码图片已下载');
+        }
+
+        // 打印二维码
+        function printQrCode() {
+            const canvas = elements.adminQrCode.querySelector('canvas');
+            if (!canvas) {
+                showNotification('请先生成二维码');
+                return;
+            }
+            
+            const printWindow = window.open('', '_blank');
+            const imgData = canvas.toDataURL('image/png');
+            
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>打印二维码 - 像素食堂</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            text-align: center; 
+                            padding: 20px;
+                        }
+                        h1 { color: #333; }
+                        .instructions { 
+                            max-width: 600px; 
+                            margin: 20px auto; 
+                            text-align: left;
+                            background-color: #f5f5f5;
+                            padding: 15px;
+                            border-radius: 5px;
+                        }
+                        .qr-container { 
+                            margin: 30px auto; 
+                            padding: 20px; 
+                            display: inline-block;
+                            border: 2px solid #333;
+                        }
+                        .url { 
+                            margin-top: 20px; 
+                            font-size: 16px; 
+                            color: #666;
+                            word-break: break-all;
+                        }
+                        @media print {
+                            .no-print { display: none; }
+                            .qr-container { border: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>像素食堂 - 点餐二维码</h1>
+                    <div class="instructions">
+                        <p><strong>使用说明：</strong></p>
+                        <ol>
+                            <li>将此二维码打印出来张贴在餐厅显眼位置</li>
+                            <li>顾客使用手机扫码即可点餐</li>
+                            <li>建议打印尺寸不小于10cm × 10cm</li>
+                            <li>确保二维码清晰可读</li>
+                        </ol>
+                    </div>
+                    <div class="qr-container">
+                        <img src="${imgData}" alt="点餐二维码" style="width: 300px; height: 300px;">
+                    </div>
+                    <div class="url">
+                        <strong>点餐网址：</strong><br>
+                        ${elements.qrCodeUrl.value}
+                    </div>
+                    <div class="no-print" style="margin-top: 30px;">
+                        <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; background-color: #d32f2f; color: white; border: none; cursor: pointer;">
+                            打印二维码
+                        </button>
+                        <button onclick="window.close()" style="padding: 10px 20px; font-size: 16px; background-color: #666; color: white; border: none; cursor: pointer; margin-left: 10px;">
+                            关闭窗口
+                        </button>
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            // 自动触发打印对话框
+                            setTimeout(function() {
+                                window.print();
+                            }, 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+        }
+
+        // 页面切换
+        function switchPage(page) {
+            // 更新状态
+            state.currentPage = page;
+            
+            // 更新按钮样式
+            if (page === 'menu') {
+                elements.viewMenuBtn.classList.remove('secondary');
+                elements.viewMenuBtn.classList.add('active');
+                elements.viewAdminBtn.classList.remove('active');
+                elements.viewAdminBtn.classList.add('secondary');
+            } else {
+                elements.viewMenuBtn.classList.remove('active');
+                elements.viewMenuBtn.classList.add('secondary');
+                elements.viewAdminBtn.classList.remove('secondary');
+                elements.viewAdminBtn.classList.add('active');
+            }
+            
+            // 切换页面显示
+            elements.menuPage.classList.remove('active');
+            elements.adminPage.classList.remove('active');
+            
+            if (page === 'menu') {
+                elements.menuPage.classList.add('active');
+            } else {
+                elements.adminPage.classList.add('active');
+            }
+        }
+
+        // 加载菜单页面
+        function loadMenuPage() {
+            loadMenuItems();
+        }
+
+        // 加载菜品列表
+        function loadMenuItems() {
+            // 获取所有菜品
+            const items = getMenuItems();
+            
+            // 根据分类筛选
+            let filteredItems = items;
+            if (state.currentCategory !== 'all') {
+                filteredItems = items.filter(item => item.category === state.currentCategory);
+            }
+            
+            // 清空容器
+            elements.menuItemsContainer.innerHTML = '';
+            
+            // 如果没有菜品
+            if (filteredItems.length === 0) {
+                elements.menuItemsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <p style="font-size: 20px; color: #666;">暂无菜品</p>
+                        <p>请前往管理后台添加菜品</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 渲染菜品
+            filteredItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'menu-item pixel-border';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="item-image" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'">
+                    <h3 class="item-name">${item.name}</h3>
+                    <p class="item-description">${item.description}</p>
+                    <div class="item-footer">
+                        <div class="item-price">${item.price.toFixed(2)} 元</div>
+                        <button class="add-to-cart pixel-border-white" data-id="${item.id}">加入购物车</button>
+                    </div>
+                `;
+                
+                elements.menuItemsContainer.appendChild(itemElement);
+            });
+            
+            // 为添加按钮添加事件监听器
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    addToCart(itemId);
+                });
+            });
+        }
+
+        // 获取菜品列表
+        function getMenuItems() {
+            const itemsJson = localStorage.getItem(DATA_KEYS.MENU_ITEMS);
+            return itemsJson ? JSON.parse(itemsJson) : [];
+        }
+
+        // 保存菜品列表
+        function saveMenuItems(items) {
+            localStorage.setItem(DATA_KEYS.MENU_ITEMS, JSON.stringify(items));
+        }
+
+        // 获取顾客订单历史
+        function getCustomerOrders() {
+            const ordersJson = localStorage.getItem(DATA_KEYS.CUSTOMER_ORDERS);
+            return ordersJson ? JSON.parse(ordersJson) : [];
+        }
+
+        // 保存顾客订单历史
+        function saveCustomerOrders(orders) {
+            localStorage.setItem(DATA_KEYS.CUSTOMER_ORDERS, JSON.stringify(orders));
+        }
+
+        // 添加到购物车
+        function addToCart(itemId) {
+            // 获取菜品
+            const items = getMenuItems();
+            const item = items.find(i => i.id === itemId);
+            
+            if (!item) return;
+            
+            // 检查是否已在购物车中
+            const existingItemIndex = state.cart.findIndex(cartItem => cartItem.id === itemId);
+            
+            if (existingItemIndex >= 0) {
+                // 如果已存在，增加数量
+                state.cart[existingItemIndex].quantity += 1;
+            } else {
+                // 否则添加到购物车
+                state.cart.push({
+                    ...item,
+                    quantity: 1
+                });
+            }
+            
+            // 更新购物车显示
+            updateCartDisplay();
+            
+            // 显示通知
+            showNotification(`已添加 ${item.name} 到购物车`);
+        }
+
+        // 更新购物车显示
+        function updateCartDisplay() {
+            // 更新购物车数量
+            const totalItems = state.cart.reduce((total, item) => total + item.quantity, 0);
+            elements.cartCount.textContent = totalItems;
+            
+            // 更新购物车总价
+            const totalPrice = state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            elements.cartTotal.textContent = totalPrice.toFixed(2);
+            
+            // 更新购物车内容
+            renderCartItems();
+        }
+
+        // 渲染购物车内容
+        function renderCartItems() {
+            // 清空容器
+            elements.cartItemsContainer.innerHTML = '';
+            
+            // 如果没有商品
+            if (state.cart.length === 0) {
+                elements.cartItemsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <p>购物车是空的</p>
+                        <p>快去添加一些菜品吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 渲染购物车商品
+            state.cart.forEach(item => {
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'cart-item';
+                cartItemElement.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">${item.price.toFixed(2)} 元</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="cart-item-decrease pixel-border-white" data-id="${item.id}" style="width: 30px; height: 30px; background: #333; color: white; border: none; cursor: pointer;">-</button>
+                        <div class="cart-item-qty">${item.quantity}</div>
+                        <button class="cart-item-increase pixel-border-white" data-id="${item.id}" style="width: 30px; height: 30px; background: #333; color: white; border: none; cursor: pointer;">+</button>
+                        <button class="cart-item-remove pixel-border-white" data-id="${item.id}" style="margin-left: 10px; background: #d32f2f; color: white; border: none; cursor: pointer; padding: 5px 10px;">删除</button>
+                    </div>
+                `;
+                
+                elements.cartItemsContainer.appendChild(cartItemElement);
+            });
+            
+            // 为购物车按钮添加事件监听器
+            document.querySelectorAll('.cart-item-decrease').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    updateCartItemQuantity(itemId, -1);
+                });
+            });
+            
+            document.querySelectorAll('.cart-item-increase').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    updateCartItemQuantity(itemId, 1);
+                });
+            });
+            
+            document.querySelectorAll('.cart-item-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    removeFromCart(itemId);
+                });
+            });
+        }
+
+        // 更新购物车商品数量
+        function updateCartItemQuantity(itemId, change) {
+            const itemIndex = state.cart.findIndex(item => item.id === itemId);
+            
+            if (itemIndex >= 0) {
+                state.cart[itemIndex].quantity += change;
+                
+                // 如果数量为0或负数，从购物车移除
+                if (state.cart[itemIndex].quantity <= 0) {
+                    state.cart.splice(itemIndex, 1);
+                }
+                
+                // 更新购物车显示
+                updateCartDisplay();
+            }
+        }
+
+        // 从购物车移除商品
+        function removeFromCart(itemId) {
+            const itemIndex = state.cart.findIndex(item => item.id === itemId);
+            
+            if (itemIndex >= 0) {
+                state.cart.splice(itemIndex, 1);
+                updateCartDisplay();
+                showNotification('已从购物车移除商品');
+            }
+        }
+
+        // 切换购物车显示
+        function toggleCart() {
+            elements.cartContainer.classList.toggle('open');
+            
+            // 如果打开购物车，检查当前标签页并加载相应内容
+            if (elements.cartContainer.classList.contains('open')) {
+                if (state.currentCartTab === 'history') {
+                    loadOrderHistory();
+                }
+            }
+        }
+
+        // 切换购物车标签页
+        function switchCartTab(tabId) {
+            state.currentCartTab = tabId;
+            
+            // 更新标签按钮样式
+            elements.cartTabs.forEach(tab => {
+                if (tab.dataset.tab === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // 切换内容显示
+            const tabContents = document.querySelectorAll('.cart-tab-content');
+            tabContents.forEach(content => {
+                if (content.id === tabId + 'CartTab') {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+            
+            // 如果是历史标签页且购物车已打开，加载订单历史
+            if (tabId === 'history' && elements.cartContainer.classList.contains('open')) {
+                loadOrderHistory();
+            }
+        }
+
+        // 加载订单历史
+        function loadOrderHistory() {
+            const orders = getCustomerOrders();
+            
+            // 清空容器
+            elements.orderHistoryContainer.innerHTML = '';
+            
+            // 如果没有订单历史
+            if (orders.length === 0) {
+                elements.orderHistoryContainer.innerHTML = `
+                    <div class="empty-message">
+                        <p>暂无订单历史</p>
+                        <p>提交订单后可以在这里查看</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按时间倒序排列
+            orders.sort((a, b) => b.id - a.id);
+            
+            // 渲染订单历史
+            orders.forEach(order => {
+                const orderElement = document.createElement('div');
+                orderElement.className = 'order-history-item';
+                orderElement.innerHTML = `
+                    <div class="order-history-header">
+                        <div>
+                            <div style="font-weight: bold; color: var(--primary-color);">订单 #${order.id}</div>
+                            <div style="font-size: 14px; color: #aaa; margin-top: 5px;">下单时间: ${order.date}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 20px; font-weight: bold;">${order.total.toFixed(2)} 元</div>
+                            <div class="order-status ${order.status === '已处理' ? 'processed' : ''}" style="margin-top: 5px;">${order.status}</div>
+                        </div>
+                    </div>
+                    <div class="order-history-items">
+                        <div style="font-weight: bold; color: #aaa; margin-bottom: 5px;">菜品详情:</div>
+                        ${order.items.map(item => `
+                            <div class="order-history-item-row">
+                                <div>${item.name} × ${item.quantity}</div>
+                                <div>${(item.price * item.quantity).toFixed(2)} 元</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                elements.orderHistoryContainer.appendChild(orderElement);
+            });
+        }
+
+        // 提交订单
+        function submitOrder() {
+            if (state.cart.length === 0) {
+                showNotification('购物车是空的，无法提交订单');
+                return;
+            }
+            
+            // 创建订单
+            const orderId = Date.now();
+            const now = new Date();
+            const order = {
+                id: orderId,
+                date: `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`,
+                items: JSON.parse(JSON.stringify(state.cart)), // 深度拷贝
+                total: state.cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+                status: '待处理'
             };
             
-            qrImg.onload = function() {
-                console.log('备用二维码API加载成功');
-                element.innerHTML = '';
-                element.appendChild(qrImg);
-                element._img = qrImg;
-                element._url = url;
-                showNotification('使用备用API生成二维码成功');
+            // 保存到餐厅订单（管理端可见）
+            const restaurantOrders = getOrders();
+            restaurantOrders.push(order);
+            saveOrders(restaurantOrders);
+            
+            // 保存到顾客订单历史
+            const customerOrders = getCustomerOrders();
+            customerOrders.push(order);
+            saveCustomerOrders(customerOrders);
+            
+            // 清空购物车
+            state.cart = [];
+            updateCartDisplay();
+            
+            // 切换到订单历史标签页
+            switchCartTab('history');
+            
+            // 显示成功消息
+            showNotification(`订单提交成功！订单号: #${orderId}`);
+            
+            // 如果管理员已登录且在看订单页面，刷新订单列表
+            if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
+                loadOrders();
+            }
+        }
+
+        // 获取餐厅订单列表
+        function getOrders() {
+            const ordersJson = localStorage.getItem(DATA_KEYS.ORDERS);
+            return ordersJson ? JSON.parse(ordersJson) : [];
+        }
+
+        // 保存餐厅订单列表
+        function saveOrders(orders) {
+            localStorage.setItem(DATA_KEYS.ORDERS, JSON.stringify(orders));
+        }
+
+        // 管理员登录
+        function adminLogin() {
+            const password = elements.adminPassword.value;
+            const savedPassword = localStorage.getItem(DATA_KEYS.ADMIN_PASSWORD);
+            
+            if (password === savedPassword) {
+                state.adminLoggedIn = true;
+                elements.adminLogin.style.display = 'none';
+                elements.adminPanel.style.display = 'block';
+                elements.adminPassword.value = '';
+                
+                // 加载管理页面
+                loadAdminItems();
+                showNotification('管理员登录成功');
+            } else {
+                showNotification('密码错误，请重试');
+                elements.adminPassword.value = '';
+                elements.adminPassword.focus();
+            }
+        }
+
+        // 管理员退出
+        function adminLogout() {
+            state.adminLoggedIn = false;
+            elements.adminLogin.style.display = 'block';
+            elements.adminPanel.style.display = 'none';
+            elements.ordersSection.style.display = 'none';
+            elements.itemFormSection.style.display = 'block';
+            elements.qrcodeSection.style.display = 'none';
+            showNotification('已退出管理员账号');
+        }
+
+        // 加载管理页面
+        function loadAdminPage() {
+            if (state.adminLoggedIn) {
+                elements.adminLogin.style.display = 'none';
+                elements.adminPanel.style.display = 'block';
+                loadAdminItems();
+            } else {
+                elements.adminLogin.style.display = 'block';
+                elements.adminPanel.style.display = 'none';
+            }
+        }
+
+        // 显示添加菜品表单
+        function showAddItemForm() {
+            // 重置表单
+            elements.itemForm.reset();
+            elements.itemId.value = '';
+            elements.formTitle.textContent = '新增菜品';
+            elements.imagePreview.style.display = 'none';
+            elements.imageUrl.style.display = 'none';
+            elements.imageUpload.style.display = 'none';
+            elements.imageUrl.value = '';
+            
+            // 显示表单
+            elements.itemFormSection.style.display = 'block';
+            elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'none';
+            
+            // 更新按钮状态
+            elements.addItemBtn.classList.remove('secondary');
+            elements.addItemBtn.classList.add('active');
+            elements.viewOrdersBtn.classList.remove('active');
+            elements.viewOrdersBtn.classList.add('secondary');
+            elements.generateQrCodeBtn.classList.remove('active');
+            elements.generateQrCodeBtn.classList.add('secondary');
+            
+            // 默认使用本地上传
+            switchImageSource('upload');
+            
+            // 更新状态
+            state.editingItemId = null;
+        }
+
+        // 切换图片源
+        function switchImageSource(source) {
+            state.imageSourceType = source;
+            
+            if (source === 'upload') {
+                elements.uploadImageBtn.classList.remove('secondary');
+                elements.useUrlBtn.classList.add('secondary');
+                elements.imageUpload.style.display = 'block';
+                elements.imageUrl.style.display = 'none';
+            } else {
+                elements.uploadImageBtn.classList.add('secondary');
+                elements.useUrlBtn.classList.remove('secondary');
+                elements.imageUpload.style.display = 'none';
+                elements.imageUrl.style.display = 'block';
+            }
+        }
+
+        // 处理图片上传
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                elements.imagePreview.src = e.target.result;
+                elements.imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 从URL更新图片预览
+        function updateImagePreviewFromUrl() {
+            const url = elements.imageUrl.value;
+            if (url) {
+                elements.imagePreview.src = url;
+                elements.imagePreview.style.display = 'block';
+            } else {
+                elements.imagePreview.style.display = 'none';
+            }
+        }
+
+        // 保存菜品
+        function saveMenuItem(event) {
+            event.preventDefault();
+            
+            // 获取表单数据
+            const name = elements.itemName.value.trim();
+            const category = elements.itemCategory.value;
+            const price = parseFloat(elements.itemPrice.value);
+            const description = elements.itemDescription.value.trim();
+            
+            // 获取图片
+            let image = '';
+            if (state.imageSourceType === 'upload' && elements.imageUpload.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    image = e.target.result;
+                    saveItemWithImage(image);
+                };
+                reader.readAsDataURL(elements.imageUpload.files[0]);
+                return;
+            } else if (state.imageSourceType === 'url') {
+                image = elements.imageUrl.value.trim();
+            }
+            
+            saveItemWithImage(image);
+            
+            function saveItemWithImage(imageUrl) {
+                // 获取现有菜品
+                const items = getMenuItems();
+                
+                if (state.editingItemId) {
+                    // 编辑现有菜品
+                    const itemIndex = items.findIndex(item => item.id === state.editingItemId);
+                    if (itemIndex >= 0) {
+                        items[itemIndex] = {
+                            ...items[itemIndex],
+                            name,
+                            category,
+                            price,
+                            description,
+                            image: imageUrl || items[itemIndex].image
+                        };
+                    }
+                } else {
+                    // 新增菜品
+                    const newId = items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1;
+                    items.push({
+                        id: newId,
+                        name,
+                        category,
+                        price,
+                        description,
+                        image: imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
+                    });
+                }
+                
+                // 保存菜品
+                saveMenuItems(items);
+                
+                // 重新加载菜品列表
+                loadAdminItems();
+                
+                // 如果顾客页面是当前页面，也重新加载
+                if (state.currentPage === 'menu') {
+                    loadMenuItems();
+                }
+                
+                // 重置表单
+                elements.itemForm.reset();
+                elements.imagePreview.style.display = 'none';
+                elements.imageUrl.value = '';
+                
+                // 显示成功消息
+                showNotification(state.editingItemId ? '菜品更新成功' : '菜品添加成功');
+                
+                // 更新状态
+                state.editingItemId = null;
+            }
+        }
+
+        // 取消编辑
+        function cancelEdit() {
+            elements.itemForm.reset();
+            elements.imagePreview.style.display = 'none';
+            elements.imageUrl.value = '';
+            state.editingItemId = null;
+        }
+
+        // 加载管理端菜品列表
+        function loadAdminItems() {
+            const items = getMenuItems();
+            
+            // 清空容器
+            elements.adminItemsContainer.innerHTML = '';
+            
+            // 如果没有菜品
+            if (items.length === 0) {
+                elements.adminItemsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <p style="font-size: 20px; color: #666;">暂无菜品</p>
+                        <p>点击"新增菜品"按钮开始添加</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按分类分组
+            const categories = {
+                main: { name: '主菜', items: [] },
+                side: { name: '小食', items: [] },
+                drink: { name: '饮品', items: [] },
+                dessert: { name: '甜点', items: [] }
             };
             
-            // 替换图片
-            element.innerHTML = '';
-            element.appendChild(qrImg);
+            items.forEach(item => {
+                if (categories[item.category]) {
+                    categories[item.category].items.push(item);
+                }
+            });
+            
+            // 渲染每个分类
+            Object.keys(categories).forEach(categoryKey => {
+                const category = categories[categoryKey];
+                if (category.items.length === 0) return;
+                
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'admin-category';
+                categoryElement.innerHTML = `
+                    <h4 style="margin: 20px 0 10px; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 5px;">${category.name}</h4>
+                    <div class="admin-items-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                        ${category.items.map(item => `
+                            <div class="admin-item pixel-border" style="padding: 15px; background-color: #222; display: flex; align-items: center;">
+                                <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px; border: 2px solid var(--primary-color);" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'">
+                                <div style="flex-grow: 1;">
+                                    <div style="font-weight: bold; color: var(--primary-color);">${item.name}</div>
+                                    <div style="color: #aaa; font-size: 14px; margin: 5px 0;">${item.description}</div>
+                                    <div style="font-weight: bold; font-size: 18px;">${item.price.toFixed(2)} 元</div>
+                                </div>
+                                <div>
+                                    <button class="edit-item pixel-border-white" data-id="${item.id}" style="background: #333; color: white; border: none; cursor: pointer; padding: 5px 10px; margin-right: 5px;">编辑</button>
+                                    <button class="delete-item pixel-border-white" data-id="${item.id}" style="background: #d32f2f; color: white; border: none; cursor: pointer; padding: 5px 10px;">删除</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                elements.adminItemsContainer.appendChild(categoryElement);
+            });
+            
+            // 为编辑和删除按钮添加事件监听器
+            document.querySelectorAll('.edit-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    editMenuItem(itemId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    deleteMenuItem(itemId);
+                });
+            });
         }
-        
-        // 备用二维码生成方案 - 使用纯Canvas生成
-        function generateFallbackQRCode(element, url) {
-            element.innerHTML = '';
+
+        // 编辑菜品
+        function editMenuItem(itemId) {
+            const items = getMenuItems();
+            const item = items.find(i => i.id === itemId);
             
-            // 创建一个简单的Canvas二维码
-            const canvas = document.createElement('canvas');
-            canvas.width = 250;
-            canvas.height = 250;
-            canvas.style.border = '1px solid #ccc';
-            canvas.style.borderRadius = '5px';
+            if (!item) return;
             
-            const ctx = canvas.getContext('2d');
+            // 填充表单
+            elements.itemId.value = item.id;
+            elements.itemName.value = item.name;
+            elements.itemCategory.value = item.category;
+            elements.itemPrice.value = item.price;
+            elements.itemDescription.value = item.description;
+            elements.formTitle.textContent = '编辑菜品';
             
-            // 清空画布
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, 250, 250);
+            // 显示图片预览
+            if (item.image) {
+                elements.imagePreview.src = item.image;
+                elements.imagePreview.style.display = 'block';
+            }
             
-            // 绘制GitHub风格的二维码
-            ctx.fillStyle = '#24292e'; // GitHub深色
+            // 默认使用URL方式
+            switchImageSource('url');
+            elements.imageUrl.value = item.image || '';
             
-            // 绘制定位图案
-            ctx.fillRect(20, 20, 50, 50);
-            ctx.fillRect(180, 20, 50, 50);
-            ctx.fillRect(20, 180, 50, 50);
+            // 显示表单
+            elements.itemFormSection.style.display = 'block';
+            elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'none';
             
-            // 绘制URL文字
-            ctx.fillStyle = '#d32f2f';
-            ctx.font = 'bold 16px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('GitHub Diner', 125, 140);
-            ctx.font = '12px Arial';
-            ctx.fillText('Scan to Order', 125, 160);
+            // 更新状态
+            state.editingItemId = itemId;
             
-            // 添加边框
-            ctx.strokeStyle = '#d32f2f';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(10, 10, 230, 230);
-            
-            element.appendChild(canvas);
-            
-            // 保存canvas以便下载
-            element._canvas = canvas;
-            element._url = url;
-            
-            showNotification('使用本地生成的二维码');
+            // 滚动到表单
+            elements.itemFormSection.scrollIntoView({ behavior: 'smooth' });
         }
-        
-        // =============================================
-        // 功能函数
-        // =============================================
-        
+
+        // 删除菜品
+        function deleteMenuItem(itemId) {
+            if (confirm('确定要删除这个菜品吗？此操作不可撤销。')) {
+                const items = getMenuItems();
+                const filteredItems = items.filter(item => item.id !== itemId);
+                
+                // 保存更新后的菜品列表
+                saveMenuItems(filteredItems);
+                
+                // 重新加载菜品列表
+                loadAdminItems();
+                
+                // 如果顾客页面是当前页面，也重新加载
+                if (state.currentPage === 'menu') {
+                    loadMenuItems();
+                }
+                
+                // 显示通知
+                showNotification('菜品删除成功');
+            }
+        }
+
+        // 切换订单视图
+        function toggleOrdersView() {
+            if (elements.ordersSection.style.display === 'none') {
+                elements.ordersSection.style.display = 'block';
+                elements.itemFormSection.style.display = 'none';
+                elements.qrcodeSection.style.display = 'none';
+                
+                // 更新按钮状态
+                elements.addItemBtn.classList.remove('active');
+                elements.addItemBtn.classList.add('secondary');
+                elements.viewOrdersBtn.classList.remove('secondary');
+                elements.viewOrdersBtn.classList.add('active');
+                elements.generateQrCodeBtn.classList.remove('active');
+                elements.generateQrCodeBtn.classList.add('secondary');
+                
+                loadOrders();
+                
+                // 滚动到订单列表
+                elements.ordersSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                elements.ordersSection.style.display = 'none';
+                elements.itemFormSection.style.display = 'block';
+                
+                // 更新按钮状态
+                elements.addItemBtn.classList.remove('secondary');
+                elements.addItemBtn.classList.add('active');
+                elements.viewOrdersBtn.classList.remove('active');
+                elements.viewOrdersBtn.classList.add('secondary');
+            }
+        }
+
+        // 加载订单
+        function loadOrders() {
+            const orders = getOrders();
+            
+            // 清空容器
+            elements.ordersContainer.innerHTML = '';
+            
+            // 如果没有订单
+            if (orders.length === 0) {
+                elements.ordersContainer.innerHTML = `
+                    <div class="empty-message">
+                        <p style="font-size: 20px; color: #666;">暂无订单</p>
+                        <p>等待顾客提交订单</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按时间倒序排列
+            orders.sort((a, b) => b.id - a.id);
+            
+            // 渲染订单
+            orders.forEach(order => {
+                const orderElement = document.createElement('div');
+                orderElement.className = 'order-item pixel-border-white';
+                orderElement.innerHTML = `
+                    <div class="order-header">
+                        <div>
+                            <strong style="color: var(--primary-color);">订单 #${order.id}</strong>
+                            <div style="font-size: 14px; color: #aaa; margin-top: 5px;">${order.date}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="background-color: ${order.status === '待处理' ? '#d32f2f' : '#4caf50'}; color: white; padding: 5px 10px; font-size: 14px;">${order.status}</span>
+                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${order.total.toFixed(2)} 元</div>
+                        </div>
+                    </div>
+                    <div class="order-items">
+                        ${order.items.map(item => `
+                            <div class="order-item-row">
+                                <div>${item.name} × ${item.quantity}</div>
+                                <div>${(item.price * item.quantity).toFixed(2)} 元</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="mark-processed pixel-button" data-id="${order.id}" style="padding: 8px 15px; font-size: 14px;">标记为已处理</button>
+                        <button class="delete-order pixel-button secondary" data-id="${order.id}" style="padding: 8px 15px; font-size: 14px; background-color: #d32f2f;">删除订单</button>
+                    </div>
+                `;
+                
+                elements.ordersContainer.appendChild(orderElement);
+            });
+            
+            // 为订单按钮添加事件监听器
+            document.querySelectorAll('.mark-processed').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = parseInt(this.dataset.id);
+                    markOrderAsProcessed(orderId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-order').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = parseInt(this.dataset.id);
+                    deleteOrder(orderId);
+                });
+            });
+        }
+
+        // 标记订单为已处理
+        function markOrderAsProcessed(orderId) {
+            const restaurantOrders = getOrders();
+            const customerOrders = getCustomerOrders();
+            
+            // 更新餐厅订单
+            const restaurantOrderIndex = restaurantOrders.findIndex(order => order.id === orderId);
+            if (restaurantOrderIndex >= 0) {
+                restaurantOrders[restaurantOrderIndex].status = '已处理';
+                saveOrders(restaurantOrders);
+            }
+            
+            // 更新顾客订单
+            const customerOrderIndex = customerOrders.findIndex(order => order.id === orderId);
+            if (customerOrderIndex >= 0) {
+                customerOrders[customerOrderIndex].status = '已处理';
+                saveCustomerOrders(customerOrders);
+            }
+            
+            // 重新加载订单
+            loadOrders();
+            
+            // 如果购物车中正在显示订单历史，重新加载
+            if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
+                loadOrderHistory();
+            }
+            
+            showNotification('订单状态已更新');
+        }
+
+        // 删除订单
+        function deleteOrder(orderId) {
+            if (confirm('确定要删除这个订单吗？此操作不可撤销。')) {
+                // 从餐厅订单中删除
+                const restaurantOrders = getOrders();
+                const filteredRestaurantOrders = restaurantOrders.filter(order => order.id !== orderId);
+                saveOrders(filteredRestaurantOrders);
+                
+                // 从顾客订单中删除
+                const customerOrders = getCustomerOrders();
+                const filteredCustomerOrders = customerOrders.filter(order => order.id !== orderId);
+                saveCustomerOrders(filteredCustomerOrders);
+                
+                // 重新加载
+                loadOrders();
+                
+                // 如果购物车中正在显示订单历史，重新加载
+                if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
+                    loadOrderHistory();
+                }
+                
+                showNotification('订单删除成功');
+            }
+        }
+
         // 显示通知
         function showNotification(message) {
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
+            elements.notificationText.textContent = message;
+            elements.notification.style.display = 'block';
             
-            notificationText.textContent = message;
-            notification.style.display = 'block';
-            
+            // 3秒后自动隐藏
             setTimeout(() => {
-                notification.style.display = 'none';
+                elements.notification.style.display = 'none';
             }, 3000);
         }
-        
-        // 下载二维码
-        function downloadQRCode() {
-            const qrcodeElement = document.getElementById('qrcode');
-            const img = qrcodeElement.querySelector('img');
-            const canvas = qrcodeElement.querySelector('canvas');
-            
-            if (img && img.src) {
-                try {
-                    const link = document.createElement('a');
-                    const now = new Date();
-                    const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
-                    link.download = `像素食堂二维码_${dateStr}.png`;
-                    link.href = img.src;
-                    link.click();
-                    
-                    showNotification('二维码下载成功！');
-                } catch (error) {
-                    console.error('下载失败:', error);
-                    showNotification('下载失败，请截图保存');
-                }
-            } else if (canvas) {
-                try {
-                    const link = document.createElement('a');
-                    const now = new Date();
-                    const dateStr = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}`;
-                    link.download = `像素食堂二维码_${dateStr}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    
-                    showNotification('二维码下载成功！');
-                } catch (error) {
-                    console.error('下载失败:', error);
-                    showNotification('下载失败，请截图保存');
-                }
-            } else {
-                showNotification('请先生成二维码');
-            }
-        }
-        
-        // 复制URL
-        function copyUrl() {
-            const githubUrlElement = document.getElementById('githubUrl');
-            const urlToCopy = githubUrlElement.textContent;
-            
-            if (!urlToCopy || urlToCopy === '正在生成GitHub Pages地址...') {
-                showNotification('请等待二维码生成完成');
-                return;
-            }
-            
-            navigator.clipboard.writeText(urlToCopy).then(() => {
-                showNotification('链接已复制到剪贴板！');
-            }).catch(err => {
-                // 备用方案
-                const textArea = document.createElement('textarea');
-                textArea.value = urlToCopy;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification('链接已复制！');
-            });
-        }
-        
-        // =============================================
-        // 页面初始化
-        // =============================================
-        function initPage() {
-            // 生成二维码
-            generateQRCode();
-            
-            // 绑定按钮事件
-            document.getElementById('downloadQrBtn').addEventListener('click', downloadQRCode);
-            document.getElementById('copyUrlBtn').addEventListener('click', copyUrl);
-            document.getElementById('refreshQrBtn').addEventListener('click', function() {
-                generateQRCode();
-                showNotification('二维码已刷新');
-            });
-            
-            // 检查当前环境
-            const currentUrl = window.location.href;
-            
-            if (currentUrl.startsWith('file://')) {
-                // 本地文件模式
-                showNotification('本地预览模式，请部署到GitHub Pages');
-                
-                // 添加部署提示
-                const tip = document.createElement('div');
-                tip.style.cssText = 'background: #ff9800; color: black; padding: 15px; margin: 15px 0; border-radius: 5px;';
-                tip.innerHTML = `
-                    <p style="font-weight: bold; margin-bottom: 10px;">
-                        <i class="fas fa-exclamation-triangle"></i> 重要提示
-                    </p>
-                    <p>当前为本地预览模式，请按以下步骤部署：</p>
-                    <ol style="text-align: left; margin: 10px 0 10px 20px;">
-                        <li>将本文件上传到GitHub仓库</li>
-                        <li>在仓库设置中启用GitHub Pages</li>
-                        <li>访问生成的URL测试二维码</li>
-                    </ol>
-                `;
-                
-                const qrcodeSection = document.querySelector('.qrcode-section');
-                qrcodeSection.insertBefore(tip, qrcodeSection.firstChild);
-                
-            } else if (currentUrl.includes('github.io')) {
-                // GitHub Pages模式
-                showNotification('GitHub Pages部署成功！');
-                
-                // 添加成功提示
-                const success = document.createElement('div');
-                success.style.cssText = 'background: #4caf50; color: white; padding: 15px; margin: 15px 0; border-radius: 5px;';
-                success.innerHTML = `
-                    <p style="font-weight: bold;">
-                        <i class="fas fa-check-circle"></i> 部署成功！
-                    </p>
-                    <p>系统已成功部署到GitHub Pages，二维码可正常使用。</p>
-                `;
-                
-                const qrcodeSection = document.querySelector('.qrcode-section');
-                qrcodeSection.insertBefore(success, qrcodeSection.firstChild);
-            }
-        }
-        
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', initPage);
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
