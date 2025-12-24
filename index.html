@@ -348,8 +348,10 @@
 
         .qrcode-display {
             background-color: white;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
+            display: inline-block;
+            min-width: 250px;
         }
 
         .qrcode-info {
@@ -381,9 +383,12 @@
             margin-top: 20px;
         }
 
-        #qrcodeCanvas {
-            width: 200px !important;
-            height: 200px !important;
+        .qrcode-canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+            margin: 20px 0;
         }
 
         .admin-qrcode-section {
@@ -716,6 +721,10 @@
                 padding: 10px 8px;
                 font-size: 13px;
             }
+            
+            .qrcode-display {
+                min-width: 200px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -732,6 +741,10 @@
             .cart-tab {
                 font-size: 12px;
                 padding: 8px 5px;
+            }
+            
+            .qrcode-display {
+                min-width: 180px;
             }
         }
 
@@ -766,6 +779,36 @@
         
         .order-status.processed {
             background-color: #4caf50;
+        }
+        
+        .url-display {
+            background-color: #222;
+            padding: 12px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+            word-break: break-all;
+            font-size: 14px;
+        }
+        
+        .qrcode-instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #222;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .qrcode-instructions h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .qrcode-instructions ul {
+            padding-left: 20px;
+            color: #aaa;
+        }
+        
+        .qrcode-instructions li {
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -837,7 +880,7 @@
                     
                     <div class="qrcode-container">
                         <div class="qrcode-display pixel-border-white">
-                            <div id="customerQrCode"></div>
+                            <div id="customerQrCode" class="qrcode-canvas-container"></div>
                         </div>
                         
                         <div class="qrcode-info">
@@ -849,9 +892,9 @@
                                 <li>支持历史订单查看</li>
                                 <li>自动计算价格，避免错误</li>
                             </ul>
-                            <p style="color: var(--primary-color); font-weight: bold;">
+                            <div class="url-display">
                                 <i class="fas fa-link"></i> 点餐网址: https://user-hjw2003.github.io/diner/
-                            </p>
+                            </div>
                         </div>
                     </div>
                     
@@ -967,7 +1010,9 @@
                         </div>
                         
                         <div class="qrcode-preview-container">
-                            <div id="adminQrCode" class="pixel-border-white" style="padding: 15px; background-color: white;"></div>
+                            <div class="qrcode-display pixel-border-white">
+                                <div id="adminQrCode" class="qrcode-canvas-container"></div>
+                            </div>
                         </div>
                         
                         <div class="qrcode-actions">
@@ -982,9 +1027,9 @@
                             </button>
                         </div>
                         
-                        <div style="margin-top: 20px; padding: 15px; background-color: #222;">
+                        <div class="qrcode-instructions">
                             <h4><i class="fas fa-lightbulb"></i> 使用建议</h4>
-                            <ul style="color: #aaa; margin-top: 10px; padding-left: 20px;">
+                            <ul>
                                 <li>将二维码打印并张贴在餐桌、前台等显眼位置</li>
                                 <li>建议打印尺寸不小于10cm×10cm，确保扫码成功率</li>
                                 <li>定期检查二维码是否清晰可读</li>
@@ -1129,9 +1174,11 @@
             cart: [],
             editingItemId: null,
             adminLoggedIn: false,
-            imageSourceType: 'upload', // 'upload' 或 'url'
+            imageSourceType: 'upload',
             currentCartTab: 'current',
-            qrCodeGenerated: false
+            qrCodeGenerated: false,
+            customerQrCodeInstance: null,
+            adminQrCodeInstance: null
         };
 
         // DOM元素
@@ -1303,7 +1350,7 @@
             });
             
             // 二维码功能
-            elements.refreshQrCodeBtn.addEventListener('click', generateCustomerQrCode);
+            elements.refreshQrCodeBtn.addEventListener('click', refreshCustomerQrCode);
             elements.saveQrCodeBtn.addEventListener('click', saveQrCodeImage);
             elements.generateQrCodeBtn.addEventListener('click', showQrCodeGenerator);
             elements.generateQrCodeNowBtn.addEventListener('click', generateAdminQrCode);
@@ -1345,17 +1392,35 @@
             elements.customerQrCode.innerHTML = '';
             
             // 生成二维码
-            new QRCode(elements.customerQrCode, {
-                text: url,
-                width: 200,
-                height: 200,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
-            // 标记二维码已生成
-            state.qrCodeGenerated = true;
+            try {
+                state.customerQrCodeInstance = new QRCode(elements.customerQrCode, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // 标记二维码已生成
+                state.qrCodeGenerated = true;
+                showNotification('二维码已生成');
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                elements.customerQrCode.innerHTML = `
+                    <div style="color: #d32f2f; padding: 20px;">
+                        <p>二维码生成失败</p>
+                        <p>请检查网络连接后重试</p>
+                        <button onclick="generateCustomerQrCode()" class="pixel-button" style="margin-top: 10px;">重试</button>
+                    </div>
+                `;
+            }
+        }
+
+        // 刷新顾客端二维码
+        function refreshCustomerQrCode() {
+            generateCustomerQrCode();
+            showNotification('二维码已刷新');
         }
 
         // 生成管理端二维码
@@ -1369,23 +1434,34 @@
             elements.adminQrCode.innerHTML = '';
             
             // 生成二维码
-            new QRCode(elements.adminQrCode, {
-                text: url,
-                width: 250,
-                height: 250,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
-            // 标记二维码已生成
-            state.qrCodeGenerated = true;
-            
-            // 更新顾客端二维码
-            generateCustomerQrCode();
-            
-            // 显示成功消息
-            showNotification('二维码生成成功！');
+            try {
+                state.adminQrCodeInstance = new QRCode(elements.adminQrCode, {
+                    text: url,
+                    width: 250,
+                    height: 250,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // 标记二维码已生成
+                state.qrCodeGenerated = true;
+                
+                // 更新顾客端二维码
+                generateCustomerQrCode();
+                
+                // 显示成功消息
+                showNotification('二维码生成成功！');
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                elements.adminQrCode.innerHTML = `
+                    <div style="color: #d32f2f; padding: 20px;">
+                        <p>二维码生成失败</p>
+                        <p>请检查网络连接后重试</p>
+                        <button onclick="generateAdminQrCode()" class="pixel-button" style="margin-top: 10px;">重试</button>
+                    </div>
+                `;
+            }
         }
 
         // 显示二维码生成器
@@ -1406,6 +1482,9 @@
             // 如果二维码已生成，重新生成
             if (state.qrCodeGenerated) {
                 generateAdminQrCode();
+            } else {
+                // 否则先清空容器
+                elements.adminQrCode.innerHTML = '';
             }
             
             // 滚动到二维码区域
@@ -1420,12 +1499,19 @@
                 return;
             }
             
-            const link = document.createElement('a');
-            link.download = '像素食堂点餐二维码.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            
-            showNotification('二维码图片已保存');
+            try {
+                const link = document.createElement('a');
+                link.download = '像素食堂点餐二维码.png';
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('二维码图片已保存');
+            } catch (error) {
+                console.error('保存二维码失败:', error);
+                showNotification('保存失败，请重试');
+            }
         }
 
         // 下载管理端二维码图片
@@ -1436,12 +1522,19 @@
                 return;
             }
             
-            const link = document.createElement('a');
-            link.download = '像素食堂点餐二维码.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            
-            showNotification('二维码图片已下载');
+            try {
+                const link = document.createElement('a');
+                link.download = '像素食堂点餐二维码.png';
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('二维码图片已下载');
+            } catch (error) {
+                console.error('下载二维码失败:', error);
+                showNotification('下载失败，请重试');
+            }
         }
 
         // 打印二维码
@@ -1452,85 +1545,120 @@
                 return;
             }
             
-            const printWindow = window.open('', '_blank');
-            const imgData = canvas.toDataURL('image/png');
-            
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>打印二维码 - 像素食堂</title>
-                    <style>
-                        body { 
-                            font-family: Arial, sans-serif; 
-                            text-align: center; 
-                            padding: 20px;
-                        }
-                        h1 { color: #333; }
-                        .instructions { 
-                            max-width: 600px; 
-                            margin: 20px auto; 
-                            text-align: left;
-                            background-color: #f5f5f5;
-                            padding: 15px;
-                            border-radius: 5px;
-                        }
-                        .qr-container { 
-                            margin: 30px auto; 
-                            padding: 20px; 
-                            display: inline-block;
-                            border: 2px solid #333;
-                        }
-                        .url { 
-                            margin-top: 20px; 
-                            font-size: 16px; 
-                            color: #666;
-                            word-break: break-all;
-                        }
-                        @media print {
-                            .no-print { display: none; }
-                            .qr-container { border: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>像素食堂 - 点餐二维码</h1>
-                    <div class="instructions">
-                        <p><strong>使用说明：</strong></p>
-                        <ol>
-                            <li>将此二维码打印出来张贴在餐厅显眼位置</li>
-                            <li>顾客使用手机扫码即可点餐</li>
-                            <li>建议打印尺寸不小于10cm × 10cm</li>
-                            <li>确保二维码清晰可读</li>
-                        </ol>
-                    </div>
-                    <div class="qr-container">
-                        <img src="${imgData}" alt="点餐二维码" style="width: 300px; height: 300px;">
-                    </div>
-                    <div class="url">
-                        <strong>点餐网址：</strong><br>
-                        ${elements.qrCodeUrl.value}
-                    </div>
-                    <div class="no-print" style="margin-top: 30px;">
-                        <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; background-color: #d32f2f; color: white; border: none; cursor: pointer;">
-                            打印二维码
-                        </button>
-                        <button onclick="window.close()" style="padding: 10px 20px; font-size: 16px; background-color: #666; color: white; border: none; cursor: pointer; margin-left: 10px;">
-                            关闭窗口
-                        </button>
-                    </div>
-                    <script>
-                        window.onload = function() {
-                            // 自动触发打印对话框
-                            setTimeout(function() {
-                                window.print();
-                            }, 500);
-                        };
-                    <\/script>
-                </body>
-                </html>
-            `);
-            
-            printWindow.document.close();
+            try {
+                const printWindow = window.open('', '_blank');
+                const imgData = canvas.toDataURL('image/png');
+                const url = elements.qrCodeUrl.value;
+                
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>打印二维码 - 像素食堂</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                text-align: center; 
+                                padding: 40px 20px;
+                                margin: 0;
+                            }
+                            h1 { 
+                                color: #333; 
+                                margin-bottom: 20px;
+                                font-size: 28px;
+                            }
+                            .instructions { 
+                                max-width: 600px; 
+                                margin: 20px auto; 
+                                text-align: left;
+                                background-color: #f5f5f5;
+                                padding: 20px;
+                                border-radius: 8px;
+                                border-left: 5px solid #d32f2f;
+                            }
+                            .qr-container { 
+                                margin: 30px auto; 
+                                padding: 20px; 
+                                display: inline-block;
+                                border: 2px solid #333;
+                                background-color: white;
+                            }
+                            .url { 
+                                margin-top: 20px; 
+                                font-size: 16px; 
+                                color: #666;
+                                word-break: break-all;
+                                max-width: 600px;
+                                margin-left: auto;
+                                margin-right: auto;
+                                padding: 15px;
+                                background-color: #f9f9f9;
+                                border-radius: 5px;
+                            }
+                            .print-info {
+                                margin-top: 30px;
+                                font-size: 14px;
+                                color: #888;
+                                border-top: 1px dashed #ccc;
+                                padding-top: 20px;
+                                max-width: 600px;
+                                margin-left: auto;
+                                margin-right: auto;
+                            }
+                            @media print {
+                                .no-print { display: none; }
+                                .qr-container { border: none; }
+                                body { padding: 20px; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>像素食堂 - 点餐二维码</h1>
+                        <div class="instructions">
+                            <p style="font-weight: bold; margin-bottom: 10px;">使用说明：</p>
+                            <ol style="margin: 0; padding-left: 20px;">
+                                <li style="margin-bottom: 8px;">将此二维码打印出来张贴在餐厅显眼位置</li>
+                                <li style="margin-bottom: 8px;">顾客使用手机扫码即可点餐</li>
+                                <li style="margin-bottom: 8px;">建议打印尺寸不小于10cm × 10cm</li>
+                                <li>确保二维码清晰可读</li>
+                            </ol>
+                        </div>
+                        <div class="qr-container">
+                            <img src="${imgData}" alt="点餐二维码" style="width: 300px; height: 300px;">
+                        </div>
+                        <div class="url">
+                            <p style="margin: 0 0 10px 0; font-weight: bold;">点餐网址：</p>
+                            <p style="margin: 0;">${url}</p>
+                        </div>
+                        <div class="print-info">
+                            <p style="margin: 0;">打印时间：${new Date().toLocaleString()}</p>
+                            <p style="margin: 5px 0 0 0;">像素食堂点餐系统</p>
+                        </div>
+                        <div class="no-print" style="margin-top: 40px;">
+                            <button onclick="window.print()" style="padding: 12px 24px; font-size: 16px; background-color: #d32f2f; color: white; border: none; cursor: pointer; border-radius: 4px;">
+                                <i class="fas fa-print"></i> 打印二维码
+                            </button>
+                            <button onclick="window.close()" style="padding: 12px 24px; font-size: 16px; background-color: #666; color: white; border: none; cursor: pointer; margin-left: 10px; border-radius: 4px;">
+                                <i class="fas fa-times"></i> 关闭窗口
+                            </button>
+                        </div>
+                        <script>
+                            window.onload = function() {
+                                // 自动触发打印对话框
+                                setTimeout(function() {
+                                    window.print();
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+            } catch (error) {
+                console.error('打印二维码失败:', error);
+                showNotification('打印失败，请重试');
+            }
         }
 
         // 页面切换
@@ -2426,6 +2554,14 @@
 
         // 初始化应用
         document.addEventListener('DOMContentLoaded', initApp);
+        
+        // 添加二维码库加载失败的处理
+        window.addEventListener('error', function(e) {
+            if (e.target.src && e.target.src.includes('qrcode')) {
+                console.error('QRCode库加载失败:', e);
+                showNotification('二维码库加载失败，请检查网络连接');
+            }
+        });
     </script>
 </body>
 </html>
