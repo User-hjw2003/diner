@@ -942,7 +942,7 @@
                                 <li>自动计算价格，避免错误</li>
                             </ul>
                             <div class="url-display">
-                                <i class="fas fa-link"></i> 点餐网址: https://user-hjw2003.github.io/diner/
+                                <i class="fas fa-link"></i> 点餐网址: <span id="customerOrderUrl">https://user-hjw2003.github.io/diner/</span>
                             </div>
                         </div>
                     </div>
@@ -1272,6 +1272,7 @@
             // 顾客端
             menuItemsContainer: document.getElementById('menuItemsContainer'),
             categoryButtons: document.querySelectorAll('.category-btn'),
+            customerOrderUrl: document.getElementById('customerOrderUrl'),
             
             // 二维码相关
             customerQrCode: document.getElementById('customerQrCode'),
@@ -1482,6 +1483,9 @@
             // 检查是否有保存的二维码图片
             const savedQrCodeImage = localStorage.getItem(DATA_KEYS.QRCODE_IMAGE);
             
+            // 更新顾客端网址显示
+            updateCustomerUrlDisplay();
+            
             if (savedQrCodeImage) {
                 // 使用保存的二维码图片
                 state.uploadedQrCodeImage = savedQrCodeImage;
@@ -1489,6 +1493,14 @@
             } else {
                 // 生成新的二维码
                 generateCustomerQrCode();
+            }
+        }
+
+        // 更新顾客端网址显示
+        function updateCustomerUrlDisplay() {
+            const url = localStorage.getItem(DATA_KEYS.QRCODE_URL) || ORDER_URL;
+            if (elements.customerOrderUrl) {
+                elements.customerOrderUrl.textContent = url;
             }
         }
 
@@ -1520,6 +1532,9 @@
         function generateCustomerQrCode() {
             const url = localStorage.getItem(DATA_KEYS.QRCODE_URL) || ORDER_URL;
             
+            // 更新顾客端网址显示
+            updateCustomerUrlDisplay();
+            
             // 清空容器
             elements.customerQrCode.innerHTML = '';
             
@@ -1546,9 +1561,6 @@
                     
                     // 标记二维码已生成
                     state.qrCodeGenerated = true;
-                    
-                    // 清除上传的二维码图片
-                    clearUploadedQrCode();
                     
                     // 显示成功消息
                     setTimeout(() => {
@@ -1614,9 +1626,6 @@
                     setTimeout(() => {
                         generateCustomerQrCode();
                     }, 500);
-                    
-                    // 清除上传的二维码图片
-                    clearUploadedQrCode();
                     
                     // 显示成功消息
                     setTimeout(() => {
