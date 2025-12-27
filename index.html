@@ -356,6 +356,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
         }
 
         .qrcode-info {
@@ -391,8 +392,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 200px;
-            height: 200px;
+            width: 100%;
+            height: 100%;
+            background-color: white;
         }
 
         .admin-qrcode-section {
@@ -733,8 +735,8 @@
             }
             
             .qrcode-display {
-                width: 200px;
-                height: 200px;
+                width: 220px;
+                height: 220px;
             }
             
             .admin-qrcode-section .qrcode-display {
@@ -760,8 +762,8 @@
             }
             
             .qrcode-display {
-                width: 180px;
-                height: 180px;
+                width: 200px;
+                height: 200px;
             }
             
             .admin-qrcode-section .qrcode-display {
@@ -866,22 +868,41 @@
         #customerQrCode canvas, #adminQrCode canvas {
             width: 200px !important;
             height: 200px !important;
+            display: none; /* 隐藏canvas，使用img显示 */
         }
         
         #adminQrCode canvas {
             width: 250px !important;
             height: 250px !important;
-        }
-        
-        /* 二维码加载状态 */
-        .qrcode-loading {
             display: none;
-            text-align: center;
-            color: #666;
         }
         
-        .qrcode-loading.active {
-            display: block;
+        /* 二维码图片样式 */
+        .qrcode-img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            background-color: white !important;
+            -webkit-touch-callout: default;
+            -webkit-user-select: auto;
+            user-select: auto;
+            -webkit-user-drag: auto;
+        }
+        
+        .admin-qrcode-img {
+            width: 250px;
+            height: 250px;
+            object-fit: contain;
+            background-color: white !important;
+            -webkit-touch-callout: default;
+            -webkit-user-select: auto;
+            user-select: auto;
+            -webkit-user-drag: auto;
+        }
+        
+        /* 确保二维码容器背景为白色 */
+        .qrcode-canvas-container {
+            background-color: white !important;
         }
     </style>
 </head>
@@ -1536,13 +1557,13 @@
             
             // 显示在顾客端
             elements.customerQrCode.innerHTML = `
-                <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" style="width: 200px; height: 200px;">
+                <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="qrcode-img" style="background-color: white !important; -webkit-touch-callout: default; -webkit-user-select: auto; user-select: auto;">
             `;
             
             // 显示在管理端
             if (elements.qrcodeSection.style.display !== 'none') {
                 elements.adminQrCode.innerHTML = `
-                    <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" style="width: 250px; height: 250px;">
+                    <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="admin-qrcode-img" style="background-color: white !important; -webkit-touch-callout: default; -webkit-user-select: auto; user-select: auto;">
                 `;
             }
             
@@ -1554,7 +1575,7 @@
             state.qrCodeGenerated = true;
         }
 
-        // 生成顾客端二维码
+        // 生成顾客端二维码 - 优化版，确保背景为白色
         function generateCustomerQrCode() {
             const url = localStorage.getItem(DATA_KEYS.QRCODE_URL) || ORDER_URL;
             
@@ -1564,17 +1585,17 @@
             // 清空容器
             elements.customerQrCode.innerHTML = '';
             
-            // 立即显示一个空白区域，避免显示加载动画
-            elements.customerQrCode.innerHTML = '<div style="width: 200px; height: 200px; background-color: white;"></div>';
-            
             try {
                 // 清除旧的二维码实例
                 if (state.qrcodeInstance) {
                     state.qrcodeInstance.clear();
                 }
                 
-                // 使用QRCode.js生成二维码
-                state.qrcodeInstance = new QRCode(elements.customerQrCode, {
+                // 先创建一个临时div来生成二维码
+                const tempDiv = document.createElement('div');
+                
+                // 使用QRCode.js生成二维码到临时div
+                state.qrcodeInstance = new QRCode(tempDiv, {
                     text: url,
                     width: 200,
                     height: 200,
@@ -1582,6 +1603,37 @@
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H
                 });
+                
+                // 等待一小段时间确保二维码已生成
+                setTimeout(() => {
+                    // 获取canvas元素
+                    const canvas = tempDiv.querySelector('canvas');
+                    if (canvas) {
+                        // 将canvas转换为dataURL
+                        const dataURL = canvas.toDataURL('image/png');
+                        
+                        // 创建img元素
+                        const img = document.createElement('img');
+                        img.src = dataURL;
+                        img.alt = '点餐二维码';
+                        img.className = 'qrcode-img';
+                        img.style.backgroundColor = 'white';
+                        img.style.webkitTouchCallout = 'default';
+                        img.style.webkitUserSelect = 'auto';
+                        img.style.userSelect = 'auto';
+                        img.style.webkitUserDrag = 'auto';
+                        
+                        // 添加到容器
+                        elements.customerQrCode.appendChild(img);
+                    } else {
+                        // 如果canvas不存在，使用默认方法
+                        elements.customerQrCode.innerHTML = `
+                            <div style="text-align: center; color: #666; padding: 40px;">
+                                <p>二维码生成失败，请刷新重试</p>
+                            </div>
+                        `;
+                    }
+                }, 100);
                 
                 // 标记二维码已生成
                 state.qrCodeGenerated = true;
@@ -1607,7 +1659,7 @@
             showNotification('二维码已刷新');
         }
 
-        // 生成管理端二维码
+        // 生成管理端二维码 - 优化版，确保背景为白色
         function generateAdminQrCode() {
             const url = elements.qrCodeUrl.value.trim() || ORDER_URL;
             
@@ -1617,17 +1669,17 @@
             // 清空容器
             elements.adminQrCode.innerHTML = '';
             
-            // 立即显示一个空白区域，避免显示加载动画
-            elements.adminQrCode.innerHTML = '<div style="width: 250px; height: 250px; background-color: white;"></div>';
-            
             try {
                 // 清除旧的二维码实例
                 if (state.adminQrcodeInstance) {
                     state.adminQrcodeInstance.clear();
                 }
                 
-                // 使用QRCode.js生成二维码
-                state.adminQrcodeInstance = new QRCode(elements.adminQrCode, {
+                // 先创建一个临时div来生成二维码
+                const tempDiv = document.createElement('div');
+                
+                // 使用QRCode.js生成二维码到临时div
+                state.adminQrcodeInstance = new QRCode(tempDiv, {
                     text: url,
                     width: 250,
                     height: 250,
@@ -1636,13 +1688,44 @@
                     correctLevel: QRCode.CorrectLevel.H
                 });
                 
+                // 等待一小段时间确保二维码已生成
+                setTimeout(() => {
+                    // 获取canvas元素
+                    const canvas = tempDiv.querySelector('canvas');
+                    if (canvas) {
+                        // 将canvas转换为dataURL
+                        const dataURL = canvas.toDataURL('image/png');
+                        
+                        // 创建img元素
+                        const img = document.createElement('img');
+                        img.src = dataURL;
+                        img.alt = '点餐二维码';
+                        img.className = 'admin-qrcode-img';
+                        img.style.backgroundColor = 'white';
+                        img.style.webkitTouchCallout = 'default';
+                        img.style.webkitUserSelect = 'auto';
+                        img.style.userSelect = 'auto';
+                        img.style.webkitUserDrag = 'auto';
+                        
+                        // 添加到容器
+                        elements.adminQrCode.appendChild(img);
+                    } else {
+                        // 如果canvas不存在，使用默认方法
+                        elements.adminQrCode.innerHTML = `
+                            <div style="text-align: center; color: #666; padding: 40px;">
+                                <p>二维码生成失败，请刷新重试</p>
+                            </div>
+                        `;
+                    }
+                }, 100);
+                
                 // 标记二维码已生成
                 state.qrCodeGenerated = true;
                 
                 // 更新顾客端二维码
                 setTimeout(() => {
                     generateCustomerQrCode();
-                }, 100);
+                }, 200);
                 
                 // 显示成功消息
                 showNotification('二维码生成成功！已同步到顾客页面');
@@ -1888,7 +1971,7 @@
                             </ol>
                         </div>
                         <div class="qr-container">
-                            <img src="${imgData}" alt="点餐二维码" style="width: 300px; height: 300px;">
+                            <img src="${imgData}" alt="点餐二维码" style="width: 300px; height: 300px; background-color: white;">
                         </div>
                         <div class="url">
                             <p style="margin: 0 0 10px 0; font-weight: bold;">点餐网址：</p>
