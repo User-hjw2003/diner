@@ -357,6 +357,7 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
 
         .qrcode-info {
@@ -394,7 +395,7 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            background-color: white;
+            background-color: white !important;
         }
 
         .admin-qrcode-section {
@@ -877,16 +878,20 @@
             display: none;
         }
         
-        /* 二维码图片样式 */
+        /* 二维码图片样式 - 确保背景为白色且可长按 */
         .qrcode-img {
             width: 200px;
             height: 200px;
             object-fit: contain;
             background-color: white !important;
-            -webkit-touch-callout: default;
-            -webkit-user-select: auto;
-            user-select: auto;
-            -webkit-user-drag: auto;
+            -webkit-touch-callout: default !important;
+            -webkit-user-select: auto !important;
+            user-select: auto !important;
+            -webkit-user-drag: auto !important;
+            pointer-events: auto !important;
+            cursor: default !important;
+            background-image: none !important;
+            display: block;
         }
         
         .admin-qrcode-img {
@@ -894,15 +899,83 @@
             height: 250px;
             object-fit: contain;
             background-color: white !important;
-            -webkit-touch-callout: default;
-            -webkit-user-select: auto;
-            user-select: auto;
-            -webkit-user-drag: auto;
+            -webkit-touch-callout: default !important;
+            -webkit-user-select: auto !important;
+            user-select: auto !important;
+            -webkit-user-drag: auto !important;
+            pointer-events: auto !important;
+            cursor: default !important;
+            background-image: none !important;
+            display: block;
         }
         
         /* 确保二维码容器背景为白色 */
         .qrcode-canvas-container {
             background-color: white !important;
+            -webkit-touch-callout: default !important;
+            -webkit-user-select: auto !important;
+            user-select: auto !important;
+            -webkit-user-drag: auto !important;
+            pointer-events: auto !important;
+            cursor: default !important;
+        }
+        
+        /* 专门为移动设备优化二维码显示 */
+        @media (max-width: 768px) {
+            .qrcode-img, .admin-qrcode-img {
+                -webkit-touch-callout: default !important;
+                -webkit-user-select: auto !important;
+                user-select: auto !important;
+                -webkit-user-drag: auto !important;
+                pointer-events: auto !important;
+                cursor: default !important;
+                background-color: white !important;
+                background-image: none !important;
+            }
+            
+            .qrcode-display {
+                background-color: white !important;
+                -webkit-touch-callout: default !important;
+                -webkit-user-select: auto !important;
+                user-select: auto !important;
+                pointer-events: auto !important;
+            }
+            
+            #customerQrCode, #adminQrCode {
+                -webkit-touch-callout: default !important;
+                -webkit-user-select: auto !important;
+                user-select: auto !important;
+                -webkit-user-drag: auto !important;
+                pointer-events: auto !important;
+                cursor: default !important;
+            }
+        }
+        
+        /* 确保二维码图片在所有设备上都有白色背景 */
+        .qrcode-display img {
+            background-color: white !important;
+            background-image: none !important;
+        }
+        
+        /* 添加白色背景层确保二维码显示 */
+        .qrcode-white-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white !important;
+            z-index: 1;
+        }
+        
+        .qrcode-image-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
@@ -974,7 +1047,8 @@
                     
                     <div class="qrcode-container">
                         <div class="qrcode-display pixel-border-white">
-                            <div id="customerQrCode" class="qrcode-canvas-container">
+                            <div class="qrcode-white-background"></div>
+                            <div id="customerQrCode" class="qrcode-image-wrapper">
                                 <!-- 二维码将在这里显示 -->
                             </div>
                         </div>
@@ -1107,7 +1181,8 @@
                         
                         <div class="qrcode-preview-container">
                             <div class="qrcode-display pixel-border-white">
-                                <div id="adminQrCode" class="qrcode-canvas-container">
+                                <div class="qrcode-white-background"></div>
+                                <div id="adminQrCode" class="qrcode-image-wrapper">
                                     <!-- 二维码将在这里显示 -->
                                 </div>
                             </div>
@@ -1557,13 +1632,13 @@
             
             // 显示在顾客端
             elements.customerQrCode.innerHTML = `
-                <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="qrcode-img" style="background-color: white !important; -webkit-touch-callout: default; -webkit-user-select: auto; user-select: auto;">
+                <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="qrcode-img" style="background-color: white !important; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; -webkit-user-drag: auto !important; pointer-events: auto !important;">
             `;
             
             // 显示在管理端
             if (elements.qrcodeSection.style.display !== 'none') {
                 elements.adminQrCode.innerHTML = `
-                    <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="admin-qrcode-img" style="background-color: white !important; -webkit-touch-callout: default; -webkit-user-select: auto; user-select: auto;">
+                    <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="admin-qrcode-img" style="background-color: white !important; -webkit-touch-callout: default !important; -webkit-user-select: auto !important; user-select: auto !important; -webkit-user-drag: auto !important; pointer-events: auto !important;">
                 `;
             }
             
@@ -1622,6 +1697,8 @@
                         img.style.webkitUserSelect = 'auto';
                         img.style.userSelect = 'auto';
                         img.style.webkitUserDrag = 'auto';
+                        img.style.pointerEvents = 'auto';
+                        img.style.cursor = 'default';
                         
                         // 添加到容器
                         elements.customerQrCode.appendChild(img);
@@ -1706,6 +1783,8 @@
                         img.style.webkitUserSelect = 'auto';
                         img.style.userSelect = 'auto';
                         img.style.webkitUserDrag = 'auto';
+                        img.style.pointerEvents = 'auto';
+                        img.style.cursor = 'default';
                         
                         // 添加到容器
                         elements.adminQrCode.appendChild(img);
@@ -1832,18 +1911,9 @@
 
         // 保存二维码图片
         function saveQrCodeImage() {
-            const canvas = elements.customerQrCode.querySelector('canvas');
             const img = elements.customerQrCode.querySelector('img');
             
-            if (canvas) {
-                // 从canvas保存
-                const link = document.createElement('a');
-                link.download = '像素食堂点餐二维码.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                showNotification('二维码图片已保存');
-            } else if (img && img.src) {
+            if (img && img.src) {
                 // 从图片保存
                 const link = document.createElement('a');
                 link.download = '像素食堂点餐二维码.png';
@@ -1858,18 +1928,9 @@
 
         // 下载管理端二维码图片
         function downloadQrCodeImage() {
-            const canvas = elements.adminQrCode.querySelector('canvas');
             const img = elements.adminQrCode.querySelector('img');
             
-            if (canvas) {
-                // 从canvas保存
-                const link = document.createElement('a');
-                link.download = '像素食堂点餐二维码.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                showNotification('二维码图片已下载');
-            } else if (img && img.src) {
+            if (img && img.src) {
                 // 从图片保存
                 const link = document.createElement('a');
                 link.download = '像素食堂点餐二维码.png';
@@ -1884,17 +1945,16 @@
 
         // 打印二维码
         function printQrCode() {
-            const canvas = elements.adminQrCode.querySelector('canvas');
             const img = elements.adminQrCode.querySelector('img');
             
-            if (!canvas && !img) {
+            if (!img) {
                 showNotification('请先生成二维码');
                 return;
             }
             
             try {
                 const printWindow = window.open('', '_blank');
-                const imgData = canvas ? canvas.toDataURL('image/png') : img.src;
+                const imgData = img.src;
                 const url = elements.qrCodeUrl.value;
                 
                 printWindow.document.write(`
