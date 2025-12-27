@@ -351,8 +351,8 @@
             padding: 20px;
             border-radius: 8px;
             display: inline-block;
-            min-width: 250px;
-            min-height: 250px;
+            width: 250px;
+            height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -399,6 +399,11 @@
             margin-top: 40px;
             padding: 25px;
             background-color: #1a1a1a;
+        }
+
+        .admin-qrcode-section .qrcode-display {
+            width: 300px;
+            height: 300px;
         }
 
         .qrcode-preview-container {
@@ -728,8 +733,13 @@
             }
             
             .qrcode-display {
-                min-width: 200px;
-                min-height: 200px;
+                width: 200px;
+                height: 200px;
+            }
+            
+            .admin-qrcode-section .qrcode-display {
+                width: 250px;
+                height: 250px;
             }
         }
 
@@ -750,8 +760,13 @@
             }
             
             .qrcode-display {
-                min-width: 180px;
-                min-height: 180px;
+                width: 180px;
+                height: 180px;
+            }
+            
+            .admin-qrcode-section .qrcode-display {
+                width: 220px;
+                height: 220px;
             }
         }
 
@@ -856,6 +871,17 @@
         #adminQrCode canvas {
             width: 250px !important;
             height: 250px !important;
+        }
+        
+        /* 二维码加载状态 */
+        .qrcode-loading {
+            display: none;
+            text-align: center;
+            color: #666;
+        }
+        
+        .qrcode-loading.active {
+            display: block;
         }
     </style>
 </head>
@@ -1538,54 +1564,47 @@
             // 清空容器
             elements.customerQrCode.innerHTML = '';
             
-            // 显示加载中
-            elements.customerQrCode.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin" style="font-size: 24px; color: #d32f2f;"></i><p style="margin-top: 10px;">生成二维码中...</p></div>';
+            // 立即显示一个空白区域，避免显示加载动画
+            elements.customerQrCode.innerHTML = '<div style="width: 200px; height: 200px; background-color: white;"></div>';
             
-            // 使用延迟确保DOM已更新
-            setTimeout(() => {
-                try {
-                    // 清除旧的二维码实例
-                    if (state.qrcodeInstance) {
-                        state.qrcodeInstance.clear();
-                    }
-                    
-                    // 使用QRCode.js生成二维码
-                    state.qrcodeInstance = new QRCode(elements.customerQrCode, {
-                        text: url,
-                        width: 200,
-                        height: 200,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
-                    
-                    // 标记二维码已生成
-                    state.qrCodeGenerated = true;
-                    
-                    // 显示成功消息
-                    setTimeout(() => {
-                        showNotification('二维码已生成');
-                    }, 500);
-                    
-                } catch (error) {
-                    console.error('生成二维码失败:', error);
-                    elements.customerQrCode.innerHTML = `
-                        <div class="qrcode-error">
-                            <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
-                            <p>错误信息: ${error.message}</p>
-                            <button onclick="generateCustomerQrCode()" class="pixel-button" style="margin-top: 10px;">
-                                <i class="fas fa-redo"></i> 重试
-                            </button>
-                        </div>
-                    `;
-                    state.qrCodeGenerated = false;
+            try {
+                // 清除旧的二维码实例
+                if (state.qrcodeInstance) {
+                    state.qrcodeInstance.clear();
                 }
-            }, 100);
+                
+                // 使用QRCode.js生成二维码
+                state.qrcodeInstance = new QRCode(elements.customerQrCode, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // 标记二维码已生成
+                state.qrCodeGenerated = true;
+                
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                elements.customerQrCode.innerHTML = `
+                    <div class="qrcode-error">
+                        <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
+                        <p>错误信息: ${error.message}</p>
+                        <button onclick="generateCustomerQrCode()" class="pixel-button" style="margin-top: 10px;">
+                            <i class="fas fa-redo"></i> 重试
+                        </button>
+                    </div>
+                `;
+                state.qrCodeGenerated = false;
+            }
         }
 
         // 刷新顾客端二维码
         function refreshCustomerQrCode() {
             generateCustomerQrCode();
+            showNotification('二维码已刷新');
         }
 
         // 生成管理端二维码
@@ -1598,54 +1617,49 @@
             // 清空容器
             elements.adminQrCode.innerHTML = '';
             
-            // 显示加载中
-            elements.adminQrCode.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin" style="font-size: 24px; color: #d32f2f;"></i><p style="margin-top: 10px;">生成二维码中...</p></div>';
+            // 立即显示一个空白区域，避免显示加载动画
+            elements.adminQrCode.innerHTML = '<div style="width: 250px; height: 250px; background-color: white;"></div>';
             
-            // 使用延迟确保DOM已更新
-            setTimeout(() => {
-                try {
-                    // 清除旧的二维码实例
-                    if (state.adminQrcodeInstance) {
-                        state.adminQrcodeInstance.clear();
-                    }
-                    
-                    // 使用QRCode.js生成二维码
-                    state.adminQrcodeInstance = new QRCode(elements.adminQrCode, {
-                        text: url,
-                        width: 250,
-                        height: 250,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
-                    
-                    // 标记二维码已生成
-                    state.qrCodeGenerated = true;
-                    
-                    // 更新顾客端二维码
-                    setTimeout(() => {
-                        generateCustomerQrCode();
-                    }, 500);
-                    
-                    // 显示成功消息
-                    setTimeout(() => {
-                        showNotification('二维码生成成功！已同步到顾客页面');
-                    }, 1000);
-                    
-                } catch (error) {
-                    console.error('生成二维码失败:', error);
-                    elements.adminQrCode.innerHTML = `
-                        <div class="qrcode-error">
-                            <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
-                            <p>错误信息: ${error.message}</p>
-                            <button onclick="generateAdminQrCode()" class="pixel-button" style="margin-top: 10px;">
-                                <i class="fas fa-redo"></i> 重试
-                            </button>
-                        </div>
-                    `;
-                    state.qrCodeGenerated = false;
+            try {
+                // 清除旧的二维码实例
+                if (state.adminQrcodeInstance) {
+                    state.adminQrcodeInstance.clear();
                 }
-            }, 100);
+                
+                // 使用QRCode.js生成二维码
+                state.adminQrcodeInstance = new QRCode(elements.adminQrCode, {
+                    text: url,
+                    width: 250,
+                    height: 250,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // 标记二维码已生成
+                state.qrCodeGenerated = true;
+                
+                // 更新顾客端二维码
+                setTimeout(() => {
+                    generateCustomerQrCode();
+                }, 100);
+                
+                // 显示成功消息
+                showNotification('二维码生成成功！已同步到顾客页面');
+                
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                elements.adminQrCode.innerHTML = `
+                    <div class="qrcode-error">
+                        <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
+                        <p>错误信息: ${error.message}</p>
+                        <button onclick="generateAdminQrCode()" class="pixel-button" style="margin-top: 10px;">
+                            <i class="fas fa-redo"></i> 重试
+                        </button>
+                    </div>
+                `;
+                state.qrCodeGenerated = false;
+            }
         }
 
         // 处理二维码上传
