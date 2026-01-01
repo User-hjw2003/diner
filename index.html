@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>像素食堂 | 云端点餐系统</title>
+    <title>像素食堂 | 云点餐系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 使用更可靠的QR Code库 -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <!-- Supabase客户端库 -->
+    <!-- 引入Supabase客户端 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -24,6 +24,9 @@
             --pixel-border: 4px;
             --grid-color: rgba(255, 255, 255, 0.05);
             --scanline-color: rgba(0, 255, 0, 0.1);
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
         }
 
         body {
@@ -128,6 +131,14 @@
 
         .pixel-button.active {
             background-color: var(--primary-color);
+        }
+
+        .pixel-button.success {
+            background-color: var(--success-color);
+        }
+
+        .pixel-button.warning {
+            background-color: var(--warning-color);
         }
 
         /* 标题样式 */
@@ -688,7 +699,77 @@
             to { transform: translateX(0); }
         }
 
-        /* 响应式设计 */
+        /* 连接状态指示器 */
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1002;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .connection-status.online {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .connection-status.offline {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .connection-status.syncing {
+            background-color: var(--warning-color);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 加载指示器 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay p {
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        /* 响应式设计 - 优化直屏显示 */
         @media (max-width: 768px) {
             .menu-items {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -738,6 +819,7 @@
                 font-size: 13px;
             }
             
+            /* 优化直屏二维码显示 */
             .qrcode-display {
                 width: 70vw;
                 height: 70vw;
@@ -754,6 +836,104 @@
                 max-height: 300px;
                 min-width: 250px;
                 min-height: 250px;
+            }
+            
+            .qrcode-img {
+                width: 90% !important;
+                height: 90% !important;
+                max-width: 200px !important;
+                max-height: 200px !important;
+            }
+            
+            .admin-qrcode-img {
+                width: 90% !important;
+                height: 90% !important;
+                max-width: 250px !important;
+                max-height: 250px !important;
+            }
+            
+            /* 确保二维码区域有足够空间 */
+            .qrcode-section {
+                padding: 20px 15px;
+            }
+            
+            /* 优化布局，确保直屏时内容不拥挤 */
+            .app-container {
+                padding-bottom: 80px;
+            }
+            
+            /* 调整连接状态位置 */
+            .connection-status {
+                top: 5px;
+                right: 5px;
+                font-size: 10px;
+                padding: 5px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .category-btn {
+                font-size: 12px;
+                padding: 6px 8px;
+                min-width: 60px;
+            }
+            
+            .cart-header h3 {
+                font-size: 18px;
+            }
+            
+            .cart-tab {
+                font-size: 12px;
+                padding: 8px 5px;
+            }
+            
+            /* 进一步优化小屏幕直屏显示 */
+            .qrcode-display {
+                width: 75vw;
+                height: 75vw;
+                max-width: 220px;
+                max-height: 220px;
+                min-width: 180px;
+                min-height: 180px;
+                padding: 15px;
+            }
+            
+            .admin-qrcode-section .qrcode-display {
+                width: 85vw;
+                height: 85vw;
+                max-width: 250px;
+                max-height: 250px;
+                min-width: 200px;
+                min-height: 200px;
+            }
+            
+            .qrcode-img {
+                width: 95% !important;
+                height: 95% !important;
+                max-width: 180px !important;
+                max-height: 180px !important;
+            }
+            
+            .admin-qrcode-img {
+                width: 95% !important;
+                height: 95% !important;
+                max-width: 220px !important;
+                max-height: 220px !important;
+            }
+            
+            /* 调整按钮大小，确保在直屏下可点击 */
+            .pixel-button {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+            
+            /* 确保菜单项在直屏下显示良好 */
+            .menu-item {
+                padding: 12px;
+            }
+            
+            .item-image {
+                height: 160px;
             }
         }
 
@@ -799,72 +979,242 @@
             font-size: 14px;
         }
         
-        /* 加载指示器 */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #444;
-            border-top: 3px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
+        .qrcode-instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #222;
+            border-left: 4px solid var(--primary-color);
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .qrcode-instructions h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
         }
         
-        .cloud-status {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: #222;
-            padding: 5px 10px;
-            border-radius: 3px;
-            font-size: 12px;
-            z-index: 1002;
+        .qrcode-instructions ul {
+            padding-left: 20px;
+            color: #aaa;
         }
         
-        .cloud-status.connected {
-            color: #4caf50;
+        .qrcode-instructions li {
+            margin-bottom: 8px;
         }
         
-        .cloud-status.disconnected {
+        .qrcode-error {
             color: #d32f2f;
+            text-align: center;
+            padding: 20px;
+            background-color: #222;
+            border: 2px solid #d32f2f;
+            margin: 10px 0;
         }
         
-        .new-order-badge {
-            background: #d32f2f;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
+        .upload-qrcode-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 5px;
+        }
+        
+        .upload-qrcode-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .uploaded-qrcode-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 15px auto;
+            display: block;
+            border: 2px solid var(--primary-color);
+        }
+        
+        /* 二维码样式 */
+        #customerQrCode canvas, #adminQrCode canvas {
+            width: 200px !important;
+            height: 200px !important;
+            display: none; /* 隐藏canvas，使用img显示 */
+        }
+        
+        #adminQrCode canvas {
+            width: 250px !important;
+            height: 250px !important;
+            display: none;
+        }
+        
+        /* 二维码图片样式 - 确保背景为白色且可长按 */
+        .qrcode-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: white !important;
+            -webkit-touch-callout: default !important;
+            -webkit-user-select: auto !important;
+            user-select: auto !important;
+            -webkit-user-drag: auto !important;
+            pointer-events: auto !important;
+            cursor: default !important;
+            background-image: none !important;
+            display: block;
+            max-width: 200px;
+            max-height: 200px;
+        }
+        
+        .admin-qrcode-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: white !important;
+            -webkit-touch-callout: default !important;
+            -webkit-user-select: auto !important;
+            user-select: auto !important;
+            -webkit-user-drag: auto !important;
+            pointer-events: auto !important;
+            cursor: default !important;
+            background-image: none !important;
+            display: block;
+            max-width: 250px;
+            max-height: 250px;
+        }
+        
+        /* 确保二维码容器背景为白色 */
+        .qrcode-canvas-container {
+            background-color: white !important;
+            -webkit-touch-callout: default !important;
+            -webkit-user-select: auto !important;
+            user-select: auto !important;
+            -webkit-user-drag: auto !important;
+            pointer-events: auto !important;
+            cursor: default !important;
+        }
+        
+        /* 专门为移动设备优化二维码显示 */
+        @media (max-width: 768px) {
+            .qrcode-img, .admin-qrcode-img {
+                -webkit-touch-callout: default !important;
+                -webkit-user-select: auto !important;
+                user-select: auto !important;
+                -webkit-user-drag: auto !important;
+                pointer-events: auto !important;
+                cursor: default !important;
+                background-color: white !important;
+                background-image: none !important;
+            }
+            
+            .qrcode-display {
+                background-color: white !important;
+                -webkit-touch-callout: default !important;
+                -webkit-user-select: auto !important;
+                user-select: auto !important;
+                pointer-events: auto !important;
+            }
+            
+            #customerQrCode, #adminQrCode {
+                -webkit-touch-callout: default !important;
+                -webkit-user-select: auto !important;
+                user-select: auto !important;
+                -webkit-user-drag: auto !important;
+                pointer-events: auto !important;
+                cursor: default !important;
+            }
+        }
+        
+        /* 确保二维码图片在所有设备上都有白色背景 */
+        .qrcode-display img {
+            background-color: white !important;
+            background-image: none !important;
+        }
+        
+        /* 添加白色背景层确保二维码显示 */
+        .qrcode-white-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white !important;
+            z-index: 1;
+        }
+        
+        .qrcode-image-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
             justify-content: center;
-            font-size: 12px;
-            margin-left: 5px;
-            animation: pulse 1s infinite;
+            align-items: center;
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        /* 新增：针对直屏优化的专用样式 */
+        @media screen and (max-aspect-ratio: 3/4) and (max-width: 768px) {
+            /* 直屏模式下，调整二维码显示优先级 */
+            .qrcode-section {
+                order: 1;
+                margin-top: 0;
+                margin-bottom: 25px;
+            }
+            
+            .instructions {
+                order: 2;
+                margin-top: 0;
+                margin-bottom: 25px;
+            }
+            
+            .menu-items {
+                order: 3;
+                margin-bottom: 25px;
+            }
+            
+            /* 确保二维码在直屏下足够大且清晰 */
+            .qrcode-display {
+                width: 70vw;
+                height: 70vw;
+                max-width: 220px;
+                max-height: 220px;
+                min-width: 180px;
+                min-height: 180px;
+            }
+            
+            /* 调整按钮大小，确保在直屏下可点击 */
+            .pixel-button {
+                min-height: 44px; /* 最小触摸目标尺寸 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* 优化菜单分类按钮在直屏下的显示 */
+            .menu-categories {
+                overflow-x: auto;
+                padding-bottom: 5px;
+                justify-content: flex-start;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .category-btn {
+                flex-shrink: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 云端连接状态指示器 -->
-    <div id="cloudStatus" class="cloud-status">
-        <i class="fas fa-cloud"></i> <span>连接中...</span>
+    <!-- 连接状态指示器 -->
+    <div id="connectionStatus" class="connection-status offline">
+        <i class="fas fa-wifi"></i>
+        <span>离线中</span>
+    </div>
+    
+    <!-- 加载遮罩层 -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading"></div>
+        <p id="loadingMessage">正在连接云数据库...</p>
     </div>
     
     <div class="container">
         <!-- 标题区域 -->
         <div class="header-title">
-            <h1><i class="fas fa-cloud"></i> 云端点餐系统</h1>
+            <h1><i class="fas fa-cloud"></i> 云点餐系统</h1>
         </div>
         
         <header>
@@ -872,19 +1222,23 @@
                 <i class="fas fa-utensils"></i>
                 <div>
                     <h2 style="margin: 0;">像素食堂</h2>
-                    <p style="color: #aaa; margin: 0;">云端实时同步 | 多端点餐</p>
+                    <p style="color: #aaa; margin: 0;">云同步复古风格餐厅</p>
                 </div>
             </div>
             <div>
                 <button id="viewMenuBtn" class="pixel-button active">顾客点餐</button>
-                <button id="viewAdminBtn" class="pixel-button secondary">管理后台 <span id="newOrdersCount" class="new-order-badge" style="display: none;">0</span></button>
+                <button id="viewAdminBtn" class="pixel-button secondary">管理后台</button>
+                <button id="syncDataBtn" class="pixel-button success">
+                    <i class="fas fa-sync-alt"></i> 同步
+                </button>
             </div>
         </header>
 
         <div class="app-container">
             <!-- 顾客点餐页面 -->
             <div id="menuPage" class="page active">
-                <h2><i class="fas fa-book"></i> 菜单浏览 <span id="onlineStatus" style="font-size: 14px; color: #4caf50;">(云端同步)</span></h2>
+                <h2><i class="fas fa-book"></i> 菜单浏览</h2>
+                <p style="color: #aaa; margin-bottom: 20px;">数据实时同步更新，所有设备保持一致</p>
                 
                 <div class="menu-categories">
                     <button class="category-btn pixel-border active" data-category="all">全部菜品</button>
@@ -895,10 +1249,7 @@
                 </div>
                 
                 <div class="menu-items" id="menuItemsContainer">
-                    <div class="empty-message">
-                        <div class="loading"></div>
-                        <p>正在从云端加载菜品...</p>
-                    </div>
+                    <!-- 菜品将通过JavaScript动态加载 -->
                 </div>
                 
                 <!-- 使用说明 -->
@@ -906,20 +1257,20 @@
                     <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
                     <div class="instructions-grid">
                         <div class="instruction-step">
-                            <h4>1. 浏览菜品</h4>
+                            <h4>1. 实时同步</h4>
+                            <p>所有数据云端存储，多设备实时同步更新</p>
+                        </div>
+                        <div class="instruction-step">
+                            <h4>2. 浏览菜品</h4>
                             <p>选择分类浏览菜单，点击"加入购物车"选择菜品</p>
                         </div>
                         <div class="instruction-step">
-                            <h4>2. 查看购物车</h4>
+                            <h4>3. 查看购物车</h4>
                             <p>点击右下角购物车图标查看已选菜品和调整数量</p>
                         </div>
                         <div class="instruction-step">
-                            <h4>3. 提交订单</h4>
-                            <p>在购物车中确认订单信息并提交订单</p>
-                        </div>
-                        <div class="instruction-step">
-                            <h4>4. 实时同步</h4>
-                            <p>所有数据实时同步到云端，多设备即时更新</p>
+                            <h4>4. 提交订单</h4>
+                            <p>在购物车中确认订单信息并提交订单，实时同步到厨房</p>
                         </div>
                     </div>
                 </div>
@@ -938,16 +1289,16 @@
                         </div>
                         
                         <div class="qrcode-info">
-                            <h4>云端点餐优势</h4>
+                            <h4>云点餐优势</h4>
                             <ul>
-                                <li><i class="fas fa-sync-alt"></i> 实时同步，多端数据一致</li>
-                                <li><i class="fas fa-cloud"></i> 云端存储，永不丢失</li>
-                                <li><i class="fas fa-bell"></i> 实时订单通知</li>
-                                <li><i class="fas fa-chart-bar"></i> 集中数据统计</li>
+                                <li><i class="fas fa-cloud"></i> 数据实时云端同步</li>
+                                <li><i class="fas fa-mobile-alt"></i> 手机扫码直接点餐</li>
+                                <li><i class="fas fa-bolt"></i> 订单实时推送到厨房</li>
+                                <li><i class="fas fa-sync"></i> 多设备数据保持一致</li>
                                 <li><i class="fas fa-shield-alt"></i> 企业级数据安全</li>
                             </ul>
                             <div class="url-display">
-                                <i class="fas fa-link"></i> 点餐网址: <span id="customerOrderUrl">加载中...</span>
+                                <i class="fas fa-link"></i> 点餐网址: <span id="customerOrderUrl">https://user-hjw2003.github.io/diner/</span>
                             </div>
                         </div>
                     </div>
@@ -969,22 +1320,80 @@
                 <div id="adminLogin" class="admin-login pixel-border">
                     <h2><i class="fas fa-lock"></i> 管理员登录</h2>
                     <p>请输入管理员密码进入后台</p>
-                    <input type="password" id="adminPassword" class="password-input" placeholder="输入密码" value="pixel123">
+                    <input type="password" id="adminPassword" class="password-input" placeholder="输入密码">
                     <button id="loginBtn" class="pixel-button">登录</button>
-                    <p style="margin-top: 20px; color: #aaa; font-size: 14px;">
-                        提示：默认密码为 "pixel123"
-                    </p>
+                    <div style="margin-top: 20px; padding: 15px; background-color: #222; border-left: 4px solid var(--primary-color);">
+                        <h4 style="color: var(--primary-color); margin-bottom: 10px;">云数据库配置</h4>
+                        <div id="dbConfig" style="text-align: left;">
+                            <!-- 数据库配置将在这里显示 -->
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- 管理界面 -->
                 <div id="adminPanel" style="display: none;">
-                    <h2><i class="fas fa-cogs"></i> 云端管理后台 <span id="adminStatus" style="font-size: 14px; color: #4caf50;">(已连接)</span></h2>
+                    <h2><i class="fas fa-cogs"></i> 云数据管理</h2>
+                    <p style="color: #aaa; margin-bottom: 20px;">数据实时同步，所有更改立即生效到所有设备</p>
                     
                     <div class="admin-controls">
                         <button id="addItemBtn" class="pixel-button active"><i class="fas fa-plus"></i> 新增菜品</button>
-                        <button id="viewOrdersBtn" class="pixel-button secondary"><i class="fas fa-list"></i> 查看订单 <span id="pendingOrdersCount" class="new-order-badge" style="display: none;">0</span></button>
+                        <button id="viewOrdersBtn" class="pixel-button secondary"><i class="fas fa-list"></i> 查看订单</button>
                         <button id="generateQrCodeBtn" class="pixel-button secondary"><i class="fas fa-qrcode"></i> 生成二维码</button>
-                        <button id="logoutBtn" class="pixel-button secondary"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
+                        <button id="manageConfigBtn" class="pixel-button secondary"><i class="fas fa-database"></i> 数据库配置</button>
+                        <button id="logoutBtn" class="pixel-button warning"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
+                    </div>
+                    
+                    <!-- 数据库配置管理 -->
+                    <div id="configSection" class="admin-section pixel-border" style="display: none; padding: 20px;">
+                        <h3><i class="fas fa-database"></i> 云数据库配置</h3>
+                        <div style="background-color: #222; padding: 20px; margin: 20px 0;">
+                            <h4 style="color: var(--primary-color); margin-bottom: 15px;">当前配置状态</h4>
+                            <div id="currentConfig" style="line-height: 1.6;">
+                                <!-- 配置状态将在这里显示 -->
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Supabase项目URL</label>
+                            <input type="text" id="supabaseUrl" class="form-input" placeholder="https://your-project.supabase.co">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Supabase匿名密钥</label>
+                            <input type="text" id="supabaseAnonKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">服务角色密钥（可选，用于高级权限）</label>
+                            <input type="text" id="supabaseServiceKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                            <p style="color: #aaa; font-size: 14px; margin-top: 5px;">仅在需要绕过RLS策略时使用</p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button id="testConnectionBtn" class="pixel-button">
+                                <i class="fas fa-plug"></i> 测试连接
+                            </button>
+                            <button id="saveConfigBtn" class="pixel-button success">
+                                <i class="fas fa-save"></i> 保存配置
+                            </button>
+                            <button id="resetConfigBtn" class="pixel-button secondary">
+                                <i class="fas fa-redo"></i> 重置配置
+                            </button>
+                            <button id="closeConfigBtn" class="pixel-button secondary">
+                                <i class="fas fa-times"></i> 关闭
+                            </button>
+                        </div>
+                        
+                        <div class="instructions" style="margin-top: 30px;">
+                            <h4><i class="fas fa-info-circle"></i> 配置说明</h4>
+                            <ul style="color: #aaa; padding-left: 20px;">
+                                <li>在 <a href="https://supabase.com" target="_blank" style="color: var(--primary-color);">Supabase官网</a> 创建免费账户和项目</li>
+                                <li>在项目设置中找到API设置，复制URL和anon key</li>
+                                <li>在数据库中创建 menu_items 和 orders 表</li>
+                                <li>启用RLS（行级安全）并设置适当的策略</li>
+                                <li>点击"测试连接"验证配置是否正确</li>
+                            </ul>
+                        </div>
                     </div>
                     
                     <!-- 菜品管理表单 -->
@@ -1019,9 +1428,13 @@
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label">菜品图片URL</label>
-                                <input type="text" id="imageUrl" class="form-input" placeholder="输入图片URL">
-                                <p style="color: #aaa; font-size: 14px; margin-top: 5px;">推荐使用Unsplash等免费图床</p>
+                                <label class="form-label">菜品图片</label>
+                                <div class="image-upload-options">
+                                    <button type="button" id="uploadImageBtn" class="pixel-button secondary"><i class="fas fa-upload"></i> 本地上传</button>
+                                    <button type="button" id="useUrlBtn" class="pixel-button secondary"><i class="fas fa-link"></i> 网络图片</button>
+                                </div>
+                                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                                <input type="text" id="imageUrl" class="form-input" placeholder="输入图片URL" style="display: none; margin-top: 10px;">
                                 <img id="imagePreview" class="image-preview" alt="图片预览">
                             </div>
                             
@@ -1034,31 +1447,32 @@
                     
                     <!-- 菜品列表 -->
                     <div id="itemsListSection" class="admin-section">
-                        <h3>云端菜品列表 <span id="itemsCount">(0个菜品)</span></h3>
+                        <h3>云端菜品列表</h3>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span id="itemsCount" style="color: #aaa;">正在加载...</span>
+                            <button id="refreshItemsBtn" class="pixel-button secondary" style="padding: 8px 12px;">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                        </div>
                         <div id="adminItemsContainer">
-                            <div class="empty-message">
-                                <div class="loading"></div>
-                                <p>正在从云端加载菜品...</p>
-                            </div>
+                            <!-- 菜品将通过JavaScript动态加载 -->
                         </div>
                     </div>
                     
                     <!-- 订单列表 -->
                     <div id="ordersSection" class="admin-section" style="display: none;">
-                        <h3><i class="fas fa-receipt"></i> 云端订单管理 <span id="totalOrdersCount">(0个订单)</span></h3>
-                        
-                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                            <button class="pixel-button active filter-order" data-status="all">全部订单</button>
-                            <button class="pixel-button secondary filter-order" data-status="pending">待处理 <span id="pendingFilterCount" class="new-order-badge" style="display: none;">0</span></button>
-                            <button class="pixel-button secondary filter-order" data-status="processing">制作中</button>
-                            <button class="pixel-button secondary filter-order" data-status="completed">已完成</button>
+                        <h3><i class="fas fa-receipt"></i> 云端订单列表</h3>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span id="ordersCount" style="color: #aaa;">正在加载...</span>
+                            <button id="refreshOrdersBtn" class="pixel-button secondary" style="padding: 8px 12px;">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                            <button id="clearOrdersBtn" class="pixel-button warning" style="padding: 8px 12px;">
+                                <i class="fas fa-trash"></i> 清空订单
+                            </button>
                         </div>
-                        
                         <div id="ordersContainer" class="orders-list">
-                            <div class="empty-message">
-                                <div class="loading"></div>
-                                <p>正在从云端加载订单...</p>
-                            </div>
+                            <!-- 订单将通过JavaScript动态加载 -->
                         </div>
                     </div>
                     
@@ -1069,7 +1483,7 @@
                         
                         <div class="form-group">
                             <label class="form-label">点餐网址</label>
-                            <input type="text" id="qrCodeUrl" class="form-input" value="加载中..." readonly>
+                            <input type="text" id="qrCodeUrl" class="form-input" value="https://user-hjw2003.github.io/diner/" readonly>
                             <p style="color: #aaa; font-size: 14px; margin-top: 5px;">这是顾客扫码后访问的点餐页面地址</p>
                         </div>
                         
@@ -1089,6 +1503,44 @@
                             <button id="downloadQrCodeBtn" class="pixel-button secondary">
                                 <i class="fas fa-download"></i> 下载二维码
                             </button>
+                            <button id="printQrCodeBtn" class="pixel-button secondary">
+                                <i class="fas fa-print"></i> 打印二维码
+                            </button>
+                        </div>
+                        
+                        <!-- 二维码本地上传功能 -->
+                        <div class="upload-qrcode-section">
+                            <h4><i class="fas fa-upload"></i> 上传二维码图片</h4>
+                            <p style="color: #aaa; margin-bottom: 15px;">如果您已有二维码图片，可以在这里上传</p>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <input type="file" id="qrcodeUpload" accept="image/*" style="display: none;">
+                                <button id="selectQrCodeBtn" class="pixel-button secondary">
+                                    <i class="fas fa-folder-open"></i> 选择二维码图片
+                                </button>
+                                <div id="uploadedQrCodePreview" style="display: none;">
+                                    <p style="color: #aaa; margin-bottom: 10px;">上传的二维码预览：</p>
+                                    <img id="uploadedQrCodeImage" class="uploaded-qrcode-preview" alt="上传的二维码">
+                                </div>
+                                <div id="uploadQrCodeActions" style="display: none; gap: 10px; margin-top: 10px;">
+                                    <button id="useUploadedQrCodeBtn" class="pixel-button secondary">
+                                        <i class="fas fa-check"></i> 使用此二维码
+                                    </button>
+                                    <button id="clearUploadedQrCodeBtn" class="pixel-button secondary">
+                                        <i class="fas fa-times"></i> 清除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="qrcode-instructions">
+                            <h4><i class="fas fa-lightbulb"></i> 使用建议</h4>
+                            <ul>
+                                <li>将二维码打印并张贴在餐桌、前台等显眼位置</li>
+                                <li>建议打印尺寸不小于10cm×10cm，确保扫码成功率</li>
+                                <li>定期检查二维码是否清晰可读</li>
+                                <li>可生成不同尺寸二维码用于不同场合</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -1120,10 +1572,7 @@
             <!-- 当前订单标签页 -->
             <div id="currentCartTab" class="cart-tab-content active">
                 <div id="cartItemsContainer">
-                    <div class="empty-message">
-                        <p>购物车是空的</p>
-                        <p>快去添加一些菜品吧！</p>
-                    </div>
+                    <!-- 购物车内容将通过JavaScript动态加载 -->
                 </div>
                 <div class="cart-total">
                     <span>总计:</span>
@@ -1137,10 +1586,7 @@
             <!-- 订单历史标签页 -->
             <div id="historyCartTab" class="cart-tab-content">
                 <div id="orderHistoryContainer" style="max-height: 400px; overflow-y: auto;">
-                    <div class="empty-message">
-                        <p>暂无订单历史</p>
-                        <p>提交订单后可以在这里查看</p>
-                    </div>
+                    <!-- 订单历史将通过JavaScript动态加载 -->
                 </div>
             </div>
         </div>
@@ -1151,73 +1597,48 @@
         <span id="notificationText"></span>
     </div>
 
-    <!-- 订单提交表单 -->
-    <div id="orderFormModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center;">
-        <div class="pixel-border" style="background: #1a1a1a; padding: 30px; max-width: 500px; width: 90%;">
-            <h3><i class="fas fa-check-circle"></i> 确认订单</h3>
-            <div class="form-group">
-                <label class="form-label">顾客姓名（可选）</label>
-                <input type="text" id="customerName" class="form-input" placeholder="请输入姓名">
-            </div>
-            <div class="form-group">
-                <label class="form-label">桌号（可选）</label>
-                <input type="text" id="tableNumber" class="form-input" placeholder="请输入桌号">
-            </div>
-            <div class="form-group">
-                <label class="form-label">备注</label>
-                <textarea id="orderNotes" class="form-input" rows="3" placeholder="如有特殊要求请备注"></textarea>
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button id="confirmOrderBtn" class="pixel-button">确认提交</button>
-                <button id="cancelOrderBtn" class="pixel-button secondary">取消</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // ==================== Supabase配置 ====================
-        // TODO: 请将以下配置替换为您自己的Supabase项目信息
-        const SUPABASE_CONFIG = {
-          //url: 'https://YOUR_PROJECT_ID.supabase.co', // 替换为您的Project URL
-			url: 'https://vtwhilxqztqmetorntid.supabase.co', // 替换为您的Project URL
-          //anonKey: 'YOUR_ANON_KEY' // 替换为您的anon public key
-			anonKey: 'sb_publishable_1NfB3o4x2kQnaLdwxygSBQ_yKMrIX9A' // 替换为您的anon public key
+        // Supabase配置
+        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config';
+        const DEFAULT_CONFIG = {
+            supabaseUrl: '',
+            supabaseAnonKey: '',
+            supabaseServiceKey: ''
         };
-
-        // ==================== 全局变量 ====================
-        let supabase = null;
-        let currentUser = null;
-        let realtimeSubscription = null;
-        let ordersSubscription = null;
         
+        // 点餐网址
+        const ORDER_URL = 'https://user-hjw2003.github.io/diner/';
+        
+        // 应用状态
         const state = {
             currentPage: 'menu',
             currentCategory: 'all',
             cart: [],
             editingItemId: null,
             adminLoggedIn: false,
-            cloudConnected: false,
-            menuItems: [],
-            orders: [],
-            orderFilter: 'all',
-            unreadOrders: 0
+            imageSourceType: 'upload',
+            currentCartTab: 'current',
+            qrCodeGenerated: false,
+            uploadedQrCodeImage: null,
+            qrcodeInstance: null,
+            adminQrcodeInstance: null,
+            supabaseClient: null,
+            connectionStatus: 'offline',
+            realtimeSubscription: null,
+            isOnline: navigator.onLine
         };
 
-        // ==================== DOM元素 ====================
+        // DOM元素
         const elements = {
             // 页面
             menuPage: document.getElementById('menuPage'),
             adminPage: document.getElementById('adminPage'),
             
-            // 状态显示
-            cloudStatus: document.getElementById('cloudStatus'),
-            onlineStatus: document.getElementById('onlineStatus'),
-            adminStatus: document.getElementById('adminStatus'),
-            newOrdersCount: document.getElementById('newOrdersCount'),
-            pendingOrdersCount: document.getElementById('pendingOrdersCount'),
-            pendingFilterCount: document.getElementById('pendingFilterCount'),
-            itemsCount: document.getElementById('itemsCount'),
-            totalOrdersCount: document.getElementById('totalOrdersCount'),
+            // 连接状态
+            connectionStatus: document.getElementById('connectionStatus'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingMessage: document.getElementById('loadingMessage'),
+            syncDataBtn: document.getElementById('syncDataBtn'),
             
             // 导航按钮
             viewMenuBtn: document.getElementById('viewMenuBtn'),
@@ -1236,8 +1657,18 @@
             generateQrCodeBtn: document.getElementById('generateQrCodeBtn'),
             generateQrCodeNowBtn: document.getElementById('generateQrCodeNowBtn'),
             downloadQrCodeBtn: document.getElementById('downloadQrCodeBtn'),
+            printQrCodeBtn: document.getElementById('printQrCodeBtn'),
             qrCodeUrl: document.getElementById('qrCodeUrl'),
             qrcodeSection: document.getElementById('qrcodeSection'),
+            
+            // 二维码上传相关
+            qrcodeUpload: document.getElementById('qrcodeUpload'),
+            selectQrCodeBtn: document.getElementById('selectQrCodeBtn'),
+            uploadedQrCodePreview: document.getElementById('uploadedQrCodePreview'),
+            uploadedQrCodeImage: document.getElementById('uploadedQrCodeImage'),
+            uploadQrCodeActions: document.getElementById('uploadQrCodeActions'),
+            useUploadedQrCodeBtn: document.getElementById('useUploadedQrCodeBtn'),
+            clearUploadedQrCodeBtn: document.getElementById('clearUploadedQrCodeBtn'),
             
             // 购物车
             cartToggle: document.getElementById('cartToggle'),
@@ -1250,25 +1681,29 @@
             cartTabs: document.querySelectorAll('.cart-tab'),
             orderHistoryContainer: document.getElementById('orderHistoryContainer'),
             
-            // 订单表单
-            orderFormModal: document.getElementById('orderFormModal'),
-            customerName: document.getElementById('customerName'),
-            tableNumber: document.getElementById('tableNumber'),
-            orderNotes: document.getElementById('orderNotes'),
-            confirmOrderBtn: document.getElementById('confirmOrderBtn'),
-            cancelOrderBtn: document.getElementById('cancelOrderBtn'),
-            
             // 管理端登录
             adminLogin: document.getElementById('adminLogin'),
             adminPassword: document.getElementById('adminPassword'),
             loginBtn: document.getElementById('loginBtn'),
+            dbConfig: document.getElementById('dbConfig'),
             
             // 管理端面板
             adminPanel: document.getElementById('adminPanel'),
             addItemBtn: document.getElementById('addItemBtn'),
             viewOrdersBtn: document.getElementById('viewOrdersBtn'),
+            manageConfigBtn: document.getElementById('manageConfigBtn'),
             logoutBtn: document.getElementById('logoutBtn'),
-            filterOrderButtons: document.querySelectorAll('.filter-order'),
+            
+            // 配置管理
+            configSection: document.getElementById('configSection'),
+            currentConfig: document.getElementById('currentConfig'),
+            supabaseUrl: document.getElementById('supabaseUrl'),
+            supabaseAnonKey: document.getElementById('supabaseAnonKey'),
+            supabaseServiceKey: document.getElementById('supabaseServiceKey'),
+            testConnectionBtn: document.getElementById('testConnectionBtn'),
+            saveConfigBtn: document.getElementById('saveConfigBtn'),
+            resetConfigBtn: document.getElementById('resetConfigBtn'),
+            closeConfigBtn: document.getElementById('closeConfigBtn'),
             
             // 菜品表单
             itemFormSection: document.getElementById('itemFormSection'),
@@ -1279,31 +1714,39 @@
             itemCategory: document.getElementById('itemCategory'),
             itemPrice: document.getElementById('itemPrice'),
             itemDescription: document.getElementById('itemDescription'),
+            uploadImageBtn: document.getElementById('uploadImageBtn'),
+            useUrlBtn: document.getElementById('useUrlBtn'),
+            imageUpload: document.getElementById('imageUpload'),
             imageUrl: document.getElementById('imageUrl'),
             imagePreview: document.getElementById('imagePreview'),
             cancelEditBtn: document.getElementById('cancelEditBtn'),
             
             // 菜品列表
             adminItemsContainer: document.getElementById('adminItemsContainer'),
+            itemsCount: document.getElementById('itemsCount'),
+            refreshItemsBtn: document.getElementById('refreshItemsBtn'),
             
             // 订单
             ordersSection: document.getElementById('ordersSection'),
             ordersContainer: document.getElementById('ordersContainer'),
+            ordersCount: document.getElementById('ordersCount'),
+            refreshOrdersBtn: document.getElementById('refreshOrdersBtn'),
+            clearOrdersBtn: document.getElementById('clearOrdersBtn'),
             
             // 通知
             notification: document.getElementById('notification'),
             notificationText: document.getElementById('notificationText')
         };
 
-        // ==================== 初始化函数 ====================
+        // 初始化应用
         async function initApp() {
-            console.log('正在初始化云端点餐系统...');
-            
-            // 初始化Supabase
-            await initSupabase();
+            showLoading('初始化云点餐系统...');
             
             // 设置事件监听器
             setupEventListeners();
+            
+            // 加载配置并初始化Supabase
+            await initSupabase();
             
             // 加载初始页面
             loadMenuPage();
@@ -1314,58 +1757,92 @@
             // 初始化二维码
             initQrCode();
             
-            console.log('应用初始化完成');
+            // 设置网络状态监听
+            setupNetworkListeners();
+            
+            hideLoading();
         }
 
-        // 初始化Supabase连接
+        // 初始化Supabase客户端
         async function initSupabase() {
+            // 加载配置
+            const config = loadConfig();
+            
+            // 显示配置状态
+            updateConfigDisplay(config);
+            
+            // 如果没有配置，使用本地模式
+            if (!config.supabaseUrl || !config.supabaseAnonKey) {
+                updateConnectionStatus('offline', '未配置云数据库，使用本地模式');
+                showNotification('未配置云数据库，当前为本地模式');
+                return;
+            }
+            
             try {
-                supabase = window.supabase.createClient(
-                    SUPABASE_CONFIG.url,
-                    SUPABASE_CONFIG.anonKey
+                // 初始化Supabase客户端
+                state.supabaseClient = supabase.createClient(
+                    config.supabaseUrl,
+                    config.supabaseAnonKey
                 );
                 
                 // 测试连接
-                const { data, error } = await supabase
+                await testConnection();
+                
+                // 设置实时订阅
+                setupRealtimeSubscription();
+                
+                updateConnectionStatus('online', '已连接到云数据库');
+                showNotification('成功连接到云数据库，数据实时同步中');
+                
+            } catch (error) {
+                console.error('Supabase初始化失败:', error);
+                updateConnectionStatus('offline', `连接失败: ${error.message}`);
+                showNotification('云数据库连接失败，使用本地模式');
+            }
+        }
+
+        // 测试数据库连接
+        async function testConnection() {
+            if (!state.supabaseClient) {
+                throw new Error('Supabase客户端未初始化');
+            }
+            
+            showLoading('正在测试数据库连接...');
+            
+            try {
+                // 测试查询菜单项
+                const { data, error } = await state.supabaseClient
                     .from('menu_items')
                     .select('count')
                     .limit(1);
                 
-                if (error) throw error;
+                if (error) {
+                    // 如果表不存在，尝试创建
+                    if (error.message.includes('does not exist')) {
+                        showNotification('数据库表不存在，将在首次使用时自动创建');
+                        return true;
+                    }
+                    throw error;
+                }
                 
-                state.cloudConnected = true;
-                elements.cloudStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>云端已连接</span>';
-                elements.cloudStatus.classList.add('connected');
-                elements.cloudStatus.classList.remove('disconnected');
-                
-                console.log('Supabase连接成功');
-                
-                // 开始监听菜品变化
-                setupMenuRealtime();
+                hideLoading();
+                return true;
                 
             } catch (error) {
-                console.error('Supabase连接失败:', error);
-                state.cloudConnected = false;
-                elements.cloudStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>云端断开</span>';
-                elements.cloudStatus.classList.remove('connected');
-                elements.cloudStatus.classList.add('disconnected');
-                
-                showNotification('云端连接失败，使用本地模式');
+                hideLoading();
+                throw error;
             }
         }
 
-        // ==================== 实时监听函数 ====================
-        function setupMenuRealtime() {
-            if (!supabase || !state.cloudConnected) return;
-            
-            // 取消旧的订阅
-            if (realtimeSubscription) {
-                supabase.removeChannel(realtimeSubscription);
+        // 设置实时订阅
+        function setupRealtimeSubscription() {
+            if (!state.supabaseClient || state.realtimeSubscription) {
+                return;
             }
             
-            // 订阅菜品表变化
-            realtimeSubscription = supabase
-                .channel('menu-items-changes')
+            // 订阅菜单项变化
+            state.realtimeSubscription = state.supabaseClient
+                .channel('menu_items_changes')
                 .on(
                     'postgres_changes',
                     {
@@ -1374,41 +1851,21 @@
                         table: 'menu_items'
                     },
                     (payload) => {
-                        console.log('菜品数据变更:', payload);
+                        console.log('菜单项变化:', payload);
                         
-                        // 重新加载菜品
+                        // 如果当前在菜单页面，重新加载菜单
                         if (state.currentPage === 'menu') {
                             loadMenuItems();
                         }
                         
-                        if (state.adminLoggedIn && state.currentPage === 'admin') {
+                        // 如果管理员已登录且在管理页面，重新加载菜品列表
+                        if (state.adminLoggedIn && elements.itemFormSection.style.display !== 'none') {
                             loadAdminItems();
                         }
                         
-                        // 显示通知
-                        if (payload.eventType === 'INSERT') {
-                            showNotification('云端同步: 新菜品已添加');
-                        } else if (payload.eventType === 'UPDATE') {
-                            showNotification('云端同步: 菜品已更新');
-                        } else if (payload.eventType === 'DELETE') {
-                            showNotification('云端同步: 菜品已删除');
-                        }
+                        showNotification('菜单已更新', 'info');
                     }
                 )
-                .subscribe();
-        }
-
-        function setupOrdersRealtime() {
-            if (!supabase || !state.cloudConnected || !state.adminLoggedIn) return;
-            
-            // 取消旧的订阅
-            if (ordersSubscription) {
-                supabase.removeChannel(ordersSubscription);
-            }
-            
-            // 订阅订单表变化
-            ordersSubscription = supabase
-                .channel('orders-changes')
                 .on(
                     'postgres_changes',
                     {
@@ -1416,118 +1873,640 @@
                         schema: 'public',
                         table: 'orders'
                     },
-                    async (payload) => {
-                        console.log('订单数据变更:', payload);
+                    (payload) => {
+                        console.log('订单变化:', payload);
                         
-                        // 重新加载订单
+                        // 如果管理员在看订单页面，重新加载订单
                         if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
-                            await loadOrders();
+                            loadOrders();
                         }
                         
-                        // 新订单通知
-                        if (payload.eventType === 'INSERT') {
-                            state.unreadOrders++;
-                            updateOrderBadges();
-                            
-                            // 播放提示音
-                            playOrderSound();
-                            
-                            // 显示通知
-                            showNotification(`新订单到达! 订单号: ${payload.new.order_number}`);
-                        }
+                        // 更新订单计数
+                        updateOrdersCount();
                     }
                 )
-                .subscribe();
+                .subscribe((status) => {
+                    console.log('实时订阅状态:', status);
+                    
+                    if (status === 'SUBSCRIBED') {
+                        updateConnectionStatus('online', '实时同步已连接');
+                    } else if (status === 'CLOSED') {
+                        updateConnectionStatus('offline', '实时同步已断开');
+                    } else if (status === 'CHANNEL_ERROR') {
+                        updateConnectionStatus('offline', '实时同步错误');
+                    }
+                });
         }
 
-        function playOrderSound() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 800;
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.5);
-            } catch (e) {
-                console.log('音频播放失败:', e);
+        // 更新连接状态显示
+        function updateConnectionStatus(status, message) {
+            state.connectionStatus = status;
+            
+            const statusElement = elements.connectionStatus;
+            statusElement.className = `connection-status ${status}`;
+            
+            let icon = 'fa-wifi';
+            let text = message;
+            
+            switch (status) {
+                case 'online':
+                    icon = 'fa-wifi';
+                    text = message || '在线 - 实时同步中';
+                    break;
+                case 'offline':
+                    icon = 'fa-wifi-slash';
+                    text = message || '离线 - 使用本地数据';
+                    break;
+                case 'syncing':
+                    icon = 'fa-sync fa-spin';
+                    text = message || '正在同步数据...';
+                    break;
             }
+            
+            statusElement.innerHTML = `<i class="fas ${icon}"></i> <span>${text}</span>`;
         }
 
-        function updateOrderBadges() {
-            // 更新新订单计数
-            if (state.unreadOrders > 0) {
-                elements.newOrdersCount.textContent = state.unreadOrders;
-                elements.newOrdersCount.style.display = 'inline-flex';
-                elements.pendingOrdersCount.textContent = state.unreadOrders;
-                elements.pendingOrdersCount.style.display = 'inline-flex';
-                elements.pendingFilterCount.textContent = state.unreadOrders;
-                elements.pendingFilterCount.style.display = 'inline-flex';
+        // 加载配置
+        function loadConfig() {
+            const savedConfig = localStorage.getItem(SUPABASE_CONFIG_KEY);
+            if (savedConfig) {
+                return JSON.parse(savedConfig);
+            }
+            
+            // 保存默认配置
+            saveConfig(DEFAULT_CONFIG);
+            return DEFAULT_CONFIG;
+        }
+
+        // 保存配置
+        function saveConfig(config) {
+            localStorage.setItem(SUPABASE_CONFIG_KEY, JSON.stringify(config));
+        }
+
+        // 更新配置显示
+        function updateConfigDisplay(config) {
+            if (!elements.dbConfig) return;
+            
+            let configHtml = '';
+            
+            if (config.supabaseUrl && config.supabaseAnonKey) {
+                configHtml = `
+                    <p><i class="fas fa-check-circle" style="color: #4caf50;"></i> 云数据库已配置</p>
+                    <p style="font-size: 12px; color: #aaa; word-break: break-all; margin-top: 5px;">
+                        项目: ${config.supabaseUrl.replace('https://', '')}
+                    </p>
+                `;
             } else {
-                elements.newOrdersCount.style.display = 'none';
-                elements.pendingOrdersCount.style.display = 'none';
-                elements.pendingFilterCount.style.display = 'none';
+                configHtml = `
+                    <p><i class="fas fa-exclamation-triangle" style="color: #ff9800;"></i> 云数据库未配置</p>
+                    <p style="font-size: 12px; color: #aaa; margin-top: 5px;">
+                        当前使用本地数据，登录后可进行配置
+                    </p>
+                `;
+            }
+            
+            elements.dbConfig.innerHTML = configHtml;
+            
+            // 更新配置表单
+            if (elements.supabaseUrl) {
+                elements.supabaseUrl.value = config.supabaseUrl || '';
+                elements.supabaseAnonKey.value = config.supabaseAnonKey || '';
+                elements.supabaseServiceKey.value = config.supabaseServiceKey || '';
             }
         }
 
-        // ==================== 菜品管理函数 ====================
-        async function loadMenuItems() {
-            if (!state.cloudConnected) {
-                // 离线模式：使用本地数据
-                renderMenuItems(state.menuItems);
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 页面导航
+            elements.viewMenuBtn.addEventListener('click', () => {
+                switchPage('menu');
+                loadMenuPage();
+            });
+            
+            elements.viewAdminBtn.addEventListener('click', () => {
+                switchPage('admin');
+                loadAdminPage();
+            });
+            
+            // 同步按钮
+            elements.syncDataBtn.addEventListener('click', async () => {
+                await syncData();
+            });
+            
+            // 分类筛选
+            elements.categoryButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    elements.categoryButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    state.currentCategory = this.dataset.category;
+                    loadMenuItems();
+                });
+            });
+            
+            // 购物车
+            elements.cartToggle.addEventListener('click', toggleCart);
+            elements.closeCartBtn.addEventListener('click', toggleCart);
+            elements.submitOrderBtn.addEventListener('click', submitOrder);
+            
+            // 购物车标签页切换
+            elements.cartTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    switchCartTab(tabId);
+                });
+            });
+            
+            // 二维码功能
+            elements.refreshQrCodeBtn.addEventListener('click', refreshCustomerQrCode);
+            elements.saveQrCodeBtn.addEventListener('click', saveQrCodeImage);
+            elements.generateQrCodeBtn.addEventListener('click', showQrCodeGenerator);
+            elements.generateQrCodeNowBtn.addEventListener('click', generateAdminQrCode);
+            elements.downloadQrCodeBtn.addEventListener('click', downloadQrCodeImage);
+            elements.printQrCodeBtn.addEventListener('click', printQrCode);
+            
+            // 二维码上传功能
+            elements.selectQrCodeBtn.addEventListener('click', () => elements.qrcodeUpload.click());
+            elements.qrcodeUpload.addEventListener('change', handleQrCodeUpload);
+            elements.useUploadedQrCodeBtn.addEventListener('click', useUploadedQrCode);
+            elements.clearUploadedQrCodeBtn.addEventListener('click', clearUploadedQrCode);
+            
+            // 管理端登录
+            elements.loginBtn.addEventListener('click', adminLogin);
+            elements.adminPassword.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    adminLogin();
+                }
+            });
+            
+            // 管理端操作
+            elements.addItemBtn.addEventListener('click', showAddItemForm);
+            elements.viewOrdersBtn.addEventListener('click', toggleOrdersView);
+            elements.manageConfigBtn.addEventListener('click', showConfigSection);
+            elements.logoutBtn.addEventListener('click', adminLogout);
+            
+            // 配置管理
+            elements.testConnectionBtn.addEventListener('click', testConnectionFromUI);
+            elements.saveConfigBtn.addEventListener('click', saveConfigFromUI);
+            elements.resetConfigBtn.addEventListener('click', resetConfig);
+            elements.closeConfigBtn.addEventListener('click', hideConfigSection);
+            
+            // 菜品表单
+            elements.itemForm.addEventListener('submit', saveMenuItem);
+            elements.cancelEditBtn.addEventListener('click', cancelEdit);
+            elements.uploadImageBtn.addEventListener('click', () => switchImageSource('upload'));
+            elements.useUrlBtn.addEventListener('click', () => switchImageSource('url'));
+            elements.imageUpload.addEventListener('change', handleImageUpload);
+            elements.imageUrl.addEventListener('input', updateImagePreviewFromUrl);
+            
+            // 刷新按钮
+            elements.refreshItemsBtn.addEventListener('click', loadAdminItems);
+            elements.refreshOrdersBtn.addEventListener('click', loadOrders);
+            elements.clearOrdersBtn.addEventListener('click', clearAllOrders);
+            
+            // 关闭通知
+            elements.notification.addEventListener('click', function() {
+                this.style.display = 'none';
+            });
+            
+            // 窗口大小变化时重新调整二维码
+            window.addEventListener('resize', debounce(function() {
+                if (state.qrCodeGenerated) {
+                    adjustQrCodeForScreen();
+                }
+            }, 250));
+        }
+
+        // 设置网络状态监听
+        function setupNetworkListeners() {
+            window.addEventListener('online', function() {
+                state.isOnline = true;
+                updateConnectionStatus('syncing', '网络已恢复，正在同步...');
+                
+                // 尝试重新连接
+                setTimeout(async () => {
+                    await initSupabase();
+                    await syncData();
+                }, 1000);
+            });
+            
+            window.addEventListener('offline', function() {
+                state.isOnline = false;
+                updateConnectionStatus('offline', '网络已断开，使用本地数据');
+                showNotification('网络连接已断开，使用本地数据', 'warning');
+            });
+        }
+
+        // 同步数据
+        async function syncData() {
+            if (!state.supabaseClient) {
+                showNotification('未配置云数据库，无法同步', 'warning');
                 return;
             }
             
+            if (!state.isOnline) {
+                showNotification('网络未连接，无法同步', 'warning');
+                return;
+            }
+            
+            showLoading('正在同步数据...');
+            updateConnectionStatus('syncing', '正在同步数据...');
+            
             try {
-                elements.menuItemsContainer.innerHTML = `
-                    <div class="empty-message">
-                        <div class="loading"></div>
-                        <p>正在从云端加载菜品...</p>
-                    </div>
-                `;
+                // 同步菜单项
+                await syncMenuItems();
                 
-                const { data, error } = await supabase
-                    .from('menu_items')
-                    .select('*')
-                    .eq('is_available', true)
-                    .order('category', { ascending: true });
+                // 同步订单
+                await syncOrders();
                 
-                if (error) throw error;
-                
-                state.menuItems = data || [];
-                
-                // 根据分类筛选
-                let filteredItems = state.menuItems;
-                if (state.currentCategory !== 'all') {
-                    filteredItems = state.menuItems.filter(item => item.category === state.currentCategory);
-                }
-                
-                renderMenuItems(filteredItems);
+                updateConnectionStatus('online', '数据同步完成');
+                showNotification('数据同步完成', 'success');
                 
             } catch (error) {
-                console.error('加载菜品失败:', error);
-                elements.menuItemsContainer.innerHTML = `
-                    <div class="qrcode-error">
-                        <p><i class="fas fa-exclamation-triangle"></i> 加载菜品失败</p>
-                        <p>错误: ${error.message}</p>
-                        <button onclick="loadMenuItems()" class="pixel-button" style="margin-top: 10px;">
-                            <i class="fas fa-redo"></i> 重试
-                        </button>
-                    </div>
-                `;
+                console.error('数据同步失败:', error);
+                updateConnectionStatus('offline', `同步失败: ${error.message}`);
+                showNotification('数据同步失败', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
-        function renderMenuItems(items) {
-            if (!items || items.length === 0) {
+        // 同步菜单项
+        async function syncMenuItems() {
+            if (!state.supabaseClient) return;
+            
+            // 从云端获取数据
+            const { data: cloudItems, error: fetchError } = await state.supabaseClient
+                .from('menu_items')
+                .select('*')
+                .order('id', { ascending: true });
+            
+            if (fetchError) {
+                // 如果表不存在，创建表并插入默认数据
+                if (fetchError.message.includes('does not exist')) {
+                    await createTables();
+                    return;
+                }
+                throw fetchError;
+            }
+            
+            // 保存到本地
+            localStorage.setItem('menu_items', JSON.stringify(cloudItems || []));
+            
+            // 重新加载菜单
+            if (state.currentPage === 'menu') {
+                loadMenuItems();
+            }
+            
+            // 更新计数
+            updateItemsCount();
+            
+            return cloudItems;
+        }
+
+        // 同步订单
+        async function syncOrders() {
+            if (!state.supabaseClient) return;
+            
+            // 从云端获取订单
+            const { data: cloudOrders, error: fetchError } = await state.supabaseClient
+                .from('orders')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (fetchError) {
+                if (!fetchError.message.includes('does not exist')) {
+                    throw fetchError;
+                }
+                return;
+            }
+            
+            // 保存到本地
+            localStorage.setItem('orders', JSON.stringify(cloudOrders || []));
+            
+            // 更新计数
+            updateOrdersCount();
+            
+            return cloudOrders;
+        }
+
+        // 创建数据库表（如果不存在）
+        async function createTables() {
+            showNotification('正在初始化数据库表...', 'info');
+            
+            // 这里需要服务角色密钥来执行DDL操作
+            // 在实际应用中，应该在Supabase控制台手动创建表
+            // 或者使用迁移脚本
+            
+            // 创建默认菜单项
+            const defaultItems = [
+                {
+                    name: '像素汉堡',
+                    category: 'main',
+                    price: 28.00,
+                    description: '经典牛肉汉堡搭配特制像素酱',
+                    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+                },
+                {
+                    name: '复古薯条',
+                    category: 'side',
+                    price: 12.00,
+                    description: '香脆薯条配像素芝士酱',
+                    image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+                },
+                {
+                    name: '像素可乐',
+                    category: 'drink',
+                    price: 8.00,
+                    description: '经典可乐，冰爽解渴',
+                    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+                }
+            ];
+            
+            // 插入默认数据
+            for (const item of defaultItems) {
+                const { error } = await state.supabaseClient
+                    .from('menu_items')
+                    .insert([item]);
+                
+                if (error) {
+                    console.error('插入默认数据失败:', error);
+                }
+            }
+            
+            showNotification('数据库表已初始化，默认菜品已添加', 'success');
+        }
+
+        // 从UI测试连接
+        async function testConnectionFromUI() {
+            const config = {
+                supabaseUrl: elements.supabaseUrl.value.trim(),
+                supabaseAnonKey: elements.supabaseAnonKey.value.trim(),
+                supabaseServiceKey: elements.supabaseServiceKey.value.trim()
+            };
+            
+            if (!config.supabaseUrl || !config.supabaseAnonKey) {
+                showNotification('请填写完整的Supabase配置', 'warning');
+                return;
+            }
+            
+            showLoading('正在测试连接...');
+            
+            try {
+                // 创建临时客户端进行测试
+                const testClient = supabase.createClient(
+                    config.supabaseUrl,
+                    config.supabaseAnonKey
+                );
+                
+                // 测试连接
+                const { error } = await testClient
+                    .from('menu_items')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    // 检查是否是表不存在的错误
+                    if (error.message.includes('does not exist')) {
+                        showNotification('连接成功，但表不存在。首次使用时会自动创建。', 'info');
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    showNotification('连接成功！', 'success');
+                }
+                
+            } catch (error) {
+                console.error('连接测试失败:', error);
+                showNotification(`连接失败: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 从UI保存配置
+        async function saveConfigFromUI() {
+            const config = {
+                supabaseUrl: elements.supabaseUrl.value.trim(),
+                supabaseAnonKey: elements.supabaseAnonKey.value.trim(),
+                supabaseServiceKey: elements.supabaseServiceKey.value.trim()
+            };
+            
+            if (!config.supabaseUrl || !config.supabaseAnonKey) {
+                showNotification('请填写URL和匿名密钥', 'warning');
+                return;
+            }
+            
+            // 保存配置
+            saveConfig(config);
+            
+            // 更新显示
+            updateConfigDisplay(config);
+            
+            // 重新初始化Supabase
+            await initSupabase();
+            
+            // 同步数据
+            await syncData();
+            
+            showNotification('配置已保存并应用', 'success');
+            hideConfigSection();
+        }
+
+        // 重置配置
+        function resetConfig() {
+            if (confirm('确定要重置数据库配置吗？这将清除当前的云数据库设置。')) {
+                saveConfig(DEFAULT_CONFIG);
+                updateConfigDisplay(DEFAULT_CONFIG);
+                showNotification('配置已重置', 'info');
+            }
+        }
+
+        // 显示配置部分
+        function showConfigSection() {
+            elements.configSection.style.display = 'block';
+            elements.itemFormSection.style.display = 'none';
+            elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'none';
+            
+            // 更新按钮状态
+            updateAdminButtonState('config');
+            
+            // 更新当前配置显示
+            const config = loadConfig();
+            let configHtml = '';
+            
+            if (config.supabaseUrl && config.supabaseAnonKey) {
+                configHtml = `
+                    <p><strong>当前配置状态:</strong> <span style="color: #4caf50;">已配置</span></p>
+                    <p><strong>项目URL:</strong> <span style="color: #aaa; word-break: break-all;">${config.supabaseUrl}</span></p>
+                    <p><strong>连接状态:</strong> <span style="color: ${state.connectionStatus === 'online' ? '#4caf50' : '#f44336'};">${state.connectionStatus}</span></p>
+                    <p><strong>数据表:</strong> menu_items, orders</p>
+                `;
+            } else {
+                configHtml = `
+                    <p><strong>当前配置状态:</strong> <span style="color: #ff9800;">未配置</span></p>
+                    <p>请填写下面的Supabase配置信息以启用云同步功能。</p>
+                `;
+            }
+            
+            elements.currentConfig.innerHTML = configHtml;
+        }
+
+        // 隐藏配置部分
+        function hideConfigSection() {
+            elements.configSection.style.display = 'none';
+            elements.itemFormSection.style.display = 'block';
+            updateAdminButtonState('items');
+        }
+
+        // 更新管理按钮状态
+        function updateAdminButtonState(activeButton) {
+            const buttons = {
+                items: elements.addItemBtn,
+                orders: elements.viewOrdersBtn,
+                qrcode: elements.generateQrCodeBtn,
+                config: elements.manageConfigBtn
+            };
+            
+            // 重置所有按钮
+            Object.values(buttons).forEach(btn => {
+                if (btn) {
+                    btn.classList.remove('active');
+                    btn.classList.add('secondary');
+                }
+            });
+            
+            // 激活当前按钮
+            if (buttons[activeButton]) {
+                buttons[activeButton].classList.remove('secondary');
+                buttons[activeButton].classList.add('active');
+            }
+        }
+
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+
+        // 显示加载指示器
+        function showLoading(message) {
+            if (elements.loadingOverlay && elements.loadingMessage) {
+                elements.loadingMessage.textContent = message || '加载中...';
+                elements.loadingOverlay.style.display = 'flex';
+            }
+        }
+
+        // 隐藏加载指示器
+        function hideLoading() {
+            if (elements.loadingOverlay) {
+                setTimeout(() => {
+                    elements.loadingOverlay.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            const notification = elements.notification;
+            const notificationText = elements.notificationText;
+            
+            // 设置颜色
+            let bgColor = var(--primary-color);
+            if (type === 'success') bgColor = '#4caf50';
+            if (type === 'warning') bgColor = '#ff9800';
+            if (type === 'error') bgColor = '#f44336';
+            
+            notification.style.backgroundColor = bgColor;
+            notificationText.textContent = message;
+            notification.style.display = 'block';
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // 页面切换
+        function switchPage(page) {
+            state.currentPage = page;
+            
+            // 更新按钮样式
+            if (page === 'menu') {
+                elements.viewMenuBtn.classList.remove('secondary');
+                elements.viewMenuBtn.classList.add('active');
+                elements.viewAdminBtn.classList.remove('active');
+                elements.viewAdminBtn.classList.add('secondary');
+            } else {
+                elements.viewMenuBtn.classList.remove('active');
+                elements.viewMenuBtn.classList.add('secondary');
+                elements.viewAdminBtn.classList.remove('secondary');
+                elements.viewAdminBtn.classList.add('active');
+            }
+            
+            // 切换页面显示
+            elements.menuPage.classList.remove('active');
+            elements.adminPage.classList.remove('active');
+            
+            if (page === 'menu') {
+                elements.menuPage.classList.add('active');
+            } else {
+                elements.adminPage.classList.add('active');
+            }
+        }
+
+        // 加载菜单页面
+        async function loadMenuPage() {
+            await loadMenuItems();
+        }
+
+        // 加载菜品列表
+        async function loadMenuItems() {
+            let items = [];
+            
+            // 尝试从云端获取
+            if (state.supabaseClient && state.isOnline) {
+                try {
+                    const { data, error } = await state.supabaseClient
+                        .from('menu_items')
+                        .select('*')
+                        .order('id', { ascending: true });
+                    
+                    if (!error && data) {
+                        items = data;
+                        // 保存到本地缓存
+                        localStorage.setItem('menu_items', JSON.stringify(items));
+                    } else {
+                        // 如果出错，使用本地缓存
+                        items = getLocalMenuItems();
+                    }
+                } catch (error) {
+                    console.error('从云端加载菜品失败:', error);
+                    items = getLocalMenuItems();
+                }
+            } else {
+                // 离线模式，使用本地缓存
+                items = getLocalMenuItems();
+            }
+            
+            // 根据分类筛选
+            let filteredItems = items;
+            if (state.currentCategory !== 'all') {
+                filteredItems = items.filter(item => item.category === state.currentCategory);
+            }
+            
+            // 清空容器
+            elements.menuItemsContainer.innerHTML = '';
+            
+            // 如果没有菜品
+            if (filteredItems.length === 0) {
                 elements.menuItemsContainer.innerHTML = `
                     <div class="empty-message">
                         <p style="font-size: 20px; color: #666;">暂无菜品</p>
@@ -1537,17 +2516,16 @@
                 return;
             }
             
-            elements.menuItemsContainer.innerHTML = '';
-            
-            items.forEach(item => {
+            // 渲染菜品
+            filteredItems.forEach(item => {
                 const itemElement = document.createElement('div');
                 itemElement.className = 'menu-item pixel-border';
                 itemElement.innerHTML = `
-                    <img src="${item.image_url}" alt="${item.name}" class="item-image" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'">
+                    <img src="${item.image}" alt="${item.name}" class="item-image" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'">
                     <h3 class="item-name">${item.name}</h3>
                     <p class="item-description">${item.description}</p>
                     <div class="item-footer">
-                        <div class="item-price">${parseFloat(item.price).toFixed(2)} 元</div>
+                        <div class="item-price">${item.price.toFixed(2)} 元</div>
                         <button class="add-to-cart pixel-border-white" data-id="${item.id}">加入购物车</button>
                     </div>
                 `;
@@ -1564,178 +2542,544 @@
             });
         }
 
-        async function addMenuItem(itemData) {
-            try {
-                const { data, error } = await supabase
-                    .from('menu_items')
-                    .insert([{
-                        name: itemData.name,
-                        category: itemData.category,
-                        price: parseFloat(itemData.price),
-                        description: itemData.description,
-                        image_url: itemData.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-                        is_available: true,
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    }])
-                    .select();
+        // 获取本地菜单项
+        function getLocalMenuItems() {
+            const itemsJson = localStorage.getItem('menu_items');
+            if (itemsJson) {
+                return JSON.parse(itemsJson);
+            }
+            
+            // 默认菜品
+            const defaultItems = [
+                {
+                    id: 1,
+                    name: '像素汉堡',
+                    category: 'main',
+                    price: 28.00,
+                    description: '经典牛肉汉堡搭配特制像素酱',
+                    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+                },
+                {
+                    id: 2,
+                    name: '复古薯条',
+                    category: 'side',
+                    price: 12.00,
+                    description: '香脆薯条配像素芝士酱',
+                    image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+                },
+                {
+                    id: 3,
+                    name: '像素可乐',
+                    category: 'drink',
+                    price: 8.00,
+                    description: '经典可乐，冰爽解渴',
+                    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+                }
+            ];
+            
+            localStorage.setItem('menu_items', JSON.stringify(defaultItems));
+            return defaultItems;
+        }
+
+        // 保存菜单项到本地
+        function saveMenuItemsToLocal(items) {
+            localStorage.setItem('menu_items', JSON.stringify(items));
+        }
+
+        // 管理员登录
+        function adminLogin() {
+            const password = elements.adminPassword.value;
+            
+            // 简单密码验证
+            if (password === 'admin123' || password === 'pixel123') {
+                state.adminLoggedIn = true;
+                elements.adminLogin.style.display = 'none';
+                elements.adminPanel.style.display = 'block';
+                elements.adminPassword.value = '';
                 
-                if (error) throw error;
-                
-                showNotification('菜品已保存到云端');
-                return { success: true, data: data[0] };
-                
-            } catch (error) {
-                console.error('保存菜品失败:', error);
-                showNotification('保存失败: ' + error.message);
-                return { success: false, error: error.message };
+                // 加载管理页面
+                loadAdminItems();
+                showNotification('管理员登录成功', 'success');
+            } else {
+                showNotification('密码错误，请重试', 'error');
+                elements.adminPassword.value = '';
+                elements.adminPassword.focus();
             }
         }
 
-        async function updateMenuItem(id, updates) {
-            try {
-                const { error } = await supabase
-                    .from('menu_items')
-                    .update({
-                        ...updates,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                showNotification('菜品已更新到云端');
-                return { success: true };
-                
-            } catch (error) {
-                console.error('更新菜品失败:', error);
-                showNotification('更新失败: ' + error.message);
-                return { success: false, error: error.message };
+        // 管理员退出
+        function adminLogout() {
+            state.adminLoggedIn = false;
+            elements.adminLogin.style.display = 'block';
+            elements.adminPanel.style.display = 'none';
+            elements.ordersSection.style.display = 'none';
+            elements.itemFormSection.style.display = 'block';
+            elements.qrcodeSection.style.display = 'none';
+            elements.configSection.style.display = 'none';
+            showNotification('已退出管理员账号', 'info');
+        }
+
+        // 加载管理页面
+        async function loadAdminPage() {
+            if (state.adminLoggedIn) {
+                elements.adminLogin.style.display = 'none';
+                elements.adminPanel.style.display = 'block';
+                await loadAdminItems();
+            } else {
+                elements.adminLogin.style.display = 'block';
+                elements.adminPanel.style.display = 'none';
             }
         }
 
-        async function deleteMenuItem(id) {
-            try {
-                const { error } = await supabase
-                    .from('menu_items')
-                    .delete()
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                showNotification('菜品已从云端删除');
-                return { success: true };
-                
-            } catch (error) {
-                console.error('删除菜品失败:', error);
-                showNotification('删除失败: ' + error.message);
-                return { success: false, error: error.message };
+        // 加载管理端菜品列表
+        async function loadAdminItems() {
+            let items = [];
+            
+            // 尝试从云端获取
+            if (state.supabaseClient && state.isOnline) {
+                try {
+                    const { data, error } = await state.supabaseClient
+                        .from('menu_items')
+                        .select('*')
+                        .order('id', { ascending: true });
+                    
+                    if (!error && data) {
+                        items = data;
+                        saveMenuItemsToLocal(items);
+                    } else {
+                        items = getLocalMenuItems();
+                    }
+                } catch (error) {
+                    console.error('从云端加载菜品失败:', error);
+                    items = getLocalMenuItems();
+                }
+            } else {
+                items = getLocalMenuItems();
             }
-        }
-
-        // ==================== 订单管理函数 ====================
-        async function submitOrder(orderData) {
-            try {
-                // 生成订单号
-                const orderNumber = 'DD' + Date.now() + Math.floor(Math.random() * 1000);
-                
-                const order = {
-                    order_number: orderNumber,
-                    items: orderData.items,
-                    total_amount: orderData.total,
-                    status: 'pending',
-                    customer_name: orderData.customerName || '匿名顾客',
-                    table_number: orderData.tableNumber || '0',
-                    notes: orderData.notes || '',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                };
-                
-                const { data, error } = await supabase
-                    .from('orders')
-                    .insert([order])
-                    .select();
-                
-                if (error) throw error;
-                
-                // 保存到本地历史记录
-                saveOrderToLocalHistory(order);
-                
-                showNotification(`订单提交成功! 订单号: ${orderNumber}`);
-                return { success: true, orderNumber: orderNumber };
-                
-            } catch (error) {
-                console.error('提交订单失败:', error);
-                showNotification('提交失败: ' + error.message);
-                return { success: false, error: error.message };
-            }
-        }
-
-        async function loadOrders() {
-            if (!state.cloudConnected) {
-                renderOrders([]);
+            
+            // 更新计数
+            updateItemsCount(items.length);
+            
+            // 清空容器
+            elements.adminItemsContainer.innerHTML = '';
+            
+            // 如果没有菜品
+            if (items.length === 0) {
+                elements.adminItemsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <p style="font-size: 20px; color: #666;">暂无菜品</p>
+                        <p>点击"新增菜品"按钮开始添加</p>
+                    </div>
+                `;
                 return;
             }
             
-            try {
-                elements.ordersContainer.innerHTML = `
-                    <div class="empty-message">
-                        <div class="loading"></div>
-                        <p>正在从云端加载订单...</p>
+            // 按分类分组
+            const categories = {
+                main: { name: '主菜', items: [] },
+                side: { name: '小食', items: [] },
+                drink: { name: '饮品', items: [] },
+                dessert: { name: '甜点', items: [] }
+            };
+            
+            items.forEach(item => {
+                if (categories[item.category]) {
+                    categories[item.category].items.push(item);
+                }
+            });
+            
+            // 渲染每个分类
+            Object.keys(categories).forEach(categoryKey => {
+                const category = categories[categoryKey];
+                if (category.items.length === 0) return;
+                
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'admin-category';
+                categoryElement.innerHTML = `
+                    <h4 style="margin: 20px 0 10px; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 5px;">${category.name}</h4>
+                    <div class="admin-items-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                        ${category.items.map(item => `
+                            <div class="admin-item pixel-border" style="padding: 15px; background-color: #222; display: flex; align-items: center;">
+                                <img src="${item.image}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px; border: 2px solid var(--primary-color);" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'">
+                                <div style="flex-grow: 1;">
+                                    <div style="font-weight: bold; color: var(--primary-color);">${item.name}</div>
+                                    <div style="color: #aaa; font-size: 14px; margin: 5px 0;">${item.description}</div>
+                                    <div style="font-weight: bold; font-size: 18px;">${item.price.toFixed(2)} 元</div>
+                                </div>
+                                <div>
+                                    <button class="edit-item pixel-border-white" data-id="${item.id}" style="background: #333; color: white; border: none; cursor: pointer; padding: 5px 10px; margin-right: 5px;">编辑</button>
+                                    <button class="delete-item pixel-border-white" data-id="${item.id}" style="background: #d32f2f; color: white; border: none; cursor: pointer; padding: 5px 10px;">删除</button>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 `;
                 
-                let query = supabase
-                    .from('orders')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+                elements.adminItemsContainer.appendChild(categoryElement);
+            });
+            
+            // 为编辑和删除按钮添加事件监听器
+            document.querySelectorAll('.edit-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    editMenuItem(itemId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = parseInt(this.dataset.id);
+                    deleteMenuItem(itemId);
+                });
+            });
+        }
+
+        // 更新菜品计数
+        function updateItemsCount(count) {
+            if (elements.itemsCount) {
+                if (count !== undefined) {
+                    elements.itemsCount.textContent = `共 ${count} 个菜品`;
+                } else {
+                    const items = getLocalMenuItems();
+                    elements.itemsCount.textContent = `共 ${items.length} 个菜品`;
+                }
+            }
+        }
+
+        // 更新订单计数
+        function updateOrdersCount() {
+            if (elements.ordersCount) {
+                const orders = getLocalOrders();
+                elements.ordersCount.textContent = `共 ${orders.length} 个订单`;
+            }
+        }
+
+        // 显示添加菜品表单
+        function showAddItemForm() {
+            elements.itemForm.reset();
+            elements.itemId.value = '';
+            elements.formTitle.textContent = '新增菜品';
+            elements.imagePreview.style.display = 'none';
+            elements.imageUrl.style.display = 'none';
+            elements.imageUpload.style.display = 'none';
+            elements.imageUrl.value = '';
+            
+            elements.itemFormSection.style.display = 'block';
+            elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'none';
+            elements.configSection.style.display = 'none';
+            
+            updateAdminButtonState('items');
+            
+            switchImageSource('upload');
+            state.editingItemId = null;
+        }
+
+        // 切换图片源
+        function switchImageSource(source) {
+            state.imageSourceType = source;
+            
+            if (source === 'upload') {
+                elements.uploadImageBtn.classList.remove('secondary');
+                elements.useUrlBtn.classList.add('secondary');
+                elements.imageUpload.style.display = 'block';
+                elements.imageUrl.style.display = 'none';
+            } else {
+                elements.uploadImageBtn.classList.add('secondary');
+                elements.useUrlBtn.classList.remove('secondary');
+                elements.imageUpload.style.display = 'none';
+                elements.imageUrl.style.display = 'block';
+            }
+        }
+
+        // 处理图片上传
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                elements.imagePreview.src = e.target.result;
+                elements.imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 从URL更新图片预览
+        function updateImagePreviewFromUrl() {
+            const url = elements.imageUrl.value;
+            if (url) {
+                elements.imagePreview.src = url;
+                elements.imagePreview.style.display = 'block';
+            } else {
+                elements.imagePreview.style.display = 'none';
+            }
+        }
+
+        // 保存菜品
+        async function saveMenuItem(event) {
+            event.preventDefault();
+            
+            // 获取表单数据
+            const name = elements.itemName.value.trim();
+            const category = elements.itemCategory.value;
+            const price = parseFloat(elements.itemPrice.value);
+            const description = elements.itemDescription.value.trim();
+            
+            // 验证数据
+            if (!name || !category || isNaN(price) || price <= 0) {
+                showNotification('请填写完整的菜品信息', 'warning');
+                return;
+            }
+            
+            // 获取图片
+            let image = '';
+            if (state.imageSourceType === 'upload' && elements.imageUpload.files[0]) {
+                image = await readFileAsDataURL(elements.imageUpload.files[0]);
+            } else if (state.imageSourceType === 'url') {
+                image = elements.imageUrl.value.trim();
+            }
+            
+            // 如果没有图片，使用默认图片
+            if (!image) {
+                image = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+            }
+            
+            const itemData = {
+                name,
+                category,
+                price,
+                description,
+                image
+            };
+            
+            showLoading(state.editingItemId ? '正在更新菜品...' : '正在添加菜品...');
+            
+            try {
+                let result;
                 
-                // 应用状态筛选
-                if (state.orderFilter !== 'all') {
-                    query = query.eq('status', state.orderFilter);
+                if (state.editingItemId) {
+                    // 编辑现有菜品
+                    if (state.supabaseClient && state.isOnline) {
+                        const { data, error } = await state.supabaseClient
+                            .from('menu_items')
+                            .update(itemData)
+                            .eq('id', state.editingItemId)
+                            .select();
+                        
+                        if (error) throw error;
+                        result = data[0];
+                    } else {
+                        // 离线模式，更新本地数据
+                        const items = getLocalMenuItems();
+                        const itemIndex = items.findIndex(item => item.id === state.editingItemId);
+                        if (itemIndex >= 0) {
+                            items[itemIndex] = { ...items[itemIndex], ...itemData };
+                            saveMenuItemsToLocal(items);
+                            result = items[itemIndex];
+                        }
+                    }
+                    
+                    showNotification('菜品更新成功', 'success');
+                } else {
+                    // 新增菜品
+                    if (state.supabaseClient && state.isOnline) {
+                        const { data, error } = await state.supabaseClient
+                            .from('menu_items')
+                            .insert([itemData])
+                            .select();
+                        
+                        if (error) throw error;
+                        result = data[0];
+                    } else {
+                        // 离线模式，添加到本地数据
+                        const items = getLocalMenuItems();
+                        const newId = items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1;
+                        const newItem = { id: newId, ...itemData };
+                        items.push(newItem);
+                        saveMenuItemsToLocal(items);
+                        result = newItem;
+                    }
+                    
+                    showNotification('菜品添加成功', 'success');
                 }
                 
-                const { data, error } = await query;
+                // 重新加载菜品列表
+                await loadAdminItems();
                 
-                if (error) throw error;
+                // 如果顾客页面是当前页面，也重新加载
+                if (state.currentPage === 'menu') {
+                    await loadMenuItems();
+                }
                 
-                state.orders = data || [];
+                // 重置表单
+                elements.itemForm.reset();
+                elements.imagePreview.style.display = 'none';
+                elements.imageUrl.value = '';
                 
-                // 更新订单计数
-                updateOrdersCount();
-                
-                renderOrders(state.orders);
+                // 更新状态
+                state.editingItemId = null;
                 
             } catch (error) {
-                console.error('加载订单失败:', error);
-                elements.ordersContainer.innerHTML = `
-                    <div class="qrcode-error">
-                        <p><i class="fas fa-exclamation-triangle"></i> 加载订单失败</p>
-                        <p>错误: ${error.message}</p>
-                        <button onclick="loadOrders()" class="pixel-button" style="margin-top: 10px;">
-                            <i class="fas fa-redo"></i> 重试
-                        </button>
-                    </div>
-                `;
+                console.error('保存菜品失败:', error);
+                showNotification(`保存失败: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
             }
         }
 
-        function updateOrdersCount() {
-            const totalOrders = state.orders.length;
-            const pendingOrders = state.orders.filter(o => o.status === 'pending').length;
+        // 将文件读取为DataURL
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    resolve(e.target.result);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 取消编辑
+        function cancelEdit() {
+            elements.itemForm.reset();
+            elements.imagePreview.style.display = 'none';
+            elements.imageUrl.value = '';
+            state.editingItemId = null;
+        }
+
+        // 编辑菜品
+        async function editMenuItem(itemId) {
+            const items = getLocalMenuItems();
+            const item = items.find(i => i.id === itemId);
             
-            elements.totalOrdersCount.textContent = `(${totalOrders}个订单)`;
-            elements.pendingOrdersCount.textContent = pendingOrders;
-            elements.pendingFilterCount.textContent = pendingOrders;
+            if (!item) return;
             
-            if (pendingOrders > 0) {
-                elements.pendingOrdersCount.style.display = 'inline-flex';
-                elements.pendingFilterCount.style.display = 'inline-flex';
+            // 填充表单
+            elements.itemId.value = item.id;
+            elements.itemName.value = item.name;
+            elements.itemCategory.value = item.category;
+            elements.itemPrice.value = item.price;
+            elements.itemDescription.value = item.description;
+            elements.formTitle.textContent = '编辑菜品';
+            
+            // 显示图片预览
+            if (item.image) {
+                elements.imagePreview.src = item.image;
+                elements.imagePreview.style.display = 'block';
+            }
+            
+            // 默认使用URL方式
+            switchImageSource('url');
+            elements.imageUrl.value = item.image || '';
+            
+            // 显示表单
+            elements.itemFormSection.style.display = 'block';
+            elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'none';
+            elements.configSection.style.display = 'none';
+            
+            updateAdminButtonState('items');
+            
+            state.editingItemId = itemId;
+            elements.itemFormSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 删除菜品
+        async function deleteMenuItem(itemId) {
+            if (!confirm('确定要删除这个菜品吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            showLoading('正在删除菜品...');
+            
+            try {
+                if (state.supabaseClient && state.isOnline) {
+                    // 从云端删除
+                    const { error } = await state.supabaseClient
+                        .from('menu_items')
+                        .delete()
+                        .eq('id', itemId);
+                    
+                    if (error) throw error;
+                }
+                
+                // 从本地删除
+                const items = getLocalMenuItems();
+                const filteredItems = items.filter(item => item.id !== itemId);
+                saveMenuItemsToLocal(filteredItems);
+                
+                // 重新加载菜品列表
+                await loadAdminItems();
+                
+                // 如果顾客页面是当前页面，也重新加载
+                if (state.currentPage === 'menu') {
+                    await loadMenuItems();
+                }
+                
+                showNotification('菜品删除成功', 'success');
+                
+            } catch (error) {
+                console.error('删除菜品失败:', error);
+                showNotification(`删除失败: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
             }
         }
 
-        function renderOrders(orders) {
-            if (!orders || orders.length === 0) {
+        // 切换订单视图
+        function toggleOrdersView() {
+            if (elements.ordersSection.style.display === 'none') {
+                elements.ordersSection.style.display = 'block';
+                elements.itemFormSection.style.display = 'none';
+                elements.qrcodeSection.style.display = 'none';
+                elements.configSection.style.display = 'none';
+                
+                updateAdminButtonState('orders');
+                loadOrders();
+                elements.ordersSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                elements.ordersSection.style.display = 'none';
+                elements.itemFormSection.style.display = 'block';
+                updateAdminButtonState('items');
+            }
+        }
+
+        // 加载订单
+        async function loadOrders() {
+            let orders = [];
+            
+            // 尝试从云端获取
+            if (state.supabaseClient && state.isOnline) {
+                try {
+                    const { data, error } = await state.supabaseClient
+                        .from('orders')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .limit(50);
+                    
+                    if (!error && data) {
+                        orders = data;
+                        saveOrdersToLocal(orders);
+                    } else {
+                        orders = getLocalOrders();
+                    }
+                } catch (error) {
+                    console.error('从云端加载订单失败:', error);
+                    orders = getLocalOrders();
+                }
+            } else {
+                orders = getLocalOrders();
+            }
+            
+            // 更新计数
+            updateOrdersCount();
+            
+            // 清空容器
+            elements.ordersContainer.innerHTML = '';
+            
+            // 如果没有订单
+            if (orders.length === 0) {
                 elements.ordersContainer.innerHTML = `
                     <div class="empty-message">
                         <p style="font-size: 20px; color: #666;">暂无订单</p>
@@ -1745,231 +3089,200 @@
                 return;
             }
             
-            elements.ordersContainer.innerHTML = '';
+            // 按时间倒序排列
+            orders.sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date));
             
+            // 渲染订单
             orders.forEach(order => {
                 const orderElement = document.createElement('div');
                 orderElement.className = 'order-item pixel-border-white';
                 
-                // 格式化日期
-                const orderDate = new Date(order.created_at);
-                const dateStr = `${orderDate.getFullYear()}/${(orderDate.getMonth()+1).toString().padStart(2,'0')}/${orderDate.getDate().toString().padStart(2,'0')} ${orderDate.getHours().toString().padStart(2,'0')}:${orderDate.getMinutes().toString().padStart(2,'0')}`;
+                // 解析订单项目
+                let items = [];
+                let total = 0;
                 
-                // 状态样式
-                let statusClass = '';
-                let statusText = '';
-                switch(order.status) {
-                    case 'pending': statusClass = 'pending'; statusText = '待处理'; break;
-                    case 'processing': statusClass = 'processing'; statusText = '制作中'; break;
-                    case 'completed': statusClass = 'completed'; statusText = '已完成'; break;
-                    case 'cancelled': statusClass = 'cancelled'; statusText = '已取消'; break;
+                if (typeof order.items === 'string') {
+                    try {
+                        items = JSON.parse(order.items);
+                    } catch (e) {
+                        items = [];
+                    }
+                } else if (Array.isArray(order.items)) {
+                    items = order.items;
                 }
                 
-                // 解析订单项
-                let itemsHtml = '';
-                if (order.items && Array.isArray(order.items)) {
-                    order.items.forEach(item => {
-                        itemsHtml += `
-                            <div class="order-item-row">
-                                <div>${item.name} × ${item.quantity}</div>
-                                <div>${(item.price * item.quantity).toFixed(2)} 元</div>
-                            </div>
-                        `;
-                    });
-                }
+                total = order.total || items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+                
+                const date = order.created_at || order.date || new Date().toISOString();
+                const formattedDate = new Date(date).toLocaleString('zh-CN');
                 
                 orderElement.innerHTML = `
                     <div class="order-header">
                         <div>
-                            <strong style="color: var(--primary-color);">订单 #${order.order_number}</strong>
-                            <div style="font-size: 14px; color: #aaa; margin-top: 5px;">${dateStr}</div>
-                            ${order.customer_name ? `<div style="font-size: 14px; color: #aaa; margin-top: 2px;">顾客: ${order.customer_name}</div>` : ''}
-                            ${order.table_number && order.table_number !== '0' ? `<div style="font-size: 14px; color: #aaa; margin-top: 2px;">桌号: ${order.table_number}</div>` : ''}
+                            <strong style="color: var(--primary-color);">订单 #${order.id}</strong>
+                            <div style="font-size: 14px; color: #aaa; margin-top: 5px;">${formattedDate}</div>
                         </div>
                         <div style="text-align: right;">
-                            <span class="order-status ${statusClass}" style="background-color: ${getStatusColor(order.status)};">${statusText}</span>
-                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${parseFloat(order.total_amount).toFixed(2)} 元</div>
+                            <span style="background-color: ${order.status === 'processed' ? '#4caf50' : '#d32f2f'}; color: white; padding: 5px 10px; font-size: 14px;">${order.status === 'processed' ? '已处理' : '待处理'}</span>
+                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${total.toFixed(2)} 元</div>
                         </div>
                     </div>
                     <div class="order-items">
-                        ${itemsHtml}
+                        ${items.map(item => `
+                            <div class="order-item-row">
+                                <div>${item.name} × ${item.quantity || 1}</div>
+                                <div>${((item.price || 0) * (item.quantity || 1)).toFixed(2)} 元</div>
+                            </div>
+                        `).join('')}
                     </div>
-                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        ${order.status === 'pending' ? `
-                            <button class="update-order-status pixel-button" data-id="${order.id}" data-status="processing" style="padding: 8px 15px; font-size: 14px;">
-                                <i class="fas fa-play"></i> 开始制作
-                            </button>
-                        ` : ''}
-                        ${order.status === 'processing' ? `
-                            <button class="update-order-status pixel-button" data-id="${order.id}" data-status="completed" style="padding: 8px 15px; font-size: 14px;">
-                                <i class="fas fa-check"></i> 标记完成
-                            </button>
-                        ` : ''}
-                        <button class="update-order-status pixel-button secondary" data-id="${order.id}" data-status="cancelled" style="padding: 8px 15px; font-size: 14px; background-color: #666;">
-                            <i class="fas fa-times"></i> 取消订单
-                        </button>
-                        ${order.notes ? `<div style="width: 100%; margin-top: 10px; padding: 10px; background: #222; border-left: 3px solid var(--primary-color);">
-                            <strong style="color: var(--primary-color);">备注:</strong> ${order.notes}
-                        </div>` : ''}
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="mark-processed pixel-button" data-id="${order.id}" style="padding: 8px 15px; font-size: 14px;">标记为已处理</button>
+                        <button class="delete-order pixel-button secondary" data-id="${order.id}" style="padding: 8px 15px; font-size: 14px; background-color: #d32f2f;">删除订单</button>
                     </div>
                 `;
                 
                 elements.ordersContainer.appendChild(orderElement);
             });
             
-            // 为状态更新按钮添加事件监听器
-            document.querySelectorAll('.update-order-status').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    const orderId = this.dataset.id;
-                    const newStatus = this.dataset.status;
-                    
-                    if (confirm(`确定要将订单状态改为"${getStatusText(newStatus)}"吗？`)) {
-                        await updateOrderStatus(orderId, newStatus);
-                    }
+            // 为订单按钮添加事件监听器
+            document.querySelectorAll('.mark-processed').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = parseInt(this.dataset.id);
+                    markOrderAsProcessed(orderId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-order').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = parseInt(this.dataset.id);
+                    deleteOrder(orderId);
                 });
             });
         }
 
-        function getStatusColor(status) {
-            switch(status) {
-                case 'pending': return '#d32f2f';
-                case 'processing': return '#ff9800';
-                case 'completed': return '#4caf50';
-                case 'cancelled': return '#757575';
-                default: return '#666';
-            }
+        // 获取本地订单
+        function getLocalOrders() {
+            const ordersJson = localStorage.getItem('orders');
+            return ordersJson ? JSON.parse(ordersJson) : [];
         }
 
-        function getStatusText(status) {
-            switch(status) {
-                case 'pending': return '待处理';
-                case 'processing': return '制作中';
-                case 'completed': return '已完成';
-                case 'cancelled': return '已取消';
-                default: return status;
-            }
+        // 保存订单到本地
+        function saveOrdersToLocal(orders) {
+            localStorage.setItem('orders', JSON.stringify(orders));
         }
 
-        async function updateOrderStatus(orderId, status) {
+        // 清空所有订单
+        async function clearAllOrders() {
+            if (!confirm('确定要清空所有订单吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            showLoading('正在清空订单...');
+            
             try {
-                const { error } = await supabase
-                    .from('orders')
-                    .update({
-                        status: status,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', orderId);
+                if (state.supabaseClient && state.isOnline) {
+                    // 从云端删除所有订单
+                    const { error } = await state.supabaseClient
+                        .from('orders')
+                        .delete()
+                        .neq('id', 0); // 删除所有记录
+                    
+                    if (error) throw error;
+                }
                 
-                if (error) throw error;
-                
-                showNotification(`订单状态已更新为"${getStatusText(status)}"`);
+                // 清空本地订单
+                saveOrdersToLocal([]);
                 
                 // 重新加载订单
                 await loadOrders();
                 
-                // 如果状态变为非待处理，减少未读计数
-                if (status !== 'pending') {
-                    state.unreadOrders = Math.max(0, state.unreadOrders - 1);
-                    updateOrderBadges();
+                showNotification('所有订单已清空', 'success');
+                
+            } catch (error) {
+                console.error('清空订单失败:', error);
+                showNotification(`清空失败: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 标记订单为已处理
+        async function markOrderAsProcessed(orderId) {
+            showLoading('正在更新订单状态...');
+            
+            try {
+                if (state.supabaseClient && state.isOnline) {
+                    // 更新云端订单
+                    const { error } = await state.supabaseClient
+                        .from('orders')
+                        .update({ status: 'processed' })
+                        .eq('id', orderId);
+                    
+                    if (error) throw error;
                 }
                 
-                return { success: true };
+                // 更新本地订单
+                const orders = getLocalOrders();
+                const orderIndex = orders.findIndex(order => order.id === orderId);
+                if (orderIndex >= 0) {
+                    orders[orderIndex].status = 'processed';
+                    saveOrdersToLocal(orders);
+                }
+                
+                // 重新加载订单
+                await loadOrders();
+                
+                showNotification('订单状态已更新', 'success');
                 
             } catch (error) {
                 console.error('更新订单状态失败:', error);
-                showNotification('更新失败: ' + error.message);
-                return { success: false, error: error.message };
+                showNotification(`更新失败: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
             }
         }
 
-        function saveOrderToLocalHistory(order) {
+        // 删除订单
+        async function deleteOrder(orderId) {
+            if (!confirm('确定要删除这个订单吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            showLoading('正在删除订单...');
+            
             try {
-                const localOrders = JSON.parse(localStorage.getItem('pixel_diner_local_orders') || '[]');
-                localOrders.unshift({
-                    ...order,
-                    local_saved: new Date().toISOString()
-                });
-                
-                // 只保留最近的50个订单
-                if (localOrders.length > 50) {
-                    localOrders.pop();
+                if (state.supabaseClient && state.isOnline) {
+                    // 从云端删除
+                    const { error } = await state.supabaseClient
+                        .from('orders')
+                        .delete()
+                        .eq('id', orderId);
+                    
+                    if (error) throw error;
                 }
                 
-                localStorage.setItem('pixel_diner_local_orders', JSON.stringify(localOrders));
+                // 从本地删除
+                const orders = getLocalOrders();
+                const filteredOrders = orders.filter(order => order.id !== orderId);
+                saveOrdersToLocal(filteredOrders);
                 
-                // 更新订单历史显示
-                if (state.currentCartTab === 'history') {
-                    loadOrderHistory();
-                }
+                // 重新加载
+                await loadOrders();
+                
+                showNotification('订单删除成功', 'success');
                 
             } catch (error) {
-                console.error('保存订单到本地失败:', error);
+                console.error('删除订单失败:', error);
+                showNotification(`删除失败: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
             }
         }
 
-        function loadOrderHistory() {
-            try {
-                const localOrders = JSON.parse(localStorage.getItem('pixel_diner_local_orders') || '[]');
-                
-                if (localOrders.length === 0) {
-                    elements.orderHistoryContainer.innerHTML = `
-                        <div class="empty-message">
-                            <p>暂无订单历史</p>
-                            <p>提交订单后可以在这里查看</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                elements.orderHistoryContainer.innerHTML = '';
-                
-                localOrders.forEach(order => {
-                    const orderElement = document.createElement('div');
-                    orderElement.className = 'order-history-item';
-                    
-                    // 格式化日期
-                    const orderDate = new Date(order.created_at);
-                    const dateStr = `${orderDate.getFullYear()}/${(orderDate.getMonth()+1).toString().padStart(2,'0')}/${orderDate.getDate().toString().padStart(2,'0')} ${orderDate.getHours().toString().padStart(2,'0')}:${orderDate.getMinutes().toString().padStart(2,'0')}`;
-                    
-                    orderElement.innerHTML = `
-                        <div class="order-history-header">
-                            <div>
-                                <div style="font-weight: bold; color: var(--primary-color);">订单 #${order.order_number}</div>
-                                <div style="font-size: 14px; color: #aaa; margin-top: 5px;">下单时间: ${dateStr}</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 20px; font-weight: bold;">${parseFloat(order.total_amount).toFixed(2)} 元</div>
-                                <div class="order-status ${order.status === 'completed' ? 'processed' : ''}" style="margin-top: 5px;">${getStatusText(order.status)}</div>
-                            </div>
-                        </div>
-                        <div class="order-history-items">
-                            <div style="font-weight: bold; color: #aaa; margin-bottom: 5px;">菜品详情:</div>
-                            ${order.items.map(item => `
-                                <div class="order-history-item-row">
-                                    <div>${item.name} × ${item.quantity}</div>
-                                    <div>${(item.price * item.quantity).toFixed(2)} 元</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                    
-                    elements.orderHistoryContainer.appendChild(orderElement);
-                });
-                
-            } catch (error) {
-                console.error('加载订单历史失败:', error);
-                elements.orderHistoryContainer.innerHTML = `
-                    <div class="empty-message">
-                        <p>加载订单历史失败</p>
-                        <p>错误: ${error.message}</p>
-                    </div>
-                `;
-            }
-        }
-
-        // ==================== 购物车函数 ====================
+        // 添加到购物车
         function addToCart(itemId) {
-            const item = state.menuItems.find(i => i.id === itemId);
+            const items = getLocalMenuItems();
+            const item = items.find(i => i.id === itemId);
             
             if (!item) return;
             
@@ -1985,20 +3298,24 @@
             }
             
             updateCartDisplay();
-            showNotification(`已添加 ${item.name} 到购物车`);
+            showNotification(`已添加 ${item.name} 到购物车`, 'success');
         }
 
+        // 更新购物车显示
         function updateCartDisplay() {
             const totalItems = state.cart.reduce((total, item) => total + item.quantity, 0);
             elements.cartCount.textContent = totalItems;
             
-            const totalPrice = state.cart.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0);
+            const totalPrice = state.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
             elements.cartTotal.textContent = totalPrice.toFixed(2);
             
             renderCartItems();
         }
 
+        // 渲染购物车内容
         function renderCartItems() {
+            elements.cartItemsContainer.innerHTML = '';
+            
             if (state.cart.length === 0) {
                 elements.cartItemsContainer.innerHTML = `
                     <div class="empty-message">
@@ -2009,15 +3326,13 @@
                 return;
             }
             
-            elements.cartItemsContainer.innerHTML = '';
-            
             state.cart.forEach(item => {
                 const cartItemElement = document.createElement('div');
                 cartItemElement.className = 'cart-item';
                 cartItemElement.innerHTML = `
                     <div class="cart-item-info">
                         <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">${parseFloat(item.price).toFixed(2)} 元</div>
+                        <div class="cart-item-price">${item.price.toFixed(2)} 元</div>
                     </div>
                     <div class="cart-item-controls">
                         <button class="cart-item-decrease pixel-border-white" data-id="${item.id}" style="width: 30px; height: 30px; background: #333; color: white; border: none; cursor: pointer;">-</button>
@@ -2052,6 +3367,7 @@
             });
         }
 
+        // 更新购物车商品数量
         function updateCartItemQuantity(itemId, change) {
             const itemIndex = state.cart.findIndex(item => item.id === itemId);
             
@@ -2066,404 +3382,29 @@
             }
         }
 
+        // 从购物车移除商品
         function removeFromCart(itemId) {
             const itemIndex = state.cart.findIndex(item => item.id === itemId);
             
             if (itemIndex >= 0) {
                 state.cart.splice(itemIndex, 1);
                 updateCartDisplay();
-                showNotification('已从购物车移除商品');
+                showNotification('已从购物车移除商品', 'info');
             }
         }
 
-        // ==================== 管理后台函数 ====================
-        async function loadAdminItems() {
-            if (!state.cloudConnected) {
-                renderAdminItems([]);
-                return;
-            }
-            
-            try {
-                elements.adminItemsContainer.innerHTML = `
-                    <div class="empty-message">
-                        <div class="loading"></div>
-                        <p>正在从云端加载菜品...</p>
-                    </div>
-                `;
-                
-                const { data, error } = await supabase
-                    .from('menu_items')
-                    .select('*')
-                    .order('category', { ascending: true });
-                
-                if (error) throw error;
-                
-                renderAdminItems(data || []);
-                
-            } catch (error) {
-                console.error('加载菜品失败:', error);
-                elements.adminItemsContainer.innerHTML = `
-                    <div class="qrcode-error">
-                        <p><i class="fas fa-exclamation-triangle"></i> 加载菜品失败</p>
-                        <p>错误: ${error.message}</p>
-                        <button onclick="loadAdminItems()" class="pixel-button" style="margin-top: 10px;">
-                            <i class="fas fa-redo"></i> 重试
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        function renderAdminItems(items) {
-            if (!items || items.length === 0) {
-                elements.adminItemsContainer.innerHTML = `
-                    <div class="empty-message">
-                        <p style="font-size: 20px; color: #666;">暂无菜品</p>
-                        <p>点击"新增菜品"按钮开始添加</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            elements.itemsCount.textContent = `(${items.length}个菜品)`;
-            
-            // 按分类分组
-            const categories = {
-                main: { name: '主菜', items: [] },
-                side: { name: '小食', items: [] },
-                drink: { name: '饮品', items: [] },
-                dessert: { name: '甜点', items: [] }
-            };
-            
-            items.forEach(item => {
-                if (categories[item.category]) {
-                    categories[item.category].items.push(item);
-                }
-            });
-            
-            elements.adminItemsContainer.innerHTML = '';
-            
-            Object.keys(categories).forEach(categoryKey => {
-                const category = categories[categoryKey];
-                if (category.items.length === 0) return;
-                
-                const categoryElement = document.createElement('div');
-                categoryElement.className = 'admin-category';
-                categoryElement.innerHTML = `
-                    <h4 style="margin: 20px 0 10px; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 5px;">${category.name}</h4>
-                    <div class="admin-items-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                        ${category.items.map(item => `
-                            <div class="admin-item pixel-border" style="padding: 15px; background-color: #222; display: flex; align-items: center;">
-                                <img src="${item.image_url}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px; border: 2px solid var(--primary-color);" onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'">
-                                <div style="flex-grow: 1;">
-                                    <div style="font-weight: bold; color: var(--primary-color);">${item.name}</div>
-                                    <div style="color: #aaa; font-size: 14px; margin: 5px 0;">${item.description}</div>
-                                    <div style="font-weight: bold; font-size: 18px;">${parseFloat(item.price).toFixed(2)} 元</div>
-                                    <div style="font-size: 12px; color: #666; margin-top: 2px;">ID: ${item.id}</div>
-                                </div>
-                                <div>
-                                    <button class="edit-item pixel-border-white" data-id="${item.id}" style="background: #333; color: white; border: none; cursor: pointer; padding: 5px 10px; margin-right: 5px;">编辑</button>
-                                    <button class="delete-item pixel-border-white" data-id="${item.id}" style="background: #d32f2f; color: white; border: none; cursor: pointer; padding: 5px 10px;">删除</button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                
-                elements.adminItemsContainer.appendChild(categoryElement);
-            });
-            
-            // 为编辑和删除按钮添加事件监听器
-            document.querySelectorAll('.edit-item').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const itemId = parseInt(this.dataset.id);
-                    editMenuItem(itemId);
-                });
-            });
-            
-            document.querySelectorAll('.delete-item').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const itemId = parseInt(this.dataset.id);
-                    deleteMenuItemConfirm(itemId);
-                });
-            });
-        }
-
-        function editMenuItem(itemId) {
-            const item = state.menuItems.find(i => i.id === itemId);
-            
-            if (!item) return;
-            
-            elements.itemId.value = item.id;
-            elements.itemName.value = item.name;
-            elements.itemCategory.value = item.category;
-            elements.itemPrice.value = item.price;
-            elements.itemDescription.value = item.description || '';
-            elements.imageUrl.value = item.image_url || '';
-            elements.formTitle.textContent = '编辑菜品';
-            
-            if (item.image_url) {
-                elements.imagePreview.src = item.image_url;
-                elements.imagePreview.style.display = 'block';
-            }
-            
-            elements.itemFormSection.style.display = 'block';
-            elements.ordersSection.style.display = 'none';
-            elements.qrcodeSection.style.display = 'none';
-            
-            state.editingItemId = itemId;
-            
-            elements.itemFormSection.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        async function deleteMenuItemConfirm(itemId) {
-            const item = state.menuItems.find(i => i.id === itemId);
-            if (!item) return;
-            
-            if (confirm(`确定要删除菜品"${item.name}"吗？此操作不可撤销。`)) {
-                const result = await deleteMenuItem(itemId);
-                if (result.success) {
-                    loadAdminItems();
-                    loadMenuItems();
-                }
-            }
-        }
-
-        // ==================== 二维码函数 ====================
-        function initQrCode() {
-            // 获取当前网址
-            const currentUrl = window.location.href;
-            elements.customerOrderUrl.textContent = currentUrl;
-            elements.qrCodeUrl.value = currentUrl;
-            
-            // 生成顾客端二维码
-            generateCustomerQrCode();
-        }
-
-        function generateCustomerQrCode() {
-            const url = window.location.href;
-            
-            elements.customerQrCode.innerHTML = '';
-            
-            try {
-                const qrcode = new QRCode(elements.customerQrCode, {
-                    text: url,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-                
-                // 等待二维码生成
-                setTimeout(() => {
-                    const canvas = elements.customerQrCode.querySelector('canvas');
-                    if (canvas) {
-                        canvas.style.width = '100%';
-                        canvas.style.height = '100%';
-                    }
-                }, 100);
-                
-            } catch (error) {
-                console.error('生成二维码失败:', error);
-                elements.customerQrCode.innerHTML = `
-                    <div class="qrcode-error">
-                        <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
-                    </div>
-                `;
-            }
-        }
-
-        function generateAdminQrCode() {
-            const url = elements.qrCodeUrl.value.trim() || window.location.href;
-            
-            elements.adminQrCode.innerHTML = '';
-            
-            try {
-                const qrcode = new QRCode(elements.adminQrCode, {
-                    text: url,
-                    width: 250,
-                    height: 250,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-                
-                // 等待二维码生成
-                setTimeout(() => {
-                    const canvas = elements.adminQrCode.querySelector('canvas');
-                    if (canvas) {
-                        canvas.style.width = '100%';
-                        canvas.style.height = '100%';
-                    }
-                }, 100);
-                
-                showNotification('二维码生成成功！');
-                
-            } catch (error) {
-                console.error('生成二维码失败:', error);
-                elements.adminQrCode.innerHTML = `
-                    <div class="qrcode-error">
-                        <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
-                    </div>
-                `;
-            }
-        }
-
-        function downloadQrCodeImage() {
-            const canvas = elements.adminQrCode.querySelector('canvas');
-            
-            if (canvas) {
-                const link = document.createElement('a');
-                link.download = '像素食堂点餐二维码.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showNotification('二维码图片已下载');
-            } else {
-                showNotification('请先生成二维码');
-            }
-        }
-
-        // ==================== 事件监听器 ====================
-        function setupEventListeners() {
-            // 页面导航
-            elements.viewMenuBtn.addEventListener('click', () => {
-                switchPage('menu');
-                loadMenuPage();
-            });
-            
-            elements.viewAdminBtn.addEventListener('click', () => {
-                switchPage('admin');
-                loadAdminPage();
-            });
-            
-            // 分类筛选
-            elements.categoryButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    elements.categoryButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    state.currentCategory = this.dataset.category;
-                    loadMenuItems();
-                });
-            });
-            
-            // 购物车
-            elements.cartToggle.addEventListener('click', toggleCart);
-            elements.closeCartBtn.addEventListener('click', toggleCart);
-            elements.submitOrderBtn.addEventListener('click', showOrderForm);
-            
-            // 订单表单
-            elements.confirmOrderBtn.addEventListener('click', confirmOrder);
-            elements.cancelOrderBtn.addEventListener('click', hideOrderForm);
-            
-            // 购物车标签页切换
-            elements.cartTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.dataset.tab;
-                    switchCartTab(tabId);
-                });
-            });
-            
-            // 二维码功能
-            elements.refreshQrCodeBtn.addEventListener('click', generateCustomerQrCode);
-            elements.saveQrCodeBtn.addEventListener('click', () => {
-                const canvas = elements.customerQrCode.querySelector('canvas');
-                if (canvas) {
-                    const link = document.createElement('a');
-                    link.download = '像素食堂点餐二维码.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    showNotification('二维码图片已保存');
-                }
-            });
-            
-            elements.generateQrCodeBtn.addEventListener('click', showQrCodeGenerator);
-            elements.generateQrCodeNowBtn.addEventListener('click', generateAdminQrCode);
-            elements.downloadQrCodeBtn.addEventListener('click', downloadQrCodeImage);
-            
-            // 管理端登录
-            elements.loginBtn.addEventListener('click', adminLogin);
-            elements.adminPassword.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') adminLogin();
-            });
-            
-            // 管理端操作
-            elements.addItemBtn.addEventListener('click', showAddItemForm);
-            elements.viewOrdersBtn.addEventListener('click', toggleOrdersView);
-            elements.logoutBtn.addEventListener('click', adminLogout);
-            
-            // 订单筛选
-            elements.filterOrderButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    elements.filterOrderButtons.forEach(b => {
-                        b.classList.remove('active');
-                        b.classList.add('secondary');
-                    });
-                    this.classList.remove('secondary');
-                    this.classList.add('active');
-                    state.orderFilter = this.dataset.status;
-                    loadOrders();
-                });
-            });
-            
-            // 菜品表单
-            elements.itemForm.addEventListener('submit', saveMenuItem);
-            elements.cancelEditBtn.addEventListener('click', cancelEdit);
-            elements.imageUrl.addEventListener('input', updateImagePreviewFromUrl);
-            
-            // 关闭通知
-            elements.notification.addEventListener('click', function() {
-                this.style.display = 'none';
-            });
-        }
-
-        // ==================== 工具函数 ====================
-        function switchPage(page) {
-            state.currentPage = page;
-            
-            if (page === 'menu') {
-                elements.viewMenuBtn.classList.remove('secondary');
-                elements.viewMenuBtn.classList.add('active');
-                elements.viewAdminBtn.classList.remove('active');
-                elements.viewAdminBtn.classList.add('secondary');
-                elements.onlineStatus.textContent = state.cloudConnected ? '(云端同步)' : '(离线模式)';
-            } else {
-                elements.viewMenuBtn.classList.remove('active');
-                elements.viewMenuBtn.classList.add('secondary');
-                elements.viewAdminBtn.classList.remove('secondary');
-                elements.viewAdminBtn.classList.add('active');
-                elements.adminStatus.textContent = state.cloudConnected ? '(已连接)' : '(离线模式)';
-            }
-            
-            elements.menuPage.classList.remove('active');
-            elements.adminPage.classList.remove('active');
-            
-            if (page === 'menu') {
-                elements.menuPage.classList.add('active');
-            } else {
-                elements.adminPage.classList.add('active');
-            }
-        }
-
-        function loadMenuPage() {
-            loadMenuItems();
-            if (state.cloudConnected) {
-                elements.onlineStatus.textContent = '(云端同步)';
-                elements.onlineStatus.style.color = '#4caf50';
-            } else {
-                elements.onlineStatus.textContent = '(离线模式)';
-                elements.onlineStatus.style.color = '#d32f2f';
-            }
-        }
-
+        // 切换购物车显示
         function toggleCart() {
             elements.cartContainer.classList.toggle('open');
             
-            if (elements.cartContainer.classList.contains('open') && state.currentCartTab === 'history') {
-                loadOrderHistory();
+            if (elements.cartContainer.classList.contains('open')) {
+                if (state.currentCartTab === 'history') {
+                    loadOrderHistory();
+                }
             }
         }
 
+        // 切换购物车标签页
         function switchCartTab(tabId) {
             state.currentCartTab = tabId;
             
@@ -2489,39 +3430,114 @@
             }
         }
 
-        function showOrderForm() {
-            if (state.cart.length === 0) {
-                showNotification('购物车是空的，无法提交订单');
+        // 加载订单历史
+        async function loadOrderHistory() {
+            const orders = getLocalOrders();
+            
+            elements.orderHistoryContainer.innerHTML = '';
+            
+            if (orders.length === 0) {
+                elements.orderHistoryContainer.innerHTML = `
+                    <div class="empty-message">
+                        <p>暂无订单历史</p>
+                        <p>提交订单后可以在这里查看</p>
+                    </div>
+                `;
                 return;
             }
             
-            elements.orderFormModal.style.display = 'flex';
+            orders.sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date));
+            
+            orders.forEach(order => {
+                const orderElement = document.createElement('div');
+                orderElement.className = 'order-history-item';
+                
+                let items = [];
+                let total = 0;
+                
+                if (typeof order.items === 'string') {
+                    try {
+                        items = JSON.parse(order.items);
+                    } catch (e) {
+                        items = [];
+                    }
+                } else if (Array.isArray(order.items)) {
+                    items = order.items;
+                }
+                
+                total = order.total || items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+                
+                const date = order.created_at || order.date || new Date().toISOString();
+                const formattedDate = new Date(date).toLocaleString('zh-CN');
+                
+                orderElement.innerHTML = `
+                    <div class="order-history-header">
+                        <div>
+                            <div style="font-weight: bold; color: var(--primary-color);">订单 #${order.id}</div>
+                            <div style="font-size: 14px; color: #aaa; margin-top: 5px;">下单时间: ${formattedDate}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 20px; font-weight: bold;">${total.toFixed(2)} 元</div>
+                            <div class="order-status ${order.status === 'processed' ? 'processed' : ''}" style="margin-top: 5px;">${order.status === 'processed' ? '已处理' : '待处理'}</div>
+                        </div>
+                    </div>
+                    <div class="order-history-items">
+                        <div style="font-weight: bold; color: #aaa; margin-bottom: 5px;">菜品详情:</div>
+                        ${items.map(item => `
+                            <div class="order-history-item-row">
+                                <div>${item.name} × ${item.quantity || 1}</div>
+                                <div>${((item.price || 0) * (item.quantity || 1)).toFixed(2)} 元</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                elements.orderHistoryContainer.appendChild(orderElement);
+            });
         }
 
-        function hideOrderForm() {
-            elements.orderFormModal.style.display = 'none';
-            elements.customerName.value = '';
-            elements.tableNumber.value = '';
-            elements.orderNotes.value = '';
-        }
-
-        async function confirmOrder() {
-            const orderData = {
-                items: state.cart.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    price: parseFloat(item.price),
-                    quantity: item.quantity
-                })),
-                total: state.cart.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0),
-                customerName: elements.customerName.value.trim(),
-                tableNumber: elements.tableNumber.value.trim(),
-                notes: elements.orderNotes.value.trim()
+        // 提交订单
+        async function submitOrder() {
+            if (state.cart.length === 0) {
+                showNotification('购物车是空的，无法提交订单', 'warning');
+                return;
+            }
+            
+            showLoading('正在提交订单...');
+            
+            const orderId = Date.now();
+            const now = new Date();
+            
+            const order = {
+                order_number: `ORDER-${orderId}`,
+                items: JSON.parse(JSON.stringify(state.cart)),
+                total: state.cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+                status: 'pending',
+                created_at: now.toISOString(),
+                date: `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
             };
             
-            const result = await submitOrder(orderData);
-            
-            if (result.success) {
+            try {
+                // 保存到云端
+                if (state.supabaseClient && state.isOnline) {
+                    const { data, error } = await state.supabaseClient
+                        .from('orders')
+                        .insert([order])
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    // 使用返回的数据（包含数据库生成的ID）
+                    if (data && data[0]) {
+                        order.id = data[0].id;
+                    }
+                }
+                
+                // 保存到本地
+                const orders = getLocalOrders();
+                orders.push({ id: orderId, ...order });
+                saveOrdersToLocal(orders);
+                
                 // 清空购物车
                 state.cart = [];
                 updateCartDisplay();
@@ -2529,207 +3545,433 @@
                 // 切换到订单历史标签页
                 switchCartTab('history');
                 
-                // 隐藏订单表单
-                hideOrderForm();
+                showNotification(`订单提交成功！订单号: ${order.order_number}`, 'success');
                 
-                // 清空未读订单计数
-                state.unreadOrders = 0;
-                updateOrderBadges();
+                // 如果管理员在看订单页面，刷新订单列表
+                if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
+                    await loadOrders();
+                }
+                
+            } catch (error) {
+                console.error('提交订单失败:', error);
+                
+                // 即使云端提交失败，也保存到本地
+                const orders = getLocalOrders();
+                orders.push({ id: orderId, ...order });
+                saveOrdersToLocal(orders);
+                
+                showNotification(`订单已保存到本地，云端同步失败: ${error.message}`, 'warning');
+                
+            } finally {
+                hideLoading();
             }
         }
 
-        function adminLogin() {
-            const password = elements.adminPassword.value;
+        // 初始化二维码
+        function initQrCode() {
+            updateCustomerUrlDisplay();
+            generateCustomerQrCode();
+            setTimeout(adjustQrCodeForScreen, 100);
+        }
+
+        // 更新顾客端网址显示
+        function updateCustomerUrlDisplay() {
+            const url = ORDER_URL;
+            if (elements.customerOrderUrl) {
+                elements.customerOrderUrl.textContent = url;
+            }
+        }
+
+        // 根据屏幕调整二维码
+        function adjustQrCodeForScreen() {
+            const isPortrait = window.innerHeight > window.innerWidth;
             
-            if (password === 'pixel123') {
-                state.adminLoggedIn = true;
-                elements.adminLogin.style.display = 'none';
-                elements.adminPanel.style.display = 'block';
-                elements.adminPassword.value = '';
-                
-                // 加载管理页面
-                loadAdminItems();
-                
-                // 开始监听订单变化
-                setupOrdersRealtime();
-                
-                // 重置未读计数
-                state.unreadOrders = 0;
-                updateOrderBadges();
-                
-                showNotification('管理员登录成功');
+            if (isPortrait) {
+                console.log("竖屏模式，调整二维码显示");
             } else {
-                showNotification('密码错误，请重试');
-                elements.adminPassword.value = '';
-                elements.adminPassword.focus();
+                console.log("横屏模式，恢复二维码显示");
+            }
+            
+            if (state.currentPage === 'menu' && state.qrCodeGenerated) {
+                generateCustomerQrCode();
             }
         }
 
-        function adminLogout() {
-            state.adminLoggedIn = false;
-            elements.adminLogin.style.display = 'block';
-            elements.adminPanel.style.display = 'none';
-            elements.ordersSection.style.display = 'none';
-            elements.itemFormSection.style.display = 'block';
-            elements.qrcodeSection.style.display = 'none';
+        // 生成顾客端二维码
+        function generateCustomerQrCode() {
+            const url = ORDER_URL;
+            updateCustomerUrlDisplay();
             
-            // 停止监听订单变化
-            if (ordersSubscription) {
-                supabase.removeChannel(ordersSubscription);
-                ordersSubscription = null;
+            elements.customerQrCode.innerHTML = '';
+            
+            try {
+                if (state.qrcodeInstance) {
+                    state.qrcodeInstance.clear();
+                }
+                
+                const tempDiv = document.createElement('div');
+                
+                state.qrcodeInstance = new QRCode(tempDiv, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                setTimeout(() => {
+                    const canvas = tempDiv.querySelector('canvas');
+                    if (canvas) {
+                        const dataURL = canvas.toDataURL('image/png');
+                        const img = document.createElement('img');
+                        img.src = dataURL;
+                        img.alt = '点餐二维码';
+                        img.className = 'qrcode-img';
+                        img.style.backgroundColor = 'white';
+                        img.style.webkitTouchCallout = 'default';
+                        img.style.webkitUserSelect = 'auto';
+                        img.style.userSelect = 'auto';
+                        img.style.webkitUserDrag = 'auto';
+                        img.style.pointerEvents = 'auto';
+                        img.style.cursor = 'default';
+                        
+                        elements.customerQrCode.appendChild(img);
+                    } else {
+                        elements.customerQrCode.innerHTML = `
+                            <div style="text-align: center; color: #666; padding: 40px;">
+                                <p>二维码生成失败，请刷新重试</p>
+                            </div>
+                        `;
+                    }
+                }, 100);
+                
+                state.qrCodeGenerated = true;
+                
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                elements.customerQrCode.innerHTML = `
+                    <div class="qrcode-error">
+                        <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
+                        <p>错误信息: ${error.message}</p>
+                        <button onclick="generateCustomerQrCode()" class="pixel-button" style="margin-top: 10px;">
+                            <i class="fas fa-redo"></i> 重试
+                        </button>
+                    </div>
+                `;
+                state.qrCodeGenerated = false;
             }
-            
-            showNotification('已退出管理员账号');
         }
 
-        function loadAdminPage() {
-            if (state.adminLoggedIn) {
-                elements.adminLogin.style.display = 'none';
-                elements.adminPanel.style.display = 'block';
-                loadAdminItems();
-            } else {
-                elements.adminLogin.style.display = 'block';
-                elements.adminPanel.style.display = 'none';
+        // 刷新顾客端二维码
+        function refreshCustomerQrCode() {
+            generateCustomerQrCode();
+            showNotification('二维码已刷新', 'info');
+        }
+
+        // 生成管理端二维码
+        function generateAdminQrCode() {
+            const url = elements.qrCodeUrl.value.trim() || ORDER_URL;
+            
+            elements.adminQrCode.innerHTML = '';
+            
+            try {
+                if (state.adminQrcodeInstance) {
+                    state.adminQrcodeInstance.clear();
+                }
+                
+                const tempDiv = document.createElement('div');
+                
+                state.adminQrcodeInstance = new QRCode(tempDiv, {
+                    text: url,
+                    width: 250,
+                    height: 250,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                setTimeout(() => {
+                    const canvas = tempDiv.querySelector('canvas');
+                    if (canvas) {
+                        const dataURL = canvas.toDataURL('image/png');
+                        const img = document.createElement('img');
+                        img.src = dataURL;
+                        img.alt = '点餐二维码';
+                        img.className = 'admin-qrcode-img';
+                        img.style.backgroundColor = 'white';
+                        img.style.webkitTouchCallout = 'default';
+                        img.style.webkitUserSelect = 'auto';
+                        img.style.userSelect = 'auto';
+                        img.style.webkitUserDrag = 'auto';
+                        img.style.pointerEvents = 'auto';
+                        img.style.cursor = 'default';
+                        
+                        elements.adminQrCode.appendChild(img);
+                    } else {
+                        elements.adminQrCode.innerHTML = `
+                            <div style="text-align: center; color: #666; padding: 40px;">
+                                <p>二维码生成失败，请刷新重试</p>
+                            </div>
+                        `;
+                    }
+                }, 100);
+                
+                state.qrCodeGenerated = true;
+                
+                setTimeout(() => {
+                    generateCustomerQrCode();
+                }, 200);
+                
+                showNotification('二维码生成成功！已同步到顾客页面', 'success');
+                
+            } catch (error) {
+                console.error('生成二维码失败:', error);
+                elements.adminQrCode.innerHTML = `
+                    <div class="qrcode-error">
+                        <p><i class="fas fa-exclamation-triangle"></i> 二维码生成失败</p>
+                        <p>错误信息: ${error.message}</p>
+                        <button onclick="generateAdminQrCode()" class="pixel-button" style="margin-top: 10px;">
+                            <i class="fas fa-redo"></i> 重试
+                        </button>
+                    </div>
+                `;
+                state.qrCodeGenerated = false;
             }
         }
 
-        function showAddItemForm() {
-            elements.itemForm.reset();
-            elements.itemId.value = '';
-            elements.formTitle.textContent = '新增菜品';
-            elements.imagePreview.style.display = 'none';
-            elements.imageUrl.value = '';
+        // 处理二维码上传
+        function handleQrCodeUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
             
-            elements.itemFormSection.style.display = 'block';
-            elements.ordersSection.style.display = 'none';
-            elements.qrcodeSection.style.display = 'none';
-            
-            elements.addItemBtn.classList.remove('secondary');
-            elements.addItemBtn.classList.add('active');
-            elements.viewOrdersBtn.classList.remove('active');
-            elements.viewOrdersBtn.classList.add('secondary');
-            elements.generateQrCodeBtn.classList.remove('active');
-            elements.generateQrCodeBtn.classList.add('secondary');
-            
-            state.editingItemId = null;
-        }
-
-        function updateImagePreviewFromUrl() {
-            const url = elements.imageUrl.value;
-            if (url) {
-                elements.imagePreview.src = url;
-                elements.imagePreview.style.display = 'block';
-            } else {
-                elements.imagePreview.style.display = 'none';
-            }
-        }
-
-        async function saveMenuItem(event) {
-            event.preventDefault();
-            
-            const name = elements.itemName.value.trim();
-            const category = elements.itemCategory.value;
-            const price = parseFloat(elements.itemPrice.value);
-            const description = elements.itemDescription.value.trim();
-            const imageUrl = elements.imageUrl.value.trim();
-            
-            if (!name || !category || isNaN(price)) {
-                showNotification('请填写完整的菜品信息');
+            if (!file.type.match('image.*')) {
+                showNotification('请选择图片文件', 'warning');
                 return;
             }
             
-            const itemData = {
-                name,
-                category,
-                price,
-                description,
-                image_url: imageUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                state.uploadedQrCodeImage = e.target.result;
+                
+                elements.uploadedQrCodeImage.src = state.uploadedQrCodeImage;
+                elements.uploadedQrCodePreview.style.display = 'block';
+                elements.uploadQrCodeActions.style.display = 'flex';
+                
+                showNotification('二维码图片已加载，点击"使用此二维码"按钮应用', 'info');
             };
             
-            if (state.editingItemId) {
-                // 更新现有菜品
-                const result = await updateMenuItem(state.editingItemId, itemData);
-                if (result.success) {
-                    loadAdminItems();
-                    loadMenuItems();
-                    cancelEdit();
-                }
-            } else {
-                // 新增菜品
-                const result = await addMenuItem(itemData);
-                if (result.success) {
-                    loadAdminItems();
-                    loadMenuItems();
-                    cancelEdit();
-                }
+            reader.readAsDataURL(file);
+        }
+
+        // 使用上传的二维码
+        function useUploadedQrCode() {
+            if (!state.uploadedQrCodeImage) {
+                showNotification('请先上传二维码图片', 'warning');
+                return;
             }
-        }
-
-        function cancelEdit() {
-            elements.itemForm.reset();
-            elements.imagePreview.style.display = 'none';
-            elements.imageUrl.value = '';
-            state.editingItemId = null;
-        }
-
-        function toggleOrdersView() {
-            if (elements.ordersSection.style.display === 'none') {
-                elements.ordersSection.style.display = 'block';
-                elements.itemFormSection.style.display = 'none';
-                elements.qrcodeSection.style.display = 'none';
-                
-                elements.addItemBtn.classList.remove('active');
-                elements.addItemBtn.classList.add('secondary');
-                elements.viewOrdersBtn.classList.remove('secondary');
-                elements.viewOrdersBtn.classList.add('active');
-                elements.generateQrCodeBtn.classList.remove('active');
-                elements.generateQrCodeBtn.classList.add('secondary');
-                
-                // 重置未读计数
-                state.unreadOrders = 0;
-                updateOrderBadges();
-                
-                loadOrders();
-                
-                elements.ordersSection.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                elements.ordersSection.style.display = 'none';
-                elements.itemFormSection.style.display = 'block';
-                
-                elements.addItemBtn.classList.remove('secondary');
-                elements.addItemBtn.classList.add('active');
-                elements.viewOrdersBtn.classList.remove('active');
-                elements.viewOrdersBtn.classList.add('secondary');
+            
+            elements.customerQrCode.innerHTML = `
+                <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="qrcode-img">
+            `;
+            
+            if (elements.qrcodeSection.style.display !== 'none') {
+                elements.adminQrCode.innerHTML = `
+                    <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="admin-qrcode-img">
+                `;
             }
+            
+            showNotification('二维码已应用', 'success');
         }
 
+        // 清除上传的二维码
+        function clearUploadedQrCode() {
+            state.uploadedQrCodeImage = null;
+            elements.uploadedQrCodePreview.style.display = 'none';
+            elements.uploadQrCodeActions.style.display = 'none';
+            elements.qrcodeUpload.value = '';
+            
+            generateCustomerQrCode();
+            showNotification('已清除上传的二维码', 'info');
+        }
+
+        // 显示二维码生成器
         function showQrCodeGenerator() {
-            elements.qrcodeSection.style.display = 'block';
             elements.itemFormSection.style.display = 'none';
             elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'block';
+            elements.configSection.style.display = 'none';
             
-            elements.addItemBtn.classList.remove('active');
-            elements.addItemBtn.classList.add('secondary');
-            elements.viewOrdersBtn.classList.remove('active');
-            elements.viewOrdersBtn.classList.add('secondary');
-            elements.generateQrCodeBtn.classList.remove('secondary');
-            elements.generateQrCodeBtn.classList.add('active');
+            updateAdminButtonState('qrcode');
             
-            generateAdminQrCode();
+            if (state.uploadedQrCodeImage) {
+                elements.adminQrCode.innerHTML = `
+                    <img src="${state.uploadedQrCodeImage}" alt="点餐二维码" class="admin-qrcode-img">
+                `;
+            } else if (!state.qrCodeGenerated) {
+                generateAdminQrCode();
+            }
             
             elements.qrcodeSection.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function showNotification(message) {
-            elements.notificationText.textContent = message;
-            elements.notification.style.display = 'block';
+        // 保存二维码图片
+        function saveQrCodeImage() {
+            const img = elements.customerQrCode.querySelector('img');
             
-            setTimeout(() => {
-                elements.notification.style.display = 'none';
-            }, 3000);
+            if (img && img.src) {
+                const link = document.createElement('a');
+                link.download = '像素食堂点餐二维码.png';
+                link.href = img.src;
+                link.click();
+                
+                showNotification('二维码图片已保存', 'success');
+            } else {
+                showNotification('请先生成二维码', 'warning');
+            }
         }
 
-        // ==================== 启动应用 ====================
+        // 下载管理端二维码图片
+        function downloadQrCodeImage() {
+            const img = elements.adminQrCode.querySelector('img');
+            
+            if (img && img.src) {
+                const link = document.createElement('a');
+                link.download = '像素食堂点餐二维码.png';
+                link.href = img.src;
+                link.click();
+                
+                showNotification('二维码图片已下载', 'success');
+            } else {
+                showNotification('请先生成二维码', 'warning');
+            }
+        }
+
+        // 打印二维码
+        function printQrCode() {
+            const img = elements.adminQrCode.querySelector('img');
+            
+            if (!img) {
+                showNotification('请先生成二维码', 'warning');
+                return;
+            }
+            
+            try {
+                const printWindow = window.open('', '_blank');
+                const imgData = img.src;
+                const url = elements.qrCodeUrl.value;
+                
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>打印二维码 - 像素食堂</title>
+                        <style>
+                            body { 
+                                font-family: Arial, sans-serif; 
+                                text-align: center; 
+                                padding: 40px 20px;
+                                margin: 0;
+                            }
+                            h1 { 
+                                color: #333; 
+                                margin-bottom: 20px;
+                                font-size: 28px;
+                            }
+                            .instructions { 
+                                max-width: 600px; 
+                                margin: 20px auto; 
+                                text-align: left;
+                                background-color: #f5f5f5;
+                                padding: 20px;
+                                border-radius: 8px;
+                                border-left: 5px solid #d32f2f;
+                            }
+                            .qr-container { 
+                                margin: 30px auto; 
+                                padding: 20px; 
+                                display: inline-block;
+                                border: 2px solid #333;
+                                background-color: white;
+                            }
+                            .url { 
+                                margin-top: 20px; 
+                                font-size: 16px; 
+                                color: #666;
+                                word-break: break-all;
+                                max-width: 600px;
+                                margin-left: auto;
+                                margin-right: auto;
+                                padding: 15px;
+                                background-color: #f9f9f9;
+                                border-radius: 5px;
+                            }
+                            .print-info {
+                                margin-top: 30px;
+                                font-size: 14px;
+                                color: #888;
+                                border-top: 1px dashed #ccc;
+                                padding-top: 20px;
+                                max-width: 600px;
+                                margin-left: auto;
+                                margin-right: auto;
+                            }
+                            @media print {
+                                .no-print { display: none; }
+                                .qr-container { border: none; }
+                                body { padding: 20px; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>像素食堂 - 点餐二维码</h1>
+                        <div class="instructions">
+                            <p style="font-weight: bold; margin-bottom: 10px;">使用说明：</p>
+                            <ol style="margin: 0; padding-left: 20px;">
+                                <li style="margin-bottom: 8px;">将此二维码打印出来张贴在餐厅显眼位置</li>
+                                <li style="margin-bottom: 8px;">顾客使用手机扫码即可点餐</li>
+                                <li style="margin-bottom: 8px;">建议打印尺寸不小于10cm × 10cm</li>
+                                <li>确保二维码清晰可读</li>
+                            </ol>
+                        </div>
+                        <div class="qr-container">
+                            <img src="${imgData}" alt="点餐二维码" style="width: 300px; height: 300px; background-color: white;">
+                        </div>
+                        <div class="url">
+                            <p style="margin: 0 0 10px 0; font-weight: bold;">点餐网址：</p>
+                            <p style="margin: 0;">${url}</p>
+                        </div>
+                        <div class="print-info">
+                            <p style="margin: 0;">打印时间：${new Date().toLocaleString()}</p>
+                            <p style="margin: 5px 0 0 0;">像素食堂点餐系统</p>
+                        </div>
+                        <div class="no-print" style="margin-top: 40px;">
+                            <button onclick="window.print()" style="padding: 12px 24px; font-size: 16px; background-color: #d32f2f; color: white; border: none; cursor: pointer; border-radius: 4px;">
+                                <i class="fas fa-print"></i> 打印二维码
+                            </button>
+                            <button onclick="window.close()" style="padding: 12px 24px; font-size: 16px; background-color: #666; color: white; border: none; cursor: pointer; margin-left: 10px; border-radius: 4px;">
+                                <i class="fas fa-times"></i> 关闭窗口
+                            </button>
+                        </div>
+                        <script>
+                            window.onload = function() {
+                                setTimeout(function() {
+                                    window.print();
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+            } catch (error) {
+                console.error('打印二维码失败:', error);
+                showNotification('打印失败，请重试', 'error');
+            }
+        }
+
+        // 初始化应用
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
