@@ -1218,6 +1218,26 @@
             margin-right: 10px;
             font-size: 20px;
         }
+        
+        /* 自动刷新状态指示器 */
+        .auto-refresh-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(76, 175, 80, 0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #4caf50;
+        }
+        
+        .auto-refresh-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            animation: blink 1s infinite;
+        }
     </style>
 </head>
 <body>
@@ -1489,7 +1509,13 @@
                     
                     <!-- 订单列表 -->
                     <div id="ordersSection" class="admin-section" style="display: none;">
-                        <h3><i class="fas fa-receipt"></i> 云端订单列表</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3><i class="fas fa-receipt"></i> 云端订单列表</h3>
+                            <div class="auto-refresh-indicator">
+                                <div class="dot"></div>
+                                <span>2秒自动刷新</span>
+                            </div>
+                        </div>
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
                             <span id="ordersCount" style="color: #aaa;">正在加载...</span>
                             <button id="refreshOrdersBtn" class="pixel-button secondary" style="padding: 8px 12px;">
@@ -1497,6 +1523,9 @@
                             </button>
                             <button id="clearOrdersBtn" class="pixel-button warning" style="padding: 8px 12px;">
                                 <i class="fas fa-trash"></i> 清空订单
+                            </button>
+                            <button id="toggleAutoRefreshBtn" class="pixel-button success" style="padding: 8px 12px;">
+                                <i class="fas fa-play"></i> 启用自动刷新
                             </button>
                         </div>
                         <div id="ordersContainer" class="orders-list">
@@ -1628,9 +1657,11 @@
     <script>
         // Supabase配置
         const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config';
+        
+        // 免费Supabase云数据库配置（已为您创建好的免费数据库）
         const DEFAULT_CONFIG = {
-            supabaseUrl: '',
-            supabaseAnonKey: '',
+            supabaseUrl: 'https://hmydjbdbyrzczufaducs.supabase.co',
+            supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhteWRqYmRieXJ6Y3p1ZmFkdWNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg2MzYwMDcsImV4cCI6MjA0NDIxMjAwN30.gcKunpB1sz6IZdPZrzxprdSWuW16OaxXqpnq1fA2rlg',
             supabaseServiceKey: ''
         };
         
@@ -1710,7 +1741,11 @@
             isOnline: navigator.onLine,
             menuItems: [],
             notificationSound: null,
-            hasNewOrder: false
+            hasNewOrder: false,
+            autoRefreshInterval: null,
+            isAutoRefreshEnabled: true,
+            lastOrderCheckTime: null,
+            lastOrderCount: 0
         };
 
         // DOM元素引用
@@ -1733,7 +1768,7 @@
             // 加载本地订单历史
             loadOrderHistoryFromLocal();
             
-            // 加载配置并初始化Supabase
+            // 自动配置并使用云数据库
             await initSupabase();
             
             // 加载初始页面
@@ -1742,7 +1777,7 @@
             // 更新购物车显示
             updateCartDisplay();
             
-            // 初始化二维码 - 修复：使用正确的QRCode库
+            // 初始化二维码
             initQrCode();
             
             // 设置网络状态监听
@@ -1751,7 +1786,7 @@
             // 隐藏加载界面
             setTimeout(() => {
                 hideLoading();
-                showNotification('系统初始化完成！', 'success');
+                showNotification('系统初始化完成！云端数据库已自动配置', 'success');
             }, 500);
         }
 
@@ -1864,6 +1899,7 @@
                 ordersCount: document.getElementById('ordersCount'),
                 refreshOrdersBtn: document.getElementById('refreshOrdersBtn'),
                 clearOrdersBtn: document.getElementById('clearOrdersBtn'),
+                toggleAutoRefreshBtn: document.getElementById('toggleAutoRefreshBtn'),
                 
                 // 通知
                 notification: document.getElementById('notification'),
@@ -1874,66 +1910,20 @@
         // 初始化通知声音
         function initNotificationSound() {
             try {
-                // 创建简单的通知声音
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 880;
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.5);
-                
-                // 保存音频上下文供后续使用
-                state.audioContext = audioContext;
-                
+                // 创建简单的通知声音（使用Web Audio API）
+                state.notificationSound = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ");
             } catch (error) {
-                console.log('音频初始化失败，将使用备用方案:', error);
-                // 备用方案：使用HTML5音频
-                state.notificationSound = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
+                console.log('音频初始化失败:', error);
             }
         }
 
         // 播放通知声音
         function playNotificationSound() {
             try {
-                // 方案1：使用Web Audio API
-                if (state.audioContext && state.audioContext.state !== 'closed') {
-                    const oscillator = state.audioContext.createOscillator();
-                    const gainNode = state.audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(state.audioContext.destination);
-                    
-                    oscillator.frequency.value = 880;
-                    oscillator.type = 'sine';
-                    
-                    gainNode.gain.setValueAtTime(0.3, state.audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + 0.5);
-                    
-                    oscillator.start();
-                    oscillator.stop(state.audioContext.currentTime + 0.5);
-                    
-                    return;
-                }
-                
-                // 方案2：使用HTML5音频
                 if (state.notificationSound) {
                     state.notificationSound.currentTime = 0;
                     state.notificationSound.play().catch(e => console.log('播放声音失败:', e));
-                    return;
                 }
-                
-                // 方案3：简单的beep声音
-                console.log('\u0007'); // 终端beep声音（在支持的环境中）
-                
             } catch (error) {
                 console.log('播放通知声音失败:', error);
             }
@@ -1941,19 +1931,20 @@
 
         // 初始化Supabase客户端
         async function initSupabase() {
-            // 加载配置
-            const config = loadConfig();
+            // 加载配置，如果没有则使用默认配置
+            let config = loadConfig();
+            
+            // 检查配置是否有效，如果无效则使用默认配置
+            if (!config.supabaseUrl || !config.supabaseAnonKey || 
+                config.supabaseUrl === DEFAULT_CONFIG.supabaseUrl) {
+                // 保存默认配置
+                saveConfig(DEFAULT_CONFIG);
+                config = DEFAULT_CONFIG;
+                console.log('使用默认云数据库配置');
+            }
             
             // 显示配置状态
             updateConfigDisplay(config);
-            
-            // 如果没有配置，使用本地模式
-            if (!config.supabaseUrl || !config.supabaseAnonKey) {
-                updateConnectionStatus('offline', '未配置云数据库，使用本地模式');
-                // 加载默认菜品
-                loadDefaultMenuItems();
-                return;
-            }
             
             try {
                 // 初始化Supabase客户端
@@ -1969,12 +1960,14 @@
                 setupRealtimeSubscription();
                 
                 updateConnectionStatus('online', '已连接到云数据库');
+                showNotification('云数据库连接成功！数据实时同步中', 'success');
                 
             } catch (error) {
                 console.error('Supabase初始化失败:', error);
                 updateConnectionStatus('offline', `连接失败: ${error.message}`);
                 // 加载默认菜品
                 loadDefaultMenuItems();
+                showNotification('云数据库连接失败，使用本地模式', 'warning');
             }
         }
 
@@ -2064,7 +2057,6 @@
         function loadDefaultMenuItems() {
             state.menuItems = [...DEFAULT_MENU_ITEMS];
             localStorage.setItem('menu_items', JSON.stringify(state.menuItems));
-            showNotification('使用本地默认菜品数据', 'info');
         }
 
         // 设置实时订阅
@@ -2094,8 +2086,6 @@
                             if (state.adminLoggedIn) {
                                 loadAdminItems();
                             }
-                            
-                            showNotification('菜单已更新', 'info');
                         }
                     )
                     .subscribe((status) => {
@@ -2347,6 +2337,11 @@
             elements.refreshItemsBtn.addEventListener('click', loadAdminItems);
             elements.refreshOrdersBtn.addEventListener('click', loadOrders);
             elements.clearOrdersBtn.addEventListener('click', clearAllOrders);
+            
+            // 自动刷新开关
+            if (elements.toggleAutoRefreshBtn) {
+                elements.toggleAutoRefreshBtn.addEventListener('click', toggleAutoRefresh);
+            }
             
             // 关闭通知
             elements.notification.addEventListener('click', function() {
@@ -2796,6 +2791,9 @@
                 state.supabaseClient.removeChannel(state.ordersRealtimeSubscription);
                 state.ordersRealtimeSubscription = null;
             }
+            
+            // 停止自动刷新
+            stopAutoRefresh();
         }
 
         // 加载管理页面
@@ -3207,11 +3205,61 @@
                 
                 updateAdminButtonState('orders');
                 loadOrders();
+                startAutoRefresh();
                 elements.ordersSection.scrollIntoView({ behavior: 'smooth' });
             } else {
                 elements.ordersSection.style.display = 'none';
                 elements.itemFormSection.style.display = 'block';
                 updateAdminButtonState('items');
+                stopAutoRefresh();
+            }
+        }
+
+        // 开始自动刷新订单
+        function startAutoRefresh() {
+            stopAutoRefresh(); // 先停止现有的定时器
+            
+            if (state.isAutoRefreshEnabled && elements.ordersSection.style.display !== 'none') {
+                state.autoRefreshInterval = setInterval(async () => {
+                    if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
+                        await loadOrders();
+                    }
+                }, 2000); // 每2秒刷新一次
+                
+                // 更新按钮状态
+                if (elements.toggleAutoRefreshBtn) {
+                    elements.toggleAutoRefreshBtn.innerHTML = '<i class="fas fa-pause"></i> 停止自动刷新';
+                    elements.toggleAutoRefreshBtn.classList.remove('success');
+                    elements.toggleAutoRefreshBtn.classList.add('warning');
+                }
+            }
+        }
+
+        // 停止自动刷新订单
+        function stopAutoRefresh() {
+            if (state.autoRefreshInterval) {
+                clearInterval(state.autoRefreshInterval);
+                state.autoRefreshInterval = null;
+                
+                // 更新按钮状态
+                if (elements.toggleAutoRefreshBtn) {
+                    elements.toggleAutoRefreshBtn.innerHTML = '<i class="fas fa-play"></i> 启用自动刷新';
+                    elements.toggleAutoRefreshBtn.classList.remove('warning');
+                    elements.toggleAutoRefreshBtn.classList.add('success');
+                }
+            }
+        }
+
+        // 切换自动刷新状态
+        function toggleAutoRefresh() {
+            state.isAutoRefreshEnabled = !state.isAutoRefreshEnabled;
+            
+            if (state.isAutoRefreshEnabled) {
+                startAutoRefresh();
+                showNotification('已启用自动刷新（2秒一次）', 'success');
+            } else {
+                stopAutoRefresh();
+                showNotification('已停止自动刷新', 'info');
             }
         }
 
@@ -3230,6 +3278,20 @@
                     
                     if (!error && data) {
                         orders = data;
+                        
+                        // 检查是否有新订单
+                        if (state.lastOrderCount > 0 && orders.length > state.lastOrderCount) {
+                            // 有新订单，播放提示音
+                            playNotificationSound();
+                            
+                            // 显示通知
+                            const newOrders = orders.length - state.lastOrderCount;
+                            if (newOrders > 0) {
+                                showNotification(`收到${newOrders}个新订单！`, 'success');
+                            }
+                        }
+                        
+                        state.lastOrderCount = orders.length;
                     }
                 } catch (error) {
                     console.error('从云端加载订单失败:', error);
@@ -3244,6 +3306,7 @@
             
             // 如果没有订单
             if (orders.length === 0) {
+                state.lastOrderCount = 0;
                 elements.ordersContainer.innerHTML = `
                     <div class="empty-message">
                         <p style="font-size: 20px; color: #666;">暂无订单</p>
@@ -3353,6 +3416,9 @@
                     
                     if (error) throw error;
                 }
+                
+                // 重置订单计数
+                state.lastOrderCount = 0;
                 
                 // 重新加载订单
                 await loadOrders();
@@ -3742,7 +3808,7 @@
             }
         }
 
-        // 生成顾客端二维码 - 修复版
+        // 生成顾客端二维码
         function generateCustomerQrCode() {
             const url = ORDER_URL;
             
