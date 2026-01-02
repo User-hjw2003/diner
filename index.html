@@ -4280,7 +4280,7 @@
             }
         }
 
-        // 加载订单 - 优化版本
+        // 加载订单 - 修复版本：正确处理字段映射
         async function loadOrders(forceRefresh = false) {
             console.log('加载订单...', forceRefresh ? '(强制刷新)' : '');
             
@@ -4335,10 +4335,10 @@
                 return;
             }
             
-            // 按时间倒序排列
-            orders.sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date));
+            // 按时间倒序排列（使用created_at字段）
+            orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             
-            // 渲染订单
+            // 渲染订单 - 修复：统一使用created_at字段
             orders.forEach(order => {
                 const orderElement = document.createElement('div');
                 orderElement.className = 'order-item pixel-border-white';
@@ -4360,7 +4360,8 @@
                 
                 total = order.total || items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
                 
-                const date = order.created_at || order.date || new Date().toISOString();
+                // 修复：统一使用created_at字段，不要引用不存在的date字段
+                const date = order.created_at || new Date().toISOString();
                 const formattedDate = new Date(date).toLocaleString('zh-CN');
                 
                 orderElement.innerHTML = `
@@ -4457,7 +4458,7 @@
             }
         }
 
-        // 标记订单为已处理 - 优化版本：快速更新UI，异步更新云端，同步更新顾客订单历史
+        // 标记订单为已处理 - 修复版本：确保状态同步到所有设备
         async function markOrderAsProcessed(orderId) {
             // 立即更新UI状态（不显示加载界面）
             const orderElement = document.querySelector(`.order-item[data-order-id="${orderId}"]`);
@@ -4504,6 +4505,8 @@
             setTimeout(async () => {
                 try {
                     if (state.supabaseClient && state.isOnline) {
+                        console.log(`更新云端订单状态: ${orderId} -> processed`);
+                        
                         // 更新云端订单
                         const { error } = await state.supabaseClient
                             .from('orders')
@@ -4746,7 +4749,7 @@
             }
         }
 
-        // 加载订单历史
+        // 加载订单历史 - 修复版本：正确处理字段映射
         function loadOrderHistory() {
             elements.orderHistoryContainer.innerHTML = '';
             
@@ -4760,9 +4763,9 @@
                 return;
             }
             
-            // 按时间倒序排列
+            // 按时间倒序排列（使用created_at字段）
             const sortedHistory = [...state.orderHistory].sort((a, b) => 
-                new Date(b.date || b.created_at) - new Date(a.date || a.created_at)
+                new Date(b.created_at) - new Date(a.created_at)
             );
             
             sortedHistory.forEach(order => {
@@ -4786,7 +4789,8 @@
                 
                 total = order.total || items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
                 
-                const date = order.date || order.created_at || new Date().toISOString();
+                // 修复：统一使用created_at字段
+                const date = order.created_at || new Date().toISOString();
                 const formattedDate = new Date(date).toLocaleString('zh-CN');
                 
                 historyElement.innerHTML = `
@@ -4816,7 +4820,7 @@
             });
         }
 
-        // 提交订单 - 优化版本
+        // 提交订单 - 修复版本：确保使用正确的字段
         async function submitOrder() {
             if (state.cart.length === 0) {
                 showNotification('购物车是空的，无法提交订单', 'warning');
@@ -4833,8 +4837,7 @@
                 items: JSON.parse(JSON.stringify(state.cart)),
                 total: state.cart.reduce((total, item) => total + (item.price * item.quantity), 0),
                 status: 'pending',
-                created_at: now.toISOString(),
-                date: `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+                created_at: now.toISOString()
             };
             
             try {
