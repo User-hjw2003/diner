@@ -4894,88 +4894,82 @@ function loadOrderHistory() {
 }
 
         // 提交订单 - 优化版本
-async function submitOrder() {
-    if (state.cart.length === 0) {
-        showNotification('购物车是空的，无法提交订单', 'warning');
-        return;
-    }
-    
-    showLoading('正在提交订单...');
-    
-    const orderId = Date.now();
-    const now = new Date();
-    
-    const order = {
-        order_number: `ORDER-${orderId}`,
-        items: JSON.parse(JSON.stringify(state.cart)),
-        total: state.cart.reduce((total, item) => total + (item.price * item.quantity), 0),
-        status: 'pending',
-        created_at: now.toISOString(),
-        date: `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-    };
-    
-    try {
-        // 保存到云端
-        if (state.supabaseClient && state.isOnline) {
-            const { data, error } = await state.supabaseClient
-                .from('orders')
-                .insert([{
-                    order_number: order.order_number,
-                    items: order.items,
-                    total: order.total,
-                    status: order.status,
-                    date: order.date
-                }])
-                .select();
+        async function submitOrder() {
+            if (state.cart.length === 0) {
+                showNotification('购物车是空的，无法提交订单', 'warning');
+                return;
+            }
             
-            if (error) throw error;
+            showLoading('正在提交订单...');
             
-            // 使用返回的数据（包含数据库生成的ID）
-            if (data && data[0]) {
-                order.id = data[0].id;
+            const orderId = Date.now();
+            const now = new Date();
+            
+            const order = {
+                order_number: `ORDER-${orderId}`,
+                items: JSON.parse(JSON.stringify(state.cart)),
+                total: state.cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+                status: 'pending',
+                created_at: now.toISOString(),
+                date: `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+            };
+            
+            try {
+                // 保存到云端
+                if (state.supabaseClient && state.isOnline) {
+                    const { data, error } = await state.supabaseClient
+                        .from('orders')
+                        .insert([order])
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    // 使用返回的数据（包含数据库生成的ID）
+                    if (data && data[0]) {
+                        order.id = data[0].id;
+                    }
+                }
+                
+                // 添加到本地订单历史
+                state.orderHistory.push(order);
+                saveOrderHistoryToLocal();
+                
+                // 清空购物车
+                state.cart = [];
+                localStorage.removeItem('cart');
+                updateCartDisplay();
+                
+                // 切换到订单历史标签页
+                switchCartTab('history');
+                
+                showNotification(`订单提交成功！订单号: ${order.order_number}`, 'success');
+                
+                // 如果管理员在看订单页面，刷新订单列表
+                if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
+                    await loadOrders();
+                }
+                
+            } catch (error) {
+                console.error('提交订单失败:', error);
+                
+                // 即使云端提交失败，也保存到本地
+                state.orderHistory.push(order);
+                saveOrderHistoryToLocal();
+                
+                // 清空购物车
+                state.cart = [];
+                localStorage.removeItem('cart');
+                updateCartDisplay();
+                
+                // 切换到订单历史标签页
+                switchCartTab('history');
+                
+                showNotification(`订单已保存到本地，云端同步失败: ${error.message}`, 'warning');
+                
+            } finally {
+                hideLoading();
             }
         }
-        
-        // 添加到本地订单历史
-        state.orderHistory.push(order);
-        saveOrderHistoryToLocal();
-        
-        // 清空购物车
-        state.cart = [];
-        localStorage.removeItem('cart');
-        updateCartDisplay();
-        
-        // 切换到订单历史标签页
-        switchCartTab('history');
-        
-        showNotification(`订单提交成功！订单号: ${order.order_number}`, 'success');
-        
-        // 如果管理员在看订单页面，刷新订单列表
-        if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
-            await loadOrders();
-        }
-        
-    } catch (error) {
-        console.error('提交订单失败:', error);
-        
-        // 即使云端提交失败，也保存到本地
-        state.orderHistory.push(order);
-        saveOrderHistoryToLocal();
-        
-        // 清空购物车
-        state.cart = [];
-        localStorage.removeItem('cart');
-        updateCartDisplay();
-        
-        // 切换到订单历史标签页
-        switchCartTab('history');
-        
-        showNotification(`订单已保存到本地，云端同步失败: ${error.message}`, 'warning');
-        
-    } finally {
-        hideLoading();
-    }
-}
 
         // 初始化二维码
         function initQrCode() {
