@@ -2408,94 +2408,123 @@
             }
         }
 
-        // 设置实时订阅
-        function setupRealtimeSubscription() {
-            console.log('设置实时订阅...');
-            
-            if (!state.supabaseClient) {
-                console.warn('Supabase客户端未初始化，无法设置实时订阅');
-                return;
-            }
-            
-            // 订阅菜单项变化
-            try {
-                state.realtimeSubscription = state.supabaseClient
-                    .channel('menu_items_changes')
-                    .on(
-                        'postgres_changes',
-                        {
-                            event: '*',
-                            schema: 'public',
-                            table: 'menu_items'
-                        },
-                        (payload) => {
-                            console.log('菜单项变化:', payload);
-                            
-                            // 重新加载菜单
-                            loadMenuItems();
-                            
-                            // 如果管理员已登录且在管理页面，重新加载菜品列表
-                            if (state.adminLoggedIn) {
-                                loadAdminItems();
-                            }
-                        }
-                    )
-                    .subscribe((status) => {
-                        console.log('实时订阅状态:', status);
-                        
-                        if (status === 'SUBSCRIBED') {
-                            updateConnectionStatus('online', '实时同步已连接');
-                        } else if (status === 'CLOSED') {
-                            updateConnectionStatus('offline', '实时同步已断开');
-                        }
-                    });
+        // 设置实时订阅 - 添加订单状态变更监听
+function setupRealtimeSubscription() {
+    console.log('设置实时订阅...');
+    
+    if (!state.supabaseClient) {
+        console.warn('Supabase客户端未初始化，无法设置实时订阅');
+        return;
+    }
+    
+    // 订阅菜单项变化
+    try {
+        state.realtimeSubscription = state.supabaseClient
+            .channel('menu_items_changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'menu_items'
+                },
+                (payload) => {
+                    console.log('菜单项变化:', payload);
                     
-                console.log('菜单项实时订阅已设置');
-                
-            } catch (error) {
-                console.error('设置实时订阅失败:', error);
-            }
-            
-            // 订阅订单变化 - 只在管理后台显示时订阅
-            if (state.adminLoggedIn && !state.ordersRealtimeSubscription) {
-                try {
-                    state.ordersRealtimeSubscription = state.supabaseClient
-                        .channel('orders_changes')
-                        .on(
-                            'postgres_changes',
-                            {
-                                event: '*', // 订阅所有事件，包括INSERT和UPDATE
-                                schema: 'public',
-                                table: 'orders'
-                            },
-                            (payload) => {
-                                console.log('订单变化:', payload);
-                                
-                                if (payload.eventType === 'INSERT') {
-                                    // 新订单，播放提示音
-                                    playNotificationSound();
-                                    
-                                    // 显示新订单通知
-                                    showNewOrderNotification(payload.new);
-                                } else if (payload.eventType === 'UPDATE') {
-                                    // 订单更新，同步到本地订单历史
-                                    syncOrderHistoryFromCloud(payload.new);
-                                }
-                                
-                                // 重新加载订单列表
-                                if (elements.ordersSection.style.display !== 'none') {
-                                    loadOrders();
-                                }
-                            }
-                        )
-                        .subscribe();
-                        
-                    console.log('订单实时订阅已设置');
+                    // 重新加载菜单
+                    loadMenuItems();
                     
-                } catch (error) {
-                    console.error('设置订单实时订阅失败:', error);
+                    // 如果管理员已登录且在管理页面，重新加载菜品列表
+                    if (state.adminLoggedIn) {
+                        loadAdminItems();
+                    }
                 }
-            }
+            )
+            .subscribe((status) => {
+                console.log('实时订阅状态:', status);
+                
+                if (status === 'SUBSCRIBED') {
+                    updateConnectionStatus('online', '实时同步已连接');
+                } else if (status === 'CLOSED') {
+                    updateConnectionStatus('offline', '实时同步已断开');
+                }
+            });
+            
+        console.log('菜单项实时订阅已设置');
+        
+    } catch (error) {
+        console.error('设置实时订阅失败:', error);
+    }
+    
+    // 订阅订单变化 - 只在管理后台显示时订阅
+    if (!state.ordersRealtimeSubscription) {
+        try {
+            state.ordersRealtimeSubscription = state.supabaseClient
+                .channel('orders_changes')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*', // 订阅所有事件，包括INSERT和UPDATE
+                        schema: 'public',
+                        table: 'orders'
+                    },
+                    (payload) => {
+                        console.log('订单变化:', payload);
+                        
+                        if (payload.eventType === 'INSERT') {
+                            // 新订单，播放提示音
+                            playNotificationSound();
+                            
+                            // 显示新订单通知
+                            showNewOrderNotification(payload.new);
+                        } else if (payload.eventType === 'UPDATE') {
+                            // 订单更新，同步到本地订单历史
+                            syncOrderHistoryFromCloud(payload.new);
+                            
+                            // 如果顾客在看订单历史，刷新显示
+                            if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
+                                loadOrderHistory();
+                            }
+                        }
+                        
+                        // 重新加载订单列表（管理后台）
+                        if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
+                            loadOrders();
+                        }
+                    }
+                )
+                .subscribe();
+                
+            console.log('订单实时订阅已设置');
+            
+        } catch (error) {
+            console.error('设置订单实时订阅失败:', error);
+        }
+    }
+    
+    // 订阅系统设置变化
+    try {
+        state.supabaseClient
+            .channel('system_settings_changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'system_settings'
+                },
+                (payload) => {
+                    console.log('系统设置变化:', payload);
+                    if (payload.new && payload.new.key === 'notification_sound') {
+                        loadSystemSettingsFromCloud();
+                    }
+                }
+            )
+            .subscribe();
+    } catch (error) {
+        console.error('设置系统设置实时订阅失败:', error);
+    }
+}
             
             // 订阅系统设置变化
             try {
@@ -4475,85 +4504,113 @@
             }
         }
 
-        // 标记订单为已处理 - 优化版本：快速更新UI，异步更新云端
-        async function markOrderAsProcessed(orderId) {
-            // 立即更新UI状态（不显示加载界面）
-            const orderElement = document.querySelector(`.order-item[data-order-id="${orderId}"]`);
-            if (orderElement) {
-                // 更新状态显示
-                const statusElement = orderElement.querySelector('.order-status');
-                if (statusElement) {
-                    statusElement.textContent = '已处理';
-                    statusElement.className = 'order-status processed';
-                    statusElement.dataset.status = 'processed';
-                }
+        // 标记订单为已处理 - 优化版本：快速更新UI，异步更新云端，并同步到所有设备
+async function markOrderAsProcessed(orderId) {
+    // 立即更新UI状态（不显示加载界面）
+    const orderElement = document.querySelector(`.order-item[data-order-id="${orderId}"]`);
+    if (orderElement) {
+        // 更新状态显示
+        const statusElement = orderElement.querySelector('.order-status');
+        if (statusElement) {
+            statusElement.textContent = '已处理';
+            statusElement.className = 'order-status processed';
+            statusElement.dataset.status = 'processed';
+        }
+        
+        // 添加快速更新动画
+        orderElement.classList.add('status-updating');
+        setTimeout(() => {
+            orderElement.classList.remove('status-updating');
+        }, 500);
+        
+        // 禁用按钮防止重复点击
+        const markButton = orderElement.querySelector('.mark-processed');
+        if (markButton) {
+            markButton.disabled = true;
+            markButton.textContent = '已处理';
+            markButton.style.backgroundColor = '#4caf50';
+        }
+    }
+    
+    // 更新本地订单历史状态
+    const orderIndex = state.orderHistory.findIndex(order => 
+        order.id === orderId || order.order_number === `ORDER-${orderId}`
+    );
+    
+    if (orderIndex >= 0) {
+        state.orderHistory[orderIndex].status = 'processed';
+        saveOrderHistoryToLocal();
+        
+        // 更新购物车中的订单历史显示
+        if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
+            loadOrderHistory();
+        }
+    }
+    
+    // 异步更新云端（不阻塞UI）
+    setTimeout(async () => {
+        try {
+            if (state.supabaseClient && state.isOnline) {
+                // 更新云端订单
+                const { error } = await state.supabaseClient
+                    .from('orders')
+                    .update({ 
+                        status: 'processed',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', orderId);
                 
-                // 添加快速更新动画
-                orderElement.classList.add('status-updating');
-                setTimeout(() => {
-                    orderElement.classList.remove('status-updating');
-                }, 500);
-                
-                // 禁用按钮防止重复点击
-                const markButton = orderElement.querySelector('.mark-processed');
-                if (markButton) {
-                    markButton.disabled = true;
-                    markButton.textContent = '已处理';
-                    markButton.style.backgroundColor = '#4caf50';
-                }
-            }
-            
-            // 更新本地订单历史状态
-            const orderIndex = state.orderHistory.findIndex(order => 
-                order.id === orderId || order.order_number === `ORDER-${orderId}`
-            );
-            
-            if (orderIndex >= 0) {
-                state.orderHistory[orderIndex].status = 'processed';
-                saveOrderHistoryToLocal();
-                
-                // 更新购物车中的订单历史显示
-                if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
-                    loadOrderHistory();
-                }
-            }
-            
-            // 异步更新云端（不阻塞UI）
-            setTimeout(async () => {
-                try {
-                    if (state.supabaseClient && state.isOnline) {
-                        // 更新云端订单
-                        const { error } = await state.supabaseClient
-                            .from('orders')
-                            .update({ status: 'processed' })
-                            .eq('id', orderId);
+                if (error) {
+                    console.error('更新云端订单状态失败:', error);
+                    // 如果失败，恢复UI状态
+                    if (orderElement && statusElement) {
+                        statusElement.textContent = '待处理';
+                        statusElement.className = 'order-status';
+                        statusElement.dataset.status = 'pending';
                         
-                        if (error) {
-                            console.error('更新云端订单状态失败:', error);
-                            // 如果失败，恢复UI状态
-                            if (orderElement && statusElement) {
-                                statusElement.textContent = '待处理';
-                                statusElement.className = 'order-status';
-                                statusElement.dataset.status = 'pending';
-                                
-                                if (markButton) {
-                                    markButton.disabled = false;
-                                    markButton.textContent = '标记为已处理';
-                                    markButton.style.backgroundColor = '';
-                                }
-                            }
-                            showNotification('订单状态更新失败，请检查网络连接', 'error');
-                        } else {
-                            console.log('云端订单状态更新成功:', orderId);
+                        if (markButton) {
+                            markButton.disabled = false;
+                            markButton.textContent = '标记为已处理';
+                            markButton.style.backgroundColor = '';
                         }
                     }
-                } catch (error) {
-                    console.error('更新订单状态失败:', error);
+                    showNotification('订单状态更新失败，请检查网络连接', 'error');
+                } else {
+                    console.log('云端订单状态更新成功:', orderId);
+                    
+                    // 触发状态变更通知
+                    await triggerOrderStatusChange(orderId, 'processed');
                 }
-            }, 0);
-            
-            showNotification('订单状态已更新', 'success');
+            }
+        } catch (error) {
+            console.error('更新订单状态失败:', error);
         }
+    }, 0);
+    
+    showNotification('订单状态已更新', 'success');
+}
+
+// 触发订单状态变更通知
+async function triggerOrderStatusChange(orderId, status) {
+    if (!state.supabaseClient || !state.isOnline) return;
+    
+    try {
+        // 尝试通过数据库函数通知状态变更
+        const { error } = await state.supabaseClient.rpc(
+            'notify_order_status_change',
+            {
+                p_order_id: orderId,
+                p_status: status
+            }
+        );
+        
+        if (error) {
+            console.log('状态变更通知发送失败，使用实时订阅:', error);
+        }
+    } catch (error) {
+        console.error('触发状态变更通知失败:', error);
+    }
+}
 
         // 删除订单
         async function deleteOrder(orderId) {
@@ -4763,152 +4820,162 @@
         }
 
         // 加载订单历史
-        function loadOrderHistory() {
-            elements.orderHistoryContainer.innerHTML = '';
-            
-            if (state.orderHistory.length === 0) {
-                elements.orderHistoryContainer.innerHTML = `
-                    <div class="empty-message">
-                        <p>暂无订单历史</p>
-                        <p>提交订单后可以在这里查看</p>
-                    </div>
-                `;
-                return;
+function loadOrderHistory() {
+    elements.orderHistoryContainer.innerHTML = '';
+    
+    if (state.orderHistory.length === 0) {
+        elements.orderHistoryContainer.innerHTML = `
+            <div class="empty-message">
+                <p>暂无订单历史</p>
+                <p>提交订单后可以在这里查看</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // 按时间倒序排列
+    const sortedHistory = [...state.orderHistory].sort((a, b) => {
+        // 优先使用created_at，如果没有则使用date
+        const dateA = a.created_at || a.date || '';
+        const dateB = b.created_at || b.date || '';
+        return new Date(dateB) - new Date(dateA);
+    });
+    
+    sortedHistory.forEach(order => {
+        const historyElement = document.createElement('div');
+        historyElement.className = 'order-history-item';
+        historyElement.dataset.orderId = order.id;
+        
+        // 解析订单项目
+        let items = [];
+        let total = 0;
+        
+        if (typeof order.items === 'string') {
+            try {
+                items = JSON.parse(order.items);
+            } catch (e) {
+                items = [];
             }
-            
-            // 按时间倒序排列
-            const sortedHistory = [...state.orderHistory].sort((a, b) => 
-                new Date(b.date || b.created_at) - new Date(a.date || a.created_at)
-            );
-            
-            sortedHistory.forEach(order => {
-                const historyElement = document.createElement('div');
-                historyElement.className = 'order-history-item';
-                historyElement.dataset.orderId = order.id;
-                
-                // 解析订单项目
-                let items = [];
-                let total = 0;
-                
-                if (typeof order.items === 'string') {
-                    try {
-                        items = JSON.parse(order.items);
-                    } catch (e) {
-                        items = [];
-                    }
-                } else if (Array.isArray(order.items)) {
-                    items = order.items;
-                }
-                
-                total = order.total || items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
-                
-                const date = order.date || order.created_at || new Date().toISOString();
-                const formattedDate = new Date(date).toLocaleString('zh-CN');
-                
-                historyElement.innerHTML = `
-                    <div class="order-history-header">
-                        <div>
-                            <strong style="color: var(--primary-color);">订单 #${order.order_number || order.id}</strong>
-                            <div style="font-size: 12px; color: #aaa; margin-top: 5px;">${formattedDate}</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <span class="order-status ${order.status === 'processed' ? 'processed' : ''}" data-status="${order.status}">
-                                ${order.status === 'processed' ? '已处理' : '待处理'}
-                            </span>
-                            <div style="font-size: 18px; font-weight: bold; margin-top: 5px;">${total.toFixed(2)} 元</div>
-                        </div>
-                    </div>
-                    <div class="order-history-items">
-                        ${items.map(item => `
-                            <div class="order-history-item-row">
-                                <div>${item.name} × ${item.quantity || 1}</div>
-                                <div>${((item.price || 0) * (item.quantity || 1)).toFixed(2)} 元</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                
-                elements.orderHistoryContainer.appendChild(historyElement);
-            });
+        } else if (Array.isArray(order.items)) {
+            items = order.items;
         }
+        
+        total = order.total || items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+        
+        // 优先使用date字段，如果没有则使用created_at
+        const date = order.date || order.created_at || new Date().toISOString();
+        const formattedDate = order.date ? order.date : new Date(date).toLocaleString('zh-CN');
+        
+        historyElement.innerHTML = `
+            <div class="order-history-header">
+                <div>
+                    <strong style="color: var(--primary-color);">订单 #${order.order_number || order.id}</strong>
+                    <div style="font-size: 12px; color: #aaa; margin-top: 5px;">${formattedDate}</div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="order-status ${order.status === 'processed' ? 'processed' : ''}" data-status="${order.status}">
+                        ${order.status === 'processed' ? '已处理' : '待处理'}
+                    </span>
+                    <div style="font-size: 18px; font-weight: bold; margin-top: 5px;">${total.toFixed(2)} 元</div>
+                </div>
+            </div>
+            <div class="order-history-items">
+                ${items.map(item => `
+                    <div class="order-history-item-row">
+                        <div>${item.name} × ${item.quantity || 1}</div>
+                        <div>${((item.price || 0) * (item.quantity || 1)).toFixed(2)} 元</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        elements.orderHistoryContainer.appendChild(historyElement);
+    });
+}
 
         // 提交订单 - 优化版本
-        async function submitOrder() {
-            if (state.cart.length === 0) {
-                showNotification('购物车是空的，无法提交订单', 'warning');
-                return;
-            }
+async function submitOrder() {
+    if (state.cart.length === 0) {
+        showNotification('购物车是空的，无法提交订单', 'warning');
+        return;
+    }
+    
+    showLoading('正在提交订单...');
+    
+    const orderId = Date.now();
+    const now = new Date();
+    
+    const order = {
+        order_number: `ORDER-${orderId}`,
+        items: JSON.parse(JSON.stringify(state.cart)),
+        total: state.cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+        status: 'pending',
+        created_at: now.toISOString(),
+        date: `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+    };
+    
+    try {
+        // 保存到云端
+        if (state.supabaseClient && state.isOnline) {
+            const { data, error } = await state.supabaseClient
+                .from('orders')
+                .insert([{
+                    order_number: order.order_number,
+                    items: order.items,
+                    total: order.total,
+                    status: order.status,
+                    date: order.date
+                }])
+                .select();
             
-            showLoading('正在提交订单...');
+            if (error) throw error;
             
-            const orderId = Date.now();
-            const now = new Date();
-            
-            const order = {
-                order_number: `ORDER-${orderId}`,
-                items: JSON.parse(JSON.stringify(state.cart)),
-                total: state.cart.reduce((total, item) => total + (item.price * item.quantity), 0),
-                status: 'pending',
-                created_at: now.toISOString(),
-                date: `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-            };
-            
-            try {
-                // 保存到云端
-                if (state.supabaseClient && state.isOnline) {
-                    const { data, error } = await state.supabaseClient
-                        .from('orders')
-                        .insert([order])
-                        .select();
-                    
-                    if (error) throw error;
-                    
-                    // 使用返回的数据（包含数据库生成的ID）
-                    if (data && data[0]) {
-                        order.id = data[0].id;
-                    }
-                }
-                
-                // 添加到本地订单历史
-                state.orderHistory.push(order);
-                saveOrderHistoryToLocal();
-                
-                // 清空购物车
-                state.cart = [];
-                localStorage.removeItem('cart');
-                updateCartDisplay();
-                
-                // 切换到订单历史标签页
-                switchCartTab('history');
-                
-                showNotification(`订单提交成功！订单号: ${order.order_number}`, 'success');
-                
-                // 如果管理员在看订单页面，刷新订单列表
-                if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
-                    await loadOrders();
-                }
-                
-            } catch (error) {
-                console.error('提交订单失败:', error);
-                
-                // 即使云端提交失败，也保存到本地
-                state.orderHistory.push(order);
-                saveOrderHistoryToLocal();
-                
-                // 清空购物车
-                state.cart = [];
-                localStorage.removeItem('cart');
-                updateCartDisplay();
-                
-                // 切换到订单历史标签页
-                switchCartTab('history');
-                
-                showNotification(`订单已保存到本地，云端同步失败: ${error.message}`, 'warning');
-                
-            } finally {
-                hideLoading();
+            // 使用返回的数据（包含数据库生成的ID）
+            if (data && data[0]) {
+                order.id = data[0].id;
             }
         }
+        
+        // 添加到本地订单历史
+        state.orderHistory.push(order);
+        saveOrderHistoryToLocal();
+        
+        // 清空购物车
+        state.cart = [];
+        localStorage.removeItem('cart');
+        updateCartDisplay();
+        
+        // 切换到订单历史标签页
+        switchCartTab('history');
+        
+        showNotification(`订单提交成功！订单号: ${order.order_number}`, 'success');
+        
+        // 如果管理员在看订单页面，刷新订单列表
+        if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
+            await loadOrders();
+        }
+        
+    } catch (error) {
+        console.error('提交订单失败:', error);
+        
+        // 即使云端提交失败，也保存到本地
+        state.orderHistory.push(order);
+        saveOrderHistoryToLocal();
+        
+        // 清空购物车
+        state.cart = [];
+        localStorage.removeItem('cart');
+        updateCartDisplay();
+        
+        // 切换到订单历史标签页
+        switchCartTab('history');
+        
+        showNotification(`订单已保存到本地，云端同步失败: ${error.message}`, 'warning');
+        
+    } finally {
+        hideLoading();
+    }
+}
 
         // 初始化二维码
         function initQrCode() {
