@@ -1377,6 +1377,27 @@
             50% { background-color: rgba(76, 175, 80, 0.3); }
             100% { background-color: inherit; }
         }
+        
+        /* 状态实时更新指示器 */
+        .real-time-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(33, 150, 243, 0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #2196f3;
+            margin-left: 10px;
+        }
+        
+        .real-time-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #2196f3;
+            animation: blink 1s infinite;
+        }
     </style>
 </head>
 <body>
@@ -1401,7 +1422,7 @@
     <div class="container">
         <!-- 标题区域 -->
         <div class="header-title">
-            <h1><i class="fas fa-cloud"></i> 云点餐系统</h1>
+            <h1><i class="fas fa-cloud"></i> 云点餐系统 <span class="real-time-indicator"><span class="dot"></span>实时同步</span></h1>
         </div>
         
         <header>
@@ -1425,7 +1446,7 @@
             <!-- 顾客点餐页面 -->
             <div id="menuPage" class="page active">
                 <h2><i class="fas fa-book"></i> 菜单浏览</h2>
-                <p style="color: #aaa; margin-bottom: 20px;">数据实时同步更新，所有设备保持一致</p>
+                <p style="color: #aaa; margin-bottom: 20px;">数据实时同步更新，所有设备保持一致 <span class="real-time-indicator"><span class="dot"></span>实时同步</span></p>
                 
                 <div class="menu-categories">
                     <button class="category-btn pixel-border active" data-category="all">全部菜品</button>
@@ -1519,7 +1540,7 @@
                 
                 <!-- 管理界面 -->
                 <div id="adminPanel" style="display: none;">
-                    <h2><i class="fas fa-cogs"></i> 云数据管理</h2>
+                    <h2><i class="fas fa-cogs"></i> 云数据管理 <span class="real-time-indicator"><span class="dot"></span>实时同步</span></h2>
                     <p style="color: #aaa; margin-bottom: 20px;">数据实时同步，所有更改立即生效到所有设备</p>
                     
                     <div class="admin-controls">
@@ -1584,8 +1605,8 @@
                         
                         <!-- 新订单提示音配置 -->
                         <div class="notification-sound-section">
-                            <h4><i class="fas fa-volume-up"></i> 新订单提示音设置</h4>
-                            <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音</p>
+                            <h4><i class="fas fa-volume-up"></i> 新订单提示音设置 <span class="real-time-indicator"><span class="dot"></span>实时同步</span></h4>
+                            <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音（仅在管理后台播放）</p>
                             
                             <div class="sound-preview">
                                 <h5>默认叮当提示音</h5>
@@ -1614,7 +1635,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过3秒。上传后所有设备将自动同步使用</div>
+                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过3秒。上传后所有管理端设备将自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -1629,7 +1650,7 @@
                         
                         <!-- 历史订单提示音配置 -->
                         <div class="history-sound-section">
-                            <h4><i class="fas fa-history"></i> 历史订单提示音设置</h4>
+                            <h4><i class="fas fa-history"></i> 历史订单提示音设置 <span class="real-time-indicator"><span class="dot"></span>实时同步</span></h4>
                             <p style="color: #aaa; margin-bottom: 15px;">选择历史订单状态变为"已处理"时的提示音（仅在相应客户设备播放）</p>
                             
                             <div class="sound-preview">
@@ -1659,7 +1680,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过2秒。上传后所有设备将自动同步使用</div>
+                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过2秒。上传后所有顾客端设备将自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -1739,7 +1760,7 @@
                     <!-- 订单列表 -->
                     <div id="ordersSection" class="admin-section" style="display: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h3 id="ordersHeader"><i class="fas fa-receipt"></i> 云端订单列表</h3>
+                            <h3 id="ordersHeader"><i class="fas fa-receipt"></i> 云端订单列表 <span class="real-time-indicator"><span class="dot"></span>实时同步</span></h3>
                             <div class="auto-refresh-indicator">
                                 <div class="dot"></div>
                                 <span>2秒自动刷新</span>
@@ -1842,7 +1863,7 @@
     
     <div id="cartContainer" class="cart-container pixel-border">
         <div class="cart-header">
-            <h3>订单管理</h3>
+            <h3>订单管理 <span class="real-time-indicator"><span class="dot"></span>实时同步</span></h3>
             <button id="closeCartBtn" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">
                 <i class="fas fa-times"></i>
             </button>
@@ -1884,20 +1905,20 @@
     </div>
 
     <script>
-        // 修复版 - 解决订单状态同步和实时订阅问题
+        // 修复版 - 完整解决订单状态实时同步和提示音同步问题
         
         // Supabase配置
-        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v4';
-        const NOTIFICATION_SOUND_KEY = 'pixel_diner_notification_sound_v4';
-        const HISTORY_NOTIFICATION_SOUND_KEY = 'pixel_diner_history_notification_sound_v4';
-        const NOTIFICATION_MUTED_KEY = 'pixel_diner_notification_muted_v4';
-        const HISTORY_NOTIFICATION_MUTED_KEY = 'pixel_diner_history_notification_muted_v4';
-        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v3';
-        const CART_KEY = 'pixel_diner_cart_v3';
-        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v5';
-        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v3';
-        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v2';
-        const DEVICE_ID_KEY = 'pixel_diner_device_id_v1';
+        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v5';
+        const NOTIFICATION_SOUND_KEY = 'pixel_diner_notification_sound_v5';
+        const HISTORY_NOTIFICATION_SOUND_KEY = 'pixel_diner_history_notification_sound_v5';
+        const NOTIFICATION_MUTED_KEY = 'pixel_diner_notification_muted_v5';
+        const HISTORY_NOTIFICATION_MUTED_KEY = 'pixel_diner_history_notification_muted_v5';
+        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v4';
+        const CART_KEY = 'pixel_diner_cart_v4';
+        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v6';
+        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v4';
+        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v3';
+        const DEVICE_ID_KEY = 'pixel_diner_device_id_v2';
         
         // 使用您提供的Supabase配置
         const DEFAULT_CONFIG = {
@@ -1982,6 +2003,7 @@
             connectionStatus: 'offline',
             realtimeSubscription: null,
             ordersRealtimeSubscription: null,
+            orderStatusRealtimeSubscription: null,
             systemSettingsRealtimeSubscription: null,
             isOnline: navigator.onLine,
             menuItems: [],
@@ -2014,11 +2036,14 @@
                 historyNotificationMuted: false
             },
             connectionRetryCount: 0,
-            maxConnectionRetries: 3,
+            maxConnectionRetries: 5,
             isRealtimeConnected: false,
             pendingOrdersSync: new Set(),
             deviceId: null,
-            orderDeviceMap: new Map() // 存储订单与设备ID的映射
+            orderDeviceMap: new Map(),
+            lastOrderStatusUpdate: null,
+            pendingStatusUpdates: new Set(),
+            isProcessingStatusUpdate: false
         };
 
         // DOM元素引用
@@ -2293,8 +2318,8 @@
                 if (isConnected) {
                     updateConnectionStatus('online', '已连接到云数据库');
                     
-                    // 设置实时订阅
-                    setupRealtimeSubscription();
+                    // 设置实时订阅 - 使用修复版本
+                    setupEnhancedRealtimeSubscription();
                     
                     await loadCloudData();
                     
@@ -2473,6 +2498,7 @@
             try {
                 await syncMenuItems();
                 await loadSystemSettingsFromCloud();
+                await loadHistoryNotificationSoundSettings();
                 await syncOrderHistoryFromCloud();
                 
             } catch (error) {
@@ -2480,9 +2506,9 @@
             }
         }
 
-        // 设置实时订阅 - 修复版：支持设备特定通知
-        function setupRealtimeSubscription() {
-            console.log('设置实时订阅...');
+        // 设置增强的实时订阅 - 修复版：支持设备特定通知和立即状态更新
+        function setupEnhancedRealtimeSubscription() {
+            console.log('设置增强实时订阅...');
             
             if (!state.supabaseClient) {
                 console.warn('Supabase客户端未初始化，无法设置实时订阅');
@@ -2496,6 +2522,10 @@
             
             if (state.ordersRealtimeSubscription) {
                 state.supabaseClient.removeChannel(state.ordersRealtimeSubscription);
+            }
+            
+            if (state.orderStatusRealtimeSubscription) {
+                state.supabaseClient.removeChannel(state.orderStatusRealtimeSubscription);
             }
             
             if (state.systemSettingsRealtimeSubscription) {
@@ -2530,7 +2560,7 @@
                             console.log('菜单项实时订阅已连接');
                         } else if (status === 'CLOSED') {
                             console.log('菜单项实时订阅已断开');
-                            setTimeout(() => setupRealtimeSubscription(), 5000);
+                            setTimeout(() => setupEnhancedRealtimeSubscription(), 5000);
                         }
                     });
                     
@@ -2540,10 +2570,10 @@
                 console.error('设置菜单项实时订阅失败:', error);
             }
             
-            // 订阅订单变化 - 关键修复：支持设备特定通知
+            // 订阅订单变化 - 关键修复：支持设备特定通知和立即状态更新
             try {
                 state.ordersRealtimeSubscription = state.supabaseClient
-                    .channel('orders_changes')
+                    .channel('orders_changes_v2')
                     .on(
                         'postgres_changes',
                         {
@@ -2554,38 +2584,10 @@
                         async (payload) => {
                             console.log('订单变化实时推送:', payload);
                             
-                            // 关键修复：处理订单状态变化
-                            if (payload.eventType === 'UPDATE' && payload.new && payload.old) {
-                                console.log('订单状态更新:', payload.new.status, '->', payload.old.status);
-                                
-                                // 检查订单是否属于当前设备
-                                const isCurrentDeviceOrder = payload.new.device_id === state.deviceId;
-                                
-                                if (isCurrentDeviceOrder) {
-                                    // 立即更新本地订单历史
-                                    await updateLocalOrderStatus(payload.new);
-                                    
-                                    // 如果顾客端购物车打开且显示订单历史，立即更新UI
-                                    if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
-                                        loadOrderHistory();
-                                        showNotification('您的订单状态已更新', 'info');
-                                    }
-                                    
-                                    // 播放历史订单提示音
-                                    playHistoryNotificationSound();
-                                    
-                                    // 高亮显示更新的订单
-                                    highlightUpdatedOrder(payload.new.id);
-                                }
-                                
-                                // 如果是管理员，播放新订单提示音
-                                if (state.adminLoggedIn) {
-                                    playNotificationSound();
-                                }
-                            }
-                            
                             if (payload.eventType === 'INSERT') {
                                 console.log('新订单:', payload.new);
+                                
+                                // 如果是管理员，播放新订单提示音
                                 if (state.adminLoggedIn) {
                                     playNotificationSound();
                                     showNewOrderNotification(payload.new);
@@ -2594,7 +2596,7 @@
                             
                             // 重新加载订单列表（如果管理员已登录）
                             if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
-                                await loadOrders();
+                                setTimeout(() => loadOrders(), 100);
                             }
                         }
                     )
@@ -2604,7 +2606,7 @@
                             console.log('订单实时订阅已连接');
                         } else if (status === 'CLOSED') {
                             console.log('订单实时订阅已断开');
-                            setTimeout(() => setupRealtimeSubscription(), 5000);
+                            setTimeout(() => setupEnhancedRealtimeSubscription(), 5000);
                         }
                     });
                     
@@ -2614,10 +2616,63 @@
                 console.error('设置订单实时订阅失败:', error);
             }
             
+            // 关键修复：订阅订单状态更新 - 专门处理状态变化
+            try {
+                state.orderStatusRealtimeSubscription = state.supabaseClient
+                    .channel('order_status_changes')
+                    .on(
+                        'postgres_changes',
+                        {
+                            event: 'UPDATE',
+                            schema: 'public',
+                            table: 'orders',
+                            filter: 'status=eq.processed'
+                        },
+                        async (payload) => {
+                            console.log('订单状态更新实时推送:', payload);
+                            
+                            // 检查订单是否属于当前设备
+                            const isCurrentDeviceOrder = payload.new.device_id === state.deviceId;
+                            console.log('是否当前设备订单:', isCurrentDeviceOrder, '设备ID:', state.deviceId, '订单设备ID:', payload.new.device_id);
+                            
+                            if (isCurrentDeviceOrder) {
+                                // 立即更新本地订单历史
+                                await updateLocalOrderStatusImmediately(payload.new);
+                                
+                                // 如果顾客端购物车打开且显示订单历史，立即更新UI
+                                if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
+                                    loadOrderHistory();
+                                    showNotification('您的订单状态已更新为"已处理"', 'info');
+                                }
+                                
+                                // 播放历史订单提示音
+                                playHistoryNotificationSound();
+                                
+                                // 高亮显示更新的订单
+                                highlightUpdatedOrder(payload.new.id);
+                            }
+                        }
+                    )
+                    .subscribe((status) => {
+                        console.log('订单状态实时订阅状态:', status);
+                        if (status === 'SUBSCRIBED') {
+                            console.log('订单状态实时订阅已连接');
+                        } else if (status === 'CLOSED') {
+                            console.log('订单状态实时订阅已断开');
+                            setTimeout(() => setupEnhancedRealtimeSubscription(), 5000);
+                        }
+                    });
+                    
+                console.log('订单状态实时订阅已设置');
+                
+            } catch (error) {
+                console.error('设置订单状态实时订阅失败:', error);
+            }
+            
             // 订阅系统设置变化 - 支持新订单和历史订单提示音同步
             try {
                 state.systemSettingsRealtimeSubscription = state.supabaseClient
-                    .channel('system_settings_changes')
+                    .channel('system_settings_changes_v2')
                     .on(
                         'postgres_changes',
                         {
@@ -2654,22 +2709,11 @@
             updateConnectionStatus('online', '实时同步已连接');
         }
 
-        // 高亮显示更新的订单
-        function highlightUpdatedOrder(orderId) {
-            const orderElement = document.querySelector(`[data-order-id="${orderId}"]`);
-            if (orderElement) {
-                orderElement.classList.add('status-update-animation');
-                setTimeout(() => {
-                    orderElement.classList.remove('status-update-animation');
-                }, 1000);
-            }
-        }
-
-        // 更新本地订单状态（关键修复函数）
-        async function updateLocalOrderStatus(cloudOrder) {
+        // 立即更新本地订单状态（关键修复函数）- 零延迟
+        async function updateLocalOrderStatusImmediately(cloudOrder) {
             if (!cloudOrder) return;
             
-            console.log('更新本地订单状态:', cloudOrder.id, cloudOrder.status);
+            console.log('立即更新本地订单状态:', cloudOrder.id, cloudOrder.status);
             
             // 确保有正确的date字段
             if (!cloudOrder.date && cloudOrder.created_at) {
@@ -2691,7 +2735,7 @@
                     date: cloudOrder.date || cloudOrder.created_at,
                     updated_at: cloudOrder.updated_at
                 };
-                console.log('本地订单状态已更新:', state.orderHistory[orderIndex].status);
+                console.log('本地订单状态已立即更新:', state.orderHistory[orderIndex].status);
             } else {
                 // 添加到本地订单历史
                 state.orderHistory.push({
@@ -2705,15 +2749,28 @@
                     updated_at: cloudOrder.updated_at,
                     device_id: cloudOrder.device_id
                 });
-                console.log('新订单已添加到本地历史');
+                console.log('新订单已立即添加到本地历史');
             }
             
-            // 保存到本地存储
-            saveOrderHistoryToLocal();
+            // 立即保存到本地存储
+            localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
             
             // 立即更新UI（如果订单历史正在显示）
             if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
                 loadOrderHistory();
+            }
+            
+            state.lastOrderStatusUpdate = Date.now();
+        }
+
+        // 高亮显示更新的订单
+        function highlightUpdatedOrder(orderId) {
+            const orderElement = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (orderElement) {
+                orderElement.classList.add('status-update-animation');
+                setTimeout(() => {
+                    orderElement.classList.remove('status-update-animation');
+                }, 1000);
             }
         }
 
@@ -2741,37 +2798,50 @@
                 if (cloudOrders && cloudOrders.length > 0) {
                     console.log(`从云端获取到 ${cloudOrders.length} 个订单`);
                     
-                    // 清空本地订单历史，重新从云端加载
-                    state.orderHistory = [];
+                    // 只同步当前设备的订单
+                    const deviceOrders = cloudOrders.filter(order => 
+                        order.device_id === state.deviceId
+                    );
                     
-                    cloudOrders.forEach(cloudOrder => {
-                        if (!cloudOrder.date && cloudOrder.created_at) {
-                            const date = new Date(cloudOrder.created_at);
-                            cloudOrder.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                    console.log(`当前设备的订单: ${deviceOrders.length} 个`);
+                    
+                    if (deviceOrders.length > 0) {
+                        // 清空当前设备订单历史，重新从云端加载
+                        state.orderHistory = state.orderHistory.filter(order => 
+                            !order.device_id || order.device_id !== state.deviceId
+                        );
+                        
+                        deviceOrders.forEach(cloudOrder => {
+                            if (!cloudOrder.date && cloudOrder.created_at) {
+                                const date = new Date(cloudOrder.created_at);
+                                cloudOrder.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                            }
+                            
+                            state.orderHistory.push({
+                                id: cloudOrder.id,
+                                order_number: cloudOrder.order_number,
+                                items: cloudOrder.items,
+                                total: cloudOrder.total,
+                                status: cloudOrder.status,
+                                date: cloudOrder.date || cloudOrder.created_at,
+                                created_at: cloudOrder.created_at,
+                                updated_at: cloudOrder.updated_at,
+                                device_id: cloudOrder.device_id
+                            });
+                        });
+                        
+                        // 保存到本地存储
+                        localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
+                        
+                        // 更新UI（如果订单历史正在显示）
+                        if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
+                            loadOrderHistory();
                         }
                         
-                        state.orderHistory.push({
-                            id: cloudOrder.id,
-                            order_number: cloudOrder.order_number,
-                            items: cloudOrder.items,
-                            total: cloudOrder.total,
-                            status: cloudOrder.status,
-                            date: cloudOrder.date || cloudOrder.created_at,
-                            created_at: cloudOrder.created_at,
-                            updated_at: cloudOrder.updated_at,
-                            device_id: cloudOrder.device_id
-                        });
-                    });
-                    
-                    // 保存到本地存储
-                    saveOrderHistoryToLocal();
-                    
-                    // 更新UI（如果订单历史正在显示）
-                    if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
-                        loadOrderHistory();
+                        console.log('订单历史已从云端同步完成');
+                    } else {
+                        console.log('云端没有当前设备的订单历史');
                     }
-                    
-                    console.log('订单历史已从云端同步完成');
                 } else {
                     console.log('云端没有订单历史');
                 }
@@ -3735,7 +3805,7 @@
                                 }
                                 
                                 await saveSystemSettingsToCloud('notification_sound', soundInfo);
-                                showNotification('新订单提示音已上传并保存到云端，所有设备将同步使用', 'success');
+                                showNotification('新订单提示音已上传并保存到云端，所有管理端设备将同步使用', 'success');
                                 
                             } else if (type === 'history') {
                                 state.customHistoryNotificationSound = audio;
@@ -3766,7 +3836,7 @@
                                 }
                                 
                                 await saveSystemSettingsToCloud('history_notification_sound', soundInfo);
-                                showNotification('历史订单提示音已上传并保存到云端，所有设备将同步使用', 'success');
+                                showNotification('历史订单提示音已上传并保存到云端，所有顾客端设备将同步使用', 'success');
                             }
                             
                             // 保存到本地
@@ -4245,11 +4315,6 @@
                     img.classList.add('loaded');
                 });
             }
-        }
-
-        // 保存订单历史到本地
-        function saveOrderHistoryToLocal() {
-            localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
         }
 
         // 管理员登录
@@ -4777,7 +4842,7 @@
             }
         }
 
-        // 加载订单 - 关键修复：支持设备ID
+        // 加载订单 - 修复版：支持设备ID和date字段
         async function loadOrders() {
             console.log('加载订单...');
             
@@ -4938,8 +5003,10 @@
                 }
                 
                 state.lastOrderCount = 0;
-                state.orderHistory = [];
-                saveOrderHistoryToLocal();
+                state.orderHistory = state.orderHistory.filter(order => 
+                    order.device_id !== state.deviceId
+                );
+                localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
                 
                 await loadOrders();
                 
@@ -4953,9 +5020,9 @@
             }
         }
 
-        // 标记订单为已处理 - 关键修复：支持设备ID和date字段
+        // 标记订单为已处理 - 关键修复：支持设备ID和date字段，实时同步到相应设备
         async function markOrderAsProcessed(orderId) {
-            showLoading('正在更新订单状态并同步到相应设备...');
+            showLoading('正在更新订单状态并实时同步到相应设备...');
             
             try {
                 // 首先获取订单信息以确保有date字段和设备ID
@@ -4971,6 +5038,12 @@
                     orderToUpdate = data;
                 }
                 
+                if (!orderToUpdate) {
+                    throw new Error('未找到订单');
+                }
+                
+                console.log('正在处理的订单设备ID:', orderToUpdate.device_id);
+                
                 // 更新云端订单状态，确保date字段存在
                 const updateData = {
                     status: 'processed',
@@ -4978,7 +5051,7 @@
                 };
                 
                 // 如果订单没有date字段，添加一个
-                if (orderToUpdate && !orderToUpdate.date && orderToUpdate.created_at) {
+                if (!orderToUpdate.date && orderToUpdate.created_at) {
                     const date = new Date(orderToUpdate.created_at);
                     updateData.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
                 }
@@ -4990,16 +5063,12 @@
                         .eq('id', orderId);
                     
                     if (error) throw error;
+                    
+                    console.log('订单状态已更新到云端，将实时同步到设备:', orderToUpdate.device_id);
                 }
                 
-                // 实时订阅会自动更新相应设备的订单历史状态
-                // 这里我们手动触发一次更新以确保立即生效
-                await updateLocalOrderStatus({
-                    ...orderToUpdate,
-                    ...updateData
-                });
-                
-                // 更新管理后台的订单列表显示
+                // 增强的实时订阅会立即同步到相应设备
+                // 这里我们手动更新管理后台的订单列表显示
                 await loadOrders();
                 
                 showNotification('订单状态已更新为"已处理"，已实时同步到相应设备', 'success');
@@ -5036,7 +5105,7 @@
                 
                 if (orderIndex >= 0) {
                     state.orderHistory.splice(orderIndex, 1);
-                    saveOrderHistoryToLocal();
+                    localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
                     
                     if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
                         loadOrderHistory();
@@ -5212,7 +5281,7 @@
             }
         }
 
-        // 加载订单历史 - 关键修复：确保状态正确显示和设备ID
+        // 加载订单历史 - 修复版：确保状态正确显示和设备ID，零延迟更新
         function loadOrderHistory() {
             console.log('加载订单历史...');
             
@@ -5230,7 +5299,7 @@
             
             // 只显示当前设备的订单历史
             const currentDeviceOrders = state.orderHistory.filter(order => 
-                !order.device_id || order.device_id === state.deviceId
+                order.device_id === state.deviceId
             );
             
             if (currentDeviceOrders.length === 0) {
@@ -5297,6 +5366,24 @@
             });
             
             console.log('订单历史加载完成，共', sortedHistory.length, '个订单（当前设备）');
+            
+            // 高亮最近更新的订单
+            if (state.lastOrderStatusUpdate && Date.now() - state.lastOrderStatusUpdate < 5000) {
+                const lastUpdatedOrder = sortedHistory.find(order => 
+                    order.status === 'processed' && 
+                    (!order.updated_at || Date.now() - new Date(order.updated_at).getTime() < 10000)
+                );
+                
+                if (lastUpdatedOrder) {
+                    const orderElement = document.querySelector(`[data-order-id="${lastUpdatedOrder.id}"]`);
+                    if (orderElement) {
+                        orderElement.classList.add('status-update-animation');
+                        setTimeout(() => {
+                            orderElement.classList.remove('status-update-animation');
+                        }, 2000);
+                    }
+                }
+            }
         }
 
         // 提交订单 - 确保date字段正确和设备ID
@@ -5335,12 +5422,14 @@
                     
                     if (data && data[0]) {
                         order.id = data[0].id;
+                        order.created_at = data[0].created_at;
+                        order.updated_at = data[0].updated_at;
                     }
                 }
                 
                 // 添加到本地订单历史
                 state.orderHistory.push(order);
-                saveOrderHistoryToLocal();
+                localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
                 
                 // 清空购物车
                 state.cart = [];
@@ -5357,7 +5446,7 @@
                 
                 // 即使云端失败，也保存到本地
                 state.orderHistory.push(order);
-                saveOrderHistoryToLocal();
+                localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
                 
                 // 清空购物车
                 state.cart = [];
