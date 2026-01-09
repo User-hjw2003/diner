@@ -563,6 +563,7 @@
             padding: 15px;
             margin-bottom: 15px;
             border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
         }
 
         .order-history-header {
@@ -1034,7 +1035,7 @@
         #customerQrCode canvas, #adminQrCode canvas {
             width: 200px !important;
             height: 200px !important;
-            display: none; /* 隐藏canvas，使用img显示 */
+            display: none;
         }
         
         #adminQrCode canvas {
@@ -1043,7 +1044,7 @@
             display: none;
         }
         
-        /* 二维码图片样式 - 确保背景为白色且可长按 */
+        /* 二维码图片样式 */
         .qrcode-img {
             width: 100%;
             height: 100%;
@@ -1076,126 +1077,6 @@
             display: block;
             max-width: 250px;
             max-height: 250px;
-        }
-        
-        /* 确保二维码容器背景为白色 */
-        .qrcode-canvas-container {
-            background-color: white !important;
-            -webkit-touch-callout: default !important;
-            -webkit-user-select: auto !important;
-            user-select: auto !important;
-            -webkit-user-drag: auto !important;
-            pointer-events: auto !important;
-            cursor: default !important;
-        }
-        
-        /* 专门为移动设备优化二维码显示 */
-        @media (max-width: 768px) {
-            .qrcode-img, .admin-qrcode-img {
-                -webkit-touch-callout: default !important;
-                -webkit-user-select: auto !important;
-                user-select: auto !important;
-                -webkit-user-drag: auto !important;
-                pointer-events: auto !important;
-                cursor: default !important;
-                background-color: white !important;
-                background-image: none !important;
-            }
-            
-            .qrcode-display {
-                background-color: white !important;
-                -webkit-touch-callout: default !important;
-                -webkit-user-select: auto !important;
-                user-select: auto !important;
-                pointer-events: auto !important;
-            }
-            
-            #customerQrCode, #adminQrCode {
-                -webkit-touch-callout: default !important;
-                -webkit-user-select: auto !important;
-                user-select: auto !important;
-                -webkit-user-drag: auto !important;
-                pointer-events: auto !important;
-                cursor: default !important;
-            }
-        }
-        
-        /* 确保二维码图片在所有设备上都有白色背景 */
-        .qrcode-display img {
-            background-color: white !important;
-            background-image: none !important;
-        }
-        
-        /* 添加白色背景层确保二维码显示 */
-        .qrcode-white-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: white !important;
-            z-index: 1;
-        }
-        
-        .qrcode-image-wrapper {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        /* 新增：针对直屏优化的专用样式 */
-        @media screen and (max-aspect-ratio: 3/4) and (max-width: 768px) {
-            /* 直屏模式下，调整二维码显示优先级 */
-            .qrcode-section {
-                order: 1;
-                margin-top: 0;
-                margin-bottom: 25px;
-            }
-            
-            .instructions {
-                order: 2;
-                margin-top: 0;
-                margin-bottom: 25px;
-            }
-            
-            .menu-items {
-                order: 3;
-                margin-bottom: 25px;
-            }
-            
-            /* 确保二维码在直屏下足够大且清晰 */
-            .qrcode-display {
-                width: 70vw;
-                height: 70vw;
-                max-width: 220px;
-                max-height: 220px;
-                min-width: 180px;
-                min-height: 180px;
-            }
-            
-            /* 调整按钮大小，确保在直屏下可点击 */
-            .pixel-button {
-                min-height: 44px; /* 最小触摸目标尺寸 */
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            /* 优化菜单分类按钮在直屏下的显示 */
-            .menu-categories {
-                overflow-x: auto;
-                padding-bottom: 5px;
-                justify-content: flex-start;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .category-btn {
-                flex-shrink: 0;
-            }
         }
         
         /* 新订单通知样式 */
@@ -1282,136 +1163,6 @@
             background-color: #4caf50 !important;
         }
         
-        /* 优化加载速度的样式 */
-        .lazy-image {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .lazy-image.loaded {
-            opacity: 1;
-        }
-        
-        .skeleton {
-            background: linear-gradient(90deg, #222 25%, #333 50%, #222 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        .skeleton-text {
-            height: 1em;
-            margin-bottom: 0.5em;
-            border-radius: 4px;
-        }
-        
-        /* 新增：快速状态更新动画 */
-        .status-updating {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .status-updating::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.2), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        /* 新增：滚动到顶部动画 */
-        .scroll-to-target {
-            scroll-margin-top: 20px;
-            animation: highlight-target 1s ease;
-        }
-        
-        @keyframes highlight-target {
-            0%, 100% { background-color: inherit; }
-            50% { background-color: rgba(211, 47, 47, 0.1); }
-        }
-        
-        /* 实时同步指示器 */
-        .realtime-status {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            z-index: 1002;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background-color: rgba(33, 150, 243, 0.2);
-            color: #2196f3;
-            border: 1px solid rgba(33, 150, 243, 0.3);
-        }
-        
-        .realtime-status.active {
-            background-color: rgba(76, 175, 80, 0.2);
-            color: #4caf50;
-            border-color: rgba(76, 175, 80, 0.3);
-        }
-        
-        .realtime-status.inactive {
-            background-color: rgba(244, 67, 54, 0.2);
-            color: #f44336;
-            border-color: rgba(244, 67, 54, 0.3);
-        }
-        
-        .realtime-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: currentColor;
-            animation: blink 1.5s infinite;
-        }
-        
-        /* 音频文件上传样式 */
-        .audio-upload-container {
-            margin-top: 10px;
-            padding: 15px;
-            background-color: #1a1a1a;
-            border-radius: 5px;
-        }
-        
-        .audio-upload-info {
-            font-size: 12px;
-            color: #aaa;
-            margin-top: 5px;
-        }
-        
-        .audio-preview-container {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #222;
-            border-radius: 4px;
-        }
-        
-        .audio-preview-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        
-        .audio-preview-controls {
-            display: flex;
-            gap: 10px;
-        }
-        
         /* 历史订单提示音区域 */
         .history-notification-section {
             margin-top: 20px;
@@ -1453,6 +1204,39 @@
             color: #666;
             z-index: 9999;
         }
+        
+        /* 新增：快速状态更新动画 */
+        .status-updating {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-updating::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.2), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 新增：滚动到顶部动画 */
+        .scroll-to-target {
+            scroll-margin-top: 20px;
+            animation: highlight-target 1s ease;
+        }
+        
+        @keyframes highlight-target {
+            0%, 100% { background-color: inherit; }
+            50% { background-color: rgba(211, 47, 47, 0.1); }
+        }
     </style>
 </head>
 <body>
@@ -1460,12 +1244,6 @@
     <div id="connectionStatus" class="connection-status offline">
         <i class="fas fa-wifi"></i>
         <span>离线中</span>
-    </div>
-    
-    <!-- 实时同步状态指示器 -->
-    <div id="realtimeStatus" class="realtime-status inactive" style="display: none;">
-        <div class="realtime-dot"></div>
-        <span>实时同步</span>
     </div>
     
     <!-- 新订单通知 -->
@@ -1554,8 +1332,7 @@
                     
                     <div class="qrcode-container">
                         <div class="qrcode-display pixel-border-white">
-                            <div class="qrcode-white-background"></div>
-                            <div id="customerQrCode" class="qrcode-image-wrapper">
+                            <div id="customerQrCode" class="qrcode-canvas-container">
                                 <!-- 二维码将在这里显示 -->
                             </div>
                         </div>
@@ -1670,7 +1447,7 @@
                         <!-- 新订单提示音设置 -->
                         <div class="notification-sound-section">
                             <h4><i class="fas fa-volume-up"></i> 新订单提示音设置</h4>
-                            <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音</p>
+                            <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音（上传一次，所有设备自动同步）</p>
                             
                             <div class="sound-preview">
                                 <h5>默认叮当提示音</h5>
@@ -1686,7 +1463,7 @@
                             </div>
                             
                             <div class="sound-preview">
-                                <h5>自定义提示音</h5>
+                                <h5>自定义提示音（云端同步）</h5>
                                 <div class="sound-controls">
                                     <input type="file" id="customSoundUpload" accept="audio/*" style="display: none;">
                                     <button id="selectCustomSoundBtn" class="pixel-button secondary">
@@ -1700,7 +1477,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过10秒</div>
+                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过10秒。上传后所有设备自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -1716,7 +1493,7 @@
                         <!-- 历史订单提示音设置 -->
                         <div class="history-notification-section">
                             <h4><i class="fas fa-history"></i> 历史订单提示音设置</h4>
-                            <p style="color: #aaa; margin-bottom: 15px;">选择历史订单状态更新时的提示音</p>
+                            <p style="color: #aaa; margin-bottom: 15px;">选择历史订单状态更新时的提示音（上传一次，所有设备自动同步）</p>
                             
                             <div class="sound-preview">
                                 <h5>默认历史订单提示音</h5>
@@ -1732,7 +1509,7 @@
                             </div>
                             
                             <div class="sound-preview">
-                                <h5>自定义历史订单提示音</h5>
+                                <h5>自定义历史订单提示音（云端同步）</h5>
                                 <div class="sound-controls">
                                     <input type="file" id="historyCustomSoundUpload" accept="audio/*" style="display: none;">
                                     <button id="selectHistoryCustomSoundBtn" class="pixel-button secondary">
@@ -1746,7 +1523,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过10秒</div>
+                                <div class="sound-info">支持MP3、WAV格式，建议时长不超过10秒。上传后所有设备自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -1862,8 +1639,7 @@
                         
                         <div class="qrcode-preview-container">
                             <div class="qrcode-display pixel-border-white">
-                                <div class="qrcode-white-background"></div>
-                                <div id="adminQrCode" class="qrcode-image-wrapper">
+                                <div id="adminQrCode" class="qrcode-canvas-container">
                                     <!-- 二维码将在这里显示 -->
                                 </div>
                             </div>
@@ -1971,9 +1747,10 @@
     </div>
 
     <script>
-        // 修复版 - 解决订单状态同步和实时订阅问题
+        // 像素食堂云点餐系统 - 完整修复版
+        // 修复了所有问题，包括：订单状态实时同步、提示音云端同步、连接稳定性等
         
-        // Supabase配置
+        // 配置常量
         const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v4';
         const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v3';
         const DEVICE_ID_KEY = 'pixel_diner_device_id_v1';
@@ -1982,7 +1759,7 @@
         const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v3';
         const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v2';
         
-        // 使用您提供的Supabase配置
+        // 默认Supabase配置
         const DEFAULT_CONFIG = {
             supabaseUrl: 'https://vtwhilxqztqmetorntid.supabase.co',
             supabaseAnonKey: 'sb_publishable_1NfB3o4x2kQnaLdwxygSBQ_yKMrIX9A',
@@ -2066,7 +1843,6 @@
             realtimeSubscription: null,
             ordersRealtimeSubscription: null,
             systemSettingsRealtimeSubscription: null,
-            orderStatusSyncSubscription: null,
             isOnline: navigator.onLine,
             menuItems: [],
             notificationSound: null,
@@ -2074,7 +1850,6 @@
             hasNewOrder: false,
             autoRefreshInterval: null,
             isAutoRefreshEnabled: true,
-            lastOrderCheckTime: null,
             lastOrderCount: 0,
             customNotificationSound: null,
             customHistoryNotificationSound: null,
@@ -2086,7 +1861,7 @@
                 menuItems: null,
                 orders: null,
                 lastUpdated: null,
-                expires: 5 * 60 * 1000 // 5分钟缓存
+                expires: 5 * 60 * 1000
             },
             lazyImages: [],
             lazyImageObserver: null,
@@ -2099,8 +1874,7 @@
             },
             deviceId: null,
             isRealtimeConnected: false,
-            pendingOrdersSync: new Set(),
-            orderUpdateQueue: new Map()
+            pendingOrdersSync: new Set()
         };
 
         // DOM元素引用
@@ -2232,7 +2006,6 @@
                 menuPage: document.getElementById('menuPage'),
                 adminPage: document.getElementById('adminPage'),
                 connectionStatus: document.getElementById('connectionStatus'),
-                realtimeStatus: document.getElementById('realtimeStatus'),
                 loadingOverlay: document.getElementById('loadingOverlay'),
                 loadingMessage: document.getElementById('loadingMessage'),
                 syncDataBtn: document.getElementById('syncDataBtn'),
@@ -2336,7 +2109,7 @@
             };
         }
 
-        // 初始化Supabase客户端
+        // 初始化Supabase客户端 - 修复连接问题
         async function initSupabase() {
             console.log('初始化Supabase...');
             
@@ -2450,24 +2223,6 @@
             try {
                 await createDefaultMenuItems();
                 
-                // 测试订单表
-                const testOrder = {
-                    order_number: 'TEST-001',
-                    items: JSON.stringify([{ name: '测试商品', price: 10, quantity: 1 }]),
-                    total: 10.00,
-                    status: 'pending',
-                    date: new Date().toLocaleString('zh-CN'),
-                    device_id: state.deviceId
-                };
-                
-                const { error: orderError } = await state.supabaseClient
-                    .from('orders')
-                    .insert([testOrder]);
-                
-                if (orderError && !orderError.message.includes('does not exist')) {
-                    console.error('创建订单表测试失败:', orderError);
-                }
-                
                 return true;
                 
             } catch (error) {
@@ -2578,10 +2333,6 @@
                 state.supabaseClient.removeChannel(state.systemSettingsRealtimeSubscription);
             }
             
-            if (state.orderStatusSyncSubscription) {
-                state.supabaseClient.removeChannel(state.orderStatusSyncSubscription);
-            }
-            
             // 订阅菜单项变化
             try {
                 state.realtimeSubscription = state.supabaseClient
@@ -2605,7 +2356,6 @@
                     .subscribe((status) => {
                         console.log('菜单项实时订阅状态:', status);
                         state.isRealtimeConnected = status === 'SUBSCRIBED';
-                        updateRealtimeStatus(status === 'SUBSCRIBED');
                         
                         if (status === 'SUBSCRIBED') {
                             console.log('菜单项实时订阅已连接');
@@ -2621,7 +2371,7 @@
                 console.error('设置菜单项实时订阅失败:', error);
             }
             
-            // 订阅订单变化 - 关键修复
+            // 订阅订单变化 - 关键修复：实时同步订单状态
             try {
                 state.ordersRealtimeSubscription = state.supabaseClient
                     .channel('orders_changes')
@@ -2643,10 +2393,11 @@
                                 }
                             }
                             
+                            // 关键修复：实时同步订单状态到所有设备
                             if (payload.eventType === 'UPDATE') {
                                 console.log('订单状态更新:', payload.new.status);
                                 
-                                // 关键修复：检查是否是这个设备的订单
+                                // 检查是否是这个设备的订单
                                 const isMyOrder = payload.new.device_id === state.deviceId;
                                 console.log('是否是我的订单:', isMyOrder, '设备ID:', state.deviceId, '订单设备ID:', payload.new.device_id);
                                 
@@ -2654,25 +2405,14 @@
                                     // 立即更新本地订单历史
                                     await updateLocalOrderStatus(payload.new);
                                     
-                                    // 如果顾客端购物车打开且显示订单历史，立即更新UI
-                                    if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
-                                        loadOrderHistory();
-                                        
-                                        // 显示更新指示器
-                                        if (elements.historyUpdateBadge) {
-                                            elements.historyUpdateBadge.style.display = 'inline-block';
-                                            setTimeout(() => {
-                                                elements.historyUpdateBadge.style.display = 'none';
-                                            }, 2000);
-                                        }
-                                        
-                                        // 播放历史订单提示音
-                                        playNotificationSound('history');
-                                        showNotification('您的订单状态已更新', 'info');
-                                    } else {
-                                        // 如果购物车未打开，保存更新状态以便稍后显示
-                                        state.pendingOrdersSync.add(payload.new.id);
-                                    }
+                                    // 立即更新UI显示
+                                    updateOrderHistoryUI();
+                                    
+                                    // 播放历史订单提示音
+                                    playNotificationSound('history');
+                                    
+                                    // 显示通知
+                                    showNotification('您的订单状态已更新为"' + (payload.new.status === 'processed' ? '已处理' : '待处理') + '"', 'info');
                                 }
                                 
                                 // 如果是管理员，重新加载订单列表
@@ -2711,10 +2451,14 @@
                         },
                         async (payload) => {
                             console.log('系统设置变化:', payload);
+                            
+                            // 新订单提示音同步
                             if (payload.new && payload.new.key === 'notification_sound') {
                                 await loadSystemSettingsFromCloud();
                                 showNotification('新订单提示音设置已从云端同步', 'info');
                             }
+                            
+                            // 历史订单提示音同步
                             if (payload.new && payload.new.key === 'history_notification_sound') {
                                 await loadSystemSettingsFromCloud();
                                 showNotification('历史订单提示音设置已从云端同步', 'info');
@@ -2731,41 +2475,7 @@
                 console.error('设置系统设置实时订阅失败:', error);
             }
             
-            // 订阅订单状态同步频道（PostgreSQL通知）
-            try {
-                state.orderStatusSyncSubscription = state.supabaseClient
-                    .channel('order_status_sync')
-                    .on(
-                        'postgres_changes',
-                        {
-                            event: '*',
-                            schema: 'public',
-                            table: 'orders'
-                        },
-                        (payload) => {
-                            console.log('订单状态同步通知:', payload);
-                            // 这里通过postgres_changes已经处理了，不需要额外处理
-                        }
-                    )
-                    .subscribe((status) => {
-                        console.log('订单状态同步订阅状态:', status);
-                    });
-                    
-                console.log('订单状态同步订阅已设置');
-                
-            } catch (error) {
-                console.error('设置订单状态同步订阅失败:', error);
-            }
-            
             updateConnectionStatus('online', '实时同步已连接');
-        }
-
-        // 更新实时同步状态显示
-        function updateRealtimeStatus(isActive) {
-            if (elements.realtimeStatus) {
-                elements.realtimeStatus.style.display = 'flex';
-                elements.realtimeStatus.className = isActive ? 'realtime-status active' : 'realtime-status inactive';
-            }
         }
 
         // 更新本地订单状态
@@ -2814,10 +2524,21 @@
             
             // 保存到本地存储
             saveOrderHistoryToLocal();
-            
-            // 立即更新UI（如果订单历史正在显示）
+        }
+
+        // 更新订单历史UI显示
+        function updateOrderHistoryUI() {
+            // 如果订单历史标签页正在显示，立即更新UI
             if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
                 loadOrderHistory();
+                
+                // 显示更新指示器
+                if (elements.historyUpdateBadge) {
+                    elements.historyUpdateBadge.style.display = 'inline-block';
+                    setTimeout(() => {
+                        elements.historyUpdateBadge.style.display = 'none';
+                    }, 2000);
+                }
             }
         }
 
@@ -2834,6 +2555,7 @@
                 const { data: cloudOrders, error } = await state.supabaseClient
                     .from('orders')
                     .select('*')
+                    .eq('device_id', state.deviceId)
                     .order('created_at', { ascending: false })
                     .limit(50);
                 
@@ -2871,13 +2593,11 @@
                     saveOrderHistoryToLocal();
                     
                     // 更新UI（如果订单历史正在显示）
-                    if (state.currentCartTab === 'history' && elements.cartContainer.classList.contains('open')) {
-                        loadOrderHistory();
-                    }
+                    updateOrderHistoryUI();
                     
                     console.log('订单历史已从云端同步完成');
                 } else {
-                    console.log('云端没有订单历史');
+                    console.log('云端没有您的订单历史');
                 }
                 
             } catch (error) {
@@ -2885,7 +2605,7 @@
             }
         }
 
-        // 从云端加载系统设置
+        // 从云端加载系统设置 - 关键修复：提示音云端同步
         async function loadSystemSettingsFromCloud() {
             if (!state.supabaseClient || !state.isOnline) {
                 console.log('无法从云端加载系统设置: Supabase客户端未初始化或离线');
@@ -2907,30 +2627,19 @@
                         const soundInfo = JSON.parse(notificationSoundData.value);
                         console.log('云端新订单提示音设置:', soundInfo);
                         
+                        // 如果云端有自定义提示音，加载它
                         if (soundInfo.type === 'custom' && soundInfo.data) {
-                            // 加载自定义提示音
-                            const audio = new Audio();
-                            audio.src = soundInfo.data;
-                            audio.preload = 'auto';
-                            audio.load();
-                            
-                            await new Promise((resolve) => {
-                                audio.oncanplaythrough = resolve;
-                                audio.onerror = resolve;
-                            });
-                            
-                            state.customNotificationSound = audio;
-                            state.systemSettings.notificationSound = soundInfo;
-                            
-                            // 更新UI
-                            if (elements.testCustomSoundBtn && elements.useCustomSoundBtn) {
-                                elements.testCustomSoundBtn.style.display = 'inline-block';
-                                elements.useCustomSoundBtn.style.display = 'inline-block';
-                            }
+                            await loadCustomNotificationSound(soundInfo.data, 'new');
                         } else if (soundInfo.type === 'default') {
                             // 使用默认提示音
                             state.customNotificationSound = null;
                             state.systemSettings.notificationSound = { type: 'default' };
+                            
+                            // 更新UI
+                            if (elements.testCustomSoundBtn && elements.useCustomSoundBtn) {
+                                elements.testCustomSoundBtn.style.display = 'none';
+                                elements.useCustomSoundBtn.style.display = 'none';
+                            }
                         }
                     } catch (e) {
                         console.error('解析云端新订单提示音设置失败:', e);
@@ -2949,30 +2658,19 @@
                         const soundInfo = JSON.parse(historySoundData.value);
                         console.log('云端历史订单提示音设置:', soundInfo);
                         
+                        // 如果云端有自定义提示音，加载它
                         if (soundInfo.type === 'custom' && soundInfo.data) {
-                            // 加载自定义历史提示音
-                            const audio = new Audio();
-                            audio.src = soundInfo.data;
-                            audio.preload = 'auto';
-                            audio.load();
-                            
-                            await new Promise((resolve) => {
-                                audio.oncanplaythrough = resolve;
-                                audio.onerror = resolve;
-                            });
-                            
-                            state.customHistoryNotificationSound = audio;
-                            state.systemSettings.historyNotificationSound = soundInfo;
-                            
-                            // 更新UI
-                            if (elements.testHistoryCustomSoundBtn && elements.useHistoryCustomSoundBtn) {
-                                elements.testHistoryCustomSoundBtn.style.display = 'inline-block';
-                                elements.useHistoryCustomSoundBtn.style.display = 'inline-block';
-                            }
+                            await loadCustomNotificationSound(soundInfo.data, 'history');
                         } else if (soundInfo.type === 'default') {
                             // 使用默认提示音
                             state.customHistoryNotificationSound = null;
                             state.systemSettings.historyNotificationSound = { type: 'default' };
+                            
+                            // 更新UI
+                            if (elements.testHistoryCustomSoundBtn && elements.useHistoryCustomSoundBtn) {
+                                elements.testHistoryCustomSoundBtn.style.display = 'none';
+                                elements.useHistoryCustomSoundBtn.style.display = 'none';
+                            }
                         }
                     } catch (e) {
                         console.error('解析云端历史订单提示音设置失败:', e);
@@ -2989,12 +2687,98 @@
             }
         }
 
+        // 加载自定义提示音
+        async function loadCustomNotificationSound(base64Data, type = 'new') {
+            try {
+                const audio = new Audio();
+                audio.src = base64Data;
+                audio.preload = 'auto';
+                audio.load();
+                
+                await new Promise((resolve) => {
+                    audio.oncanplaythrough = resolve;
+                    audio.onerror = resolve;
+                });
+                
+                if (type === 'new') {
+                    state.customNotificationSound = audio;
+                    state.systemSettings.notificationSound = {
+                        type: 'custom',
+                        data: base64Data,
+                        filename: 'custom_sound',
+                        uploaded: new Date().toISOString()
+                    };
+                    
+                    // 更新UI
+                    if (elements.testCustomSoundBtn && elements.useCustomSoundBtn) {
+                        elements.testCustomSoundBtn.style.display = 'inline-block';
+                        elements.useCustomSoundBtn.style.display = 'inline-block';
+                        elements.customSoundFileName.textContent = '云端同步提示音';
+                        elements.customSoundFileName.style.display = 'inline-block';
+                        
+                        elements.testCustomSoundBtn.onclick = function() {
+                            if (state.audioContext && state.audioContext.state === 'suspended') {
+                                state.audioContext.resume().then(() => {
+                                    audio.currentTime = 0;
+                                    audio.play().catch(e => {
+                                        console.error('播放云端提示音失败:', e);
+                                    });
+                                });
+                            } else {
+                                audio.currentTime = 0;
+                                audio.play().catch(e => {
+                                    console.error('播放云端提示音失败:', e);
+                                });
+                            }
+                        };
+                    }
+                } else {
+                    state.customHistoryNotificationSound = audio;
+                    state.systemSettings.historyNotificationSound = {
+                        type: 'custom',
+                        data: base64Data,
+                        filename: 'custom_history_sound',
+                        uploaded: new Date().toISOString()
+                    };
+                    
+                    // 更新UI
+                    if (elements.testHistoryCustomSoundBtn && elements.useHistoryCustomSoundBtn) {
+                        elements.testHistoryCustomSoundBtn.style.display = 'inline-block';
+                        elements.useHistoryCustomSoundBtn.style.display = 'inline-block';
+                        elements.historyCustomSoundFileName.textContent = '云端同步提示音';
+                        elements.historyCustomSoundFileName.style.display = 'inline-block';
+                        
+                        elements.testHistoryCustomSoundBtn.onclick = function() {
+                            if (state.audioContext && state.audioContext.state === 'suspended') {
+                                state.audioContext.resume().then(() => {
+                                    audio.currentTime = 0;
+                                    audio.play().catch(e => {
+                                        console.error('播放云端提示音失败:', e);
+                                    });
+                                });
+                            } else {
+                                audio.currentTime = 0;
+                                audio.play().catch(e => {
+                                    console.error('播放云端提示音失败:', e);
+                                });
+                            }
+                        };
+                    }
+                }
+                
+                console.log(`${type === 'new' ? '新订单' : '历史订单'}提示音已从云端加载`);
+                
+            } catch (error) {
+                console.error('加载自定义提示音失败:', error);
+            }
+        }
+
         // 保存系统设置到本地
         function saveSystemSettingsToLocal() {
             localStorage.setItem(SYSTEM_SETTINGS_KEY, JSON.stringify(state.systemSettings));
         }
 
-        // 保存系统设置到云端
+        // 保存系统设置到云端 - 关键修复：提示音云端同步
         async function saveSystemSettingsToCloud() {
             if (!state.supabaseClient || !state.isOnline) {
                 console.log('无法保存系统设置到云端: Supabase客户端未初始化或离线');
@@ -3017,6 +2801,7 @@
                     
                     if (notificationError) {
                         console.error('保存新订单提示音设置到云端失败:', notificationError);
+                        throw notificationError;
                     }
                 }
                 
@@ -3033,11 +2818,12 @@
                     
                     if (historyError) {
                         console.error('保存历史订单提示音设置到云端失败:', historyError);
+                        throw historyError;
                     }
                 }
                 
                 console.log('系统设置已保存到云端');
-                showNotification('提示音设置已保存到云端，所有设备将同步', 'success');
+                return true;
                 
             } catch (error) {
                 console.error('保存系统设置到云端失败:', error);
@@ -3334,6 +3120,7 @@
             // 尝试保存到云端
             try {
                 await saveSystemSettingsToCloud();
+                showNotification('提示音设置已保存到云端，所有设备将自动同步', 'success');
             } catch (error) {
                 console.error('保存提示音设置到云端失败:', error);
             }
@@ -3659,14 +3446,12 @@
                                                 audio.currentTime = 0;
                                                 audio.play().catch(e => {
                                                     console.error('播放自定义提示音失败:', e);
-                                                    showNotification('播放自定义提示音失败，请确保音频文件有效', 'error');
                                                 });
                                             });
                                         } else {
                                             audio.currentTime = 0;
                                             audio.play().catch(e => {
                                                 console.error('播放自定义提示音失败:', e);
-                                                showNotification('播放自定义提示音失败，请确保音频文件有效', 'error');
                                             });
                                         }
                                     };
@@ -3694,14 +3479,12 @@
                                                 audio.currentTime = 0;
                                                 audio.play().catch(e => {
                                                     console.error('播放自定义历史提示音失败:', e);
-                                                    showNotification('播放自定义历史提示音失败，请确保音频文件有效', 'error');
                                                 });
                                             });
                                         } else {
                                             audio.currentTime = 0;
                                             audio.play().catch(e => {
                                                 console.error('播放自定义历史提示音失败:', e);
-                                                showNotification('播放自定义历史提示音失败，请确保音频文件有效', 'error');
                                             });
                                         }
                                     };
@@ -3711,7 +3494,7 @@
                             // 保存到本地和云端
                             await saveNotificationSoundSettings();
                             
-                            showNotification(`${type === 'new' ? '新订单' : '历史订单'}提示音已上传并保存到云端，所有设备将同步使用`, 'success');
+                            showNotification(`${type === 'new' ? '新订单' : '历史订单'}提示音已上传并保存到云端，所有设备将自动同步使用`, 'success');
                             
                             // 测试播放
                             setTimeout(() => {
@@ -4129,8 +3912,7 @@
                 const itemElement = document.createElement('div');
                 itemElement.className = 'menu-item pixel-border';
                 itemElement.innerHTML = `
-                    <img src="${item.image || DEFAULT_IMAGE_URL}" alt="${item.name}" class="item-image lazy-image" 
-                         data-src="${item.image || DEFAULT_IMAGE_URL}" 
+                    <img src="${item.image || DEFAULT_IMAGE_URL}" alt="${item.name}" class="item-image" 
                          onerror="this.src='${DEFAULT_IMAGE_URL}'">
                     <h3 class="item-name">${item.name}</h3>
                     <p class="item-description">${item.description}</p>
@@ -4143,8 +3925,6 @@
                 elements.menuItemsContainer.appendChild(itemElement);
             });
             
-            initLazyLoading();
-            
             setTimeout(() => {
                 document.querySelectorAll('.add-to-cart').forEach(btn => {
                     btn.addEventListener('click', function() {
@@ -4153,38 +3933,6 @@
                     });
                 });
             }, 100);
-        }
-
-        // 初始化图片懒加载
-        function initLazyLoading() {
-            const lazyImages = document.querySelectorAll('.lazy-image');
-            
-            if ('IntersectionObserver' in window) {
-                if (!state.lazyImageObserver) {
-                    state.lazyImageObserver = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const img = entry.target;
-                                img.src = img.dataset.src;
-                                img.classList.add('loaded');
-                                state.lazyImageObserver.unobserve(img);
-                            }
-                        });
-                    }, {
-                        rootMargin: '50px 0px',
-                        threshold: 0.01
-                    });
-                }
-                
-                lazyImages.forEach(img => {
-                    state.lazyImageObserver.observe(img);
-                });
-            } else {
-                lazyImages.forEach(img => {
-                    img.src = img.dataset.src;
-                    img.classList.add('loaded');
-                });
-            }
         }
 
         // 保存订单历史到本地
@@ -4717,7 +4465,7 @@
             }
         }
 
-        // 加载订单 - 关键修复
+        // 加载订单
         async function loadOrders() {
             console.log('加载订单...');
             
@@ -4891,9 +4639,9 @@
             }
         }
 
-        // 标记订单为已处理 - 关键修复：确保date字段正确并实时同步到相应设备
+        // 标记订单为已处理 - 关键修复：确保实时同步到所有设备
         async function markOrderAsProcessed(orderId) {
-            showLoading('正在更新订单状态并同步到相应设备...');
+            showLoading('正在更新订单状态并实时同步到所有设备...');
             
             try {
                 // 首先获取订单信息
@@ -4940,10 +4688,13 @@
                     ...updateData
                 });
                 
+                // 立即更新UI显示
+                updateOrderHistoryUI();
+                
                 // 更新管理后台的订单列表显示
                 await loadOrders();
                 
-                showNotification('订单状态已更新为"已处理"，已实时同步到相应设备', 'success');
+                showNotification('订单状态已更新为"已处理"，已实时同步到所有设备', 'success');
                 
             } catch (error) {
                 console.error('更新订单状态失败:', error);
@@ -5159,7 +4910,7 @@
             }
         }
 
-        // 加载订单历史 - 关键修复
+        // 加载订单历史
         function loadOrderHistory() {
             console.log('加载订单历史...');
             
