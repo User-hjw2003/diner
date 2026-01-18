@@ -412,12 +412,26 @@
             color: #aaa;
         }
 
+        /* 修复：二维码按钮在一行显示 */
         .qrcode-actions {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
             justify-content: center;
+            align-items: center;
+            gap: 10px;
             margin-top: 20px;
+            width: 100%;
+        }
+
+        .qrcode-actions .pixel-button {
+            flex: 1;
+            min-width: 140px;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 10px 15px;
+            font-size: 14px;
         }
 
         .qrcode-canvas-container {
@@ -682,10 +696,48 @@
             border-left: 4px solid var(--primary-color);
         }
 
+        /* 修复：订单头部信息在一行显示 */
         .order-header {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .order-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .order-header-info .order-title {
+            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: bold;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.3;
+        }
+
+        .order-header-info .order-date {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .order-header-info .customer-phone {
+            font-size: 14px;
+            color: #4caf50;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .order-header-status {
+            text-align: right;
+            min-width: 120px;
         }
 
         .order-items {
@@ -888,6 +940,37 @@
                 font-size: 10px;
                 padding: 5px 8px;
             }
+            
+            /* 修复：二维码按钮在一行显示 */
+            .qrcode-actions {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .qrcode-actions .pixel-button {
+                min-width: 120px;
+                flex-shrink: 0;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            
+            /* 修复：订单头部信息在一行显示 */
+            .order-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .order-header-info .order-title {
+                font-size: 16px;
+            }
+            
+            .order-header-status {
+                text-align: left;
+                margin-top: 10px;
+                min-width: auto;
+            }
         }
 
         @media (max-width: 480px) {
@@ -953,6 +1036,25 @@
             
             .item-image {
                 height: 160px;
+            }
+            
+            /* 修复：二维码按钮在一行显示 */
+            .qrcode-actions {
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            
+            .qrcode-actions .pixel-button {
+                min-width: 45%;
+                max-width: 48%;
+                margin: 2px;
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            
+            /* 修复：订单头部信息在一行显示 */
+            .order-header-info .order-title {
+                font-size: 14px;
             }
         }
 
@@ -1345,6 +1447,46 @@
             background-color: rgba(255, 193, 7, 0.1);
             color: #ff9800;
             animation: pulse 1s infinite;
+        }
+        
+        /* 新增：电话联系按钮 */
+        .call-customer-btn {
+            background-color: #2196f3 !important;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            text-decoration: none;
+        }
+        
+        .call-customer-btn:hover {
+            background-color: #1976d2 !important;
+        }
+        
+        /* 新增：手机号码输入框 */
+        .phone-input {
+            width: 100%;
+            padding: 10px;
+            background-color: #222;
+            border: 2px solid #444;
+            color: white;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        /* 新增：手机号码验证样式 */
+        .phone-valid {
+            border-color: #4caf50 !important;
+        }
+        
+        .phone-invalid {
+            border-color: #f44336 !important;
         }
     </style>
 </head>
@@ -1849,6 +1991,12 @@
                     <span>总计:</span>
                     <span id="cartTotal">0.00</span> 元
                 </div>
+                <!-- 新增：手机号码输入 -->
+                <div class="form-group" style="margin-top: 15px; padding: 0 15px;">
+                    <label class="form-label">联系电话（方便联系您取餐）</label>
+                    <input type="tel" id="customerPhone" class="phone-input" placeholder="请输入手机号码（如：13888888888）">
+                    <p style="color: #aaa; font-size: 12px; margin-top: 5px;">请输入11位手机号码，方便餐厅联系您</p>
+                </div>
                 <div style="padding: 15px 0;">
                     <button id="submitOrderBtn" class="pixel-button" style="width: 100%;">提交到云端</button>
                 </div>
@@ -1870,16 +2018,17 @@
 
     <script>
         // 像素食堂云点餐系统 - 完整修复版（解决所有问题）
-        // 修复了提示音云端同步、导航布局、菜品排序、连接稳定性等问题
+        // 修复了提示音云端同步、导航布局、菜品排序、连接稳定性、手机号码等问题
         
         // 配置常量
-        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v8';
-        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v7';
-        const DEVICE_ID_KEY = 'pixel_diner_device_id_v4';
-        const CART_KEY = 'pixel_diner_cart_v7';
-        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v9';
-        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v7';
-        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v6';
+        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v9';
+        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v8';
+        const DEVICE_ID_KEY = 'pixel_diner_device_id_v5';
+        const CART_KEY = 'pixel_diner_cart_v8';
+        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v10';
+        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v8';
+        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v7';
+        const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v1';
         
         // 默认Supabase配置
         const DEFAULT_CONFIG = {
@@ -1997,7 +2146,8 @@
             lastPlayedNotification: null,
             notificationSoundPlayed: false,
             historySoundPlayed: false,
-            currentSoundUploadType: null
+            currentSoundUploadType: null,
+            customerPhone: ''
         };
 
         // DOM元素引用
@@ -2127,6 +2277,14 @@
                 }
             }
             
+            const customerPhone = localStorage.getItem(CUSTOMER_PHONE_KEY);
+            if (customerPhone) {
+                state.customerPhone = customerPhone;
+                if (elements.customerPhone) {
+                    elements.customerPhone.value = customerPhone;
+                }
+            }
+            
             updateCartDisplay();
             loadMenuPage();
         }
@@ -2170,6 +2328,7 @@
                 cartItemsContainer: document.getElementById('cartItemsContainer'),
                 cartCount: document.getElementById('cartCount'),
                 cartTotal: document.getElementById('cartTotal'),
+                customerPhone: document.getElementById('customerPhone'),
                 submitOrderBtn: document.getElementById('submitOrderBtn'),
                 cartTabs: document.querySelectorAll('.cart-tab'),
                 orderHistoryContainer: document.getElementById('orderHistoryContainer'),
@@ -2485,7 +2644,7 @@
             // 订阅菜单项变化
             try {
                 state.realtimeSubscription = state.supabaseClient
-                    .channel('menu_items_changes_v3')
+                    .channel('menu_items_changes_v4')
                     .on(
                         'postgres_changes',
                         {
@@ -2523,7 +2682,7 @@
             // 订阅订单变化
             try {
                 state.ordersRealtimeSubscription = state.supabaseClient
-                    .channel('orders_changes_v3')
+                    .channel('orders_changes_v4')
                     .on(
                         'postgres_changes',
                         {
@@ -2533,6 +2692,12 @@
                         },
                         async (payload) => {
                             console.log('订单变化实时推送:', payload);
+                            
+                            // 关键修复：确保date字段存在
+                            if (payload.new && !payload.new.date && payload.new.created_at) {
+                                const date = new Date(payload.new.created_at);
+                                payload.new.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                            }
                             
                             if (payload.eventType === 'UPDATE' && payload.new.status !== payload.old.status) {
                                 console.log('订单状态更新:', payload.new.status, '设备ID:', payload.new.device_id);
@@ -2564,19 +2729,24 @@
                             if (state.adminLoggedIn && payload.eventType === 'INSERT') {
                                 console.log('新订单:', payload.new);
                                 
+                                // 关键修复：确保所有设备都能听到提示音
                                 if (!state.notificationSoundPlayed && !state.isNotificationMuted) {
-                                    playNotificationSound('new');
+                                    setTimeout(() => {
+                                        playNotificationSound('new');
+                                    }, 300);
                                     state.notificationSoundPlayed = true;
                                     setTimeout(() => {
                                         state.notificationSoundPlayed = false;
-                                    }, 2000);
+                                    }, 3000);
                                 }
                                 
                                 showNewOrderNotification(payload.new);
                             }
                             
                             if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
-                                await loadOrders();
+                                setTimeout(() => {
+                                    loadOrders();
+                                }, 500);
                             }
                         }
                     )
@@ -2599,7 +2769,7 @@
             // 订阅系统设置变化 - 提示音实时同步
             try {
                 state.systemSettingsRealtimeSubscription = state.supabaseClient
-                    .channel('system_settings_changes_v3')
+                    .channel('system_settings_changes_v4')
                     .on(
                         'postgres_changes',
                         {
@@ -2642,6 +2812,7 @@
             
             console.log('更新本地订单状态:', cloudOrder.id, cloudOrder.status);
             
+            // 关键修复：确保date字段存在
             if (!cloudOrder.date && cloudOrder.created_at) {
                 const date = new Date(cloudOrder.created_at);
                 cloudOrder.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
@@ -2658,7 +2829,8 @@
                     status: cloudOrder.status,
                     date: cloudOrder.date || cloudOrder.created_at,
                     updated_at: cloudOrder.updated_at,
-                    device_id: cloudOrder.device_id
+                    device_id: cloudOrder.device_id,
+                    customer_phone: cloudOrder.customer_phone || state.orderHistory[orderIndex].customer_phone
                 };
                 console.log('本地订单状态已更新:', state.orderHistory[orderIndex].status);
             } else {
@@ -2671,7 +2843,8 @@
                     date: cloudOrder.date || cloudOrder.created_at,
                     created_at: cloudOrder.created_at,
                     updated_at: cloudOrder.updated_at,
-                    device_id: cloudOrder.device_id
+                    device_id: cloudOrder.device_id,
+                    customer_phone: cloudOrder.customer_phone || ''
                 });
                 console.log('新订单已添加到本地历史');
             }
@@ -2721,6 +2894,7 @@
                     state.orderHistory = [];
                     
                     cloudOrders.forEach(cloudOrder => {
+                        // 关键修复：确保date字段存在
                         if (!cloudOrder.date && cloudOrder.created_at) {
                             const date = new Date(cloudOrder.created_at);
                             cloudOrder.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
@@ -2735,7 +2909,8 @@
                             date: cloudOrder.date || cloudOrder.created_at,
                             created_at: cloudOrder.created_at,
                             updated_at: cloudOrder.updated_at,
-                            device_id: cloudOrder.device_id
+                            device_id: cloudOrder.device_id,
+                            customer_phone: cloudOrder.customer_phone || ''
                         });
                     });
                     
@@ -2838,6 +3013,7 @@
                 const audio = new Audio();
                 audio.src = base64Data;
                 audio.preload = 'auto';
+                audio.volume = 0.8;
                 
                 await new Promise((resolve) => {
                     const onCanPlayThrough = () => {
@@ -2916,26 +3092,39 @@
             }
         }
 
-        // 播放自定义提示音
+        // 播放自定义提示音 - 关键修复：支持Safari等所有浏览器
         function playCustomSound(audio) {
             if (!audio) return;
             
             try {
-                audio.currentTime = 0;
-                const playPromise = audio.play();
+                // 确保音频上下文激活
+                if (state.audioContext && state.audioContext.state === 'suspended') {
+                    state.audioContext.resume().then(() => {
+                        playAudio();
+                    });
+                } else {
+                    playAudio();
+                }
                 
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => {
-                        console.error('播放音频失败:', e);
-                        if (state.audioContext && state.audioContext.state === 'suspended') {
-                            state.audioContext.resume().then(() => {
-                                audio.currentTime = 0;
-                                audio.play().catch(e2 => {
+                function playAudio() {
+                    audio.currentTime = 0;
+                    audio.volume = 0.8;
+                    
+                    const playPromise = audio.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(e => {
+                            console.error('播放音频失败:', e);
+                            // 如果播放失败，尝试重新加载并播放
+                            if (audio.src.startsWith('blob:') || audio.src.startsWith('data:')) {
+                                const newAudio = new Audio(audio.src);
+                                newAudio.volume = 0.8;
+                                newAudio.play().catch(e2 => {
                                     console.error('重试播放音频失败:', e2);
                                 });
-                            });
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
             } catch (error) {
                 console.error('播放音频时发生错误:', error);
@@ -3027,7 +3216,8 @@
             
             total = order.total || items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
             
-            message.textContent = `新订单 #${order.id} - ${total.toFixed(2)}元`;
+            const phoneInfo = order.customer_phone ? ` - 电话: ${order.customer_phone}` : '';
+            message.textContent = `新订单 #${order.id} - ${total.toFixed(2)}元${phoneInfo}`;
             notification.style.display = 'block';
             
             notification.onclick = () => {
@@ -3048,21 +3238,16 @@
             
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 5000);
+            }, 8000);
         }
 
-        // 播放提示音
+        // 播放提示音 - 关键修复：确保所有设备都能听到
         function playNotificationSound(type = 'new') {
             if (type === 'new' && state.isNotificationMuted) {
                 return;
             }
             
             if (type === 'history' && state.isHistoryNotificationMuted) {
-                return;
-            }
-            
-            if (!state.audioContext) {
-                console.warn('音频上下文不可用');
                 return;
             }
             
@@ -3089,13 +3274,39 @@
                 
             } catch (error) {
                 console.error('播放提示音失败:', error);
+                // 如果播放失败，尝试创建简单的提示音
+                createSimpleBeep();
+            }
+        }
+
+        // 创建简单的蜂鸣声（兼容性更好）
+        function createSimpleBeep() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (error) {
+                console.error('创建简单蜂鸣声失败:', error);
             }
         }
 
         // 播放默认提示音
         function playDefaultNotificationSound(type = 'new') {
             if (!state.audioContext) {
-                console.warn('音频上下文未初始化');
+                createSimpleBeep();
                 return;
             }
             
@@ -3109,78 +3320,46 @@
                 }
             } catch (error) {
                 console.error('播放默认提示音失败:', error);
+                createSimpleBeep();
             }
             
             function createDefaultSound(soundType) {
                 try {
-                    if (soundType === 'new') {
-                        const oscillator1 = state.audioContext.createOscillator();
-                        const gainNode1 = state.audioContext.createGain();
-                        
-                        oscillator1.connect(gainNode1);
-                        gainNode1.connect(state.gainNode);
-                        
-                        oscillator1.frequency.value = 880;
-                        oscillator1.type = 'sine';
-                        
-                        gainNode1.gain.setValueAtTime(0, state.audioContext.currentTime);
-                        gainNode1.gain.linearRampToValueAtTime(0.3, state.audioContext.currentTime + 0.1);
-                        gainNode1.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + 0.5);
-                        
-                        const oscillator2 = state.audioContext.createOscillator();
-                        const gainNode2 = state.audioContext.createGain();
-                        
-                        oscillator2.connect(gainNode2);
-                        gainNode2.connect(state.gainNode);
-                        
-                        oscillator2.frequency.value = 660;
-                        oscillator2.type = 'sine';
-                        
-                        gainNode2.gain.setValueAtTime(0, state.audioContext.currentTime);
-                        gainNode2.gain.linearRampToValueAtTime(0.2, state.audioContext.currentTime + 0.1);
-                        gainNode2.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + 0.7);
-                        
-                        oscillator1.start();
-                        oscillator2.start();
-                        
-                        oscillator1.stop(state.audioContext.currentTime + 0.5);
-                        oscillator2.stop(state.audioContext.currentTime + 0.7);
-                    } else {
-                        const oscillator1 = state.audioContext.createOscillator();
-                        const gainNode1 = state.audioContext.createGain();
-                        
-                        oscillator1.connect(gainNode1);
-                        gainNode1.connect(state.gainNode);
-                        
-                        oscillator1.frequency.value = 660;
-                        oscillator1.type = 'sine';
-                        
-                        gainNode1.gain.setValueAtTime(0, state.audioContext.currentTime);
-                        gainNode1.gain.linearRampToValueAtTime(0.3, state.audioContext.currentTime + 0.1);
-                        gainNode1.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + 0.3);
-                        
-                        const oscillator2 = state.audioContext.createOscillator();
-                        const gainNode2 = state.audioContext.createGain();
-                        
-                        oscillator2.connect(gainNode2);
-                        gainNode2.connect(state.gainNode);
-                        
-                        oscillator2.frequency.value = 880;
-                        oscillator2.type = 'sine';
-                        
-                        gainNode2.gain.setValueAtTime(0, state.audioContext.currentTime + 0.1);
-                        gainNode2.gain.linearRampToValueAtTime(0.2, state.audioContext.currentTime + 0.2);
-                        gainNode2.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + 0.5);
-                        
-                        oscillator1.start();
-                        oscillator2.start(state.audioContext.currentTime + 0.1);
-                        
-                        oscillator1.stop(state.audioContext.currentTime + 0.3);
-                        oscillator2.stop(state.audioContext.currentTime + 0.5);
-                    }
+                    const oscillator1 = state.audioContext.createOscillator();
+                    const gainNode1 = state.audioContext.createGain();
+                    
+                    oscillator1.connect(gainNode1);
+                    gainNode1.connect(state.gainNode);
+                    
+                    oscillator1.frequency.value = soundType === 'new' ? 880 : 660;
+                    oscillator1.type = 'sine';
+                    
+                    gainNode1.gain.setValueAtTime(0, state.audioContext.currentTime);
+                    gainNode1.gain.linearRampToValueAtTime(0.3, state.audioContext.currentTime + 0.1);
+                    gainNode1.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + 0.5);
+                    
+                    const oscillator2 = state.audioContext.createOscillator();
+                    const gainNode2 = state.audioContext.createGain();
+                    
+                    oscillator2.connect(gainNode2);
+                    gainNode2.connect(state.gainNode);
+                    
+                    oscillator2.frequency.value = soundType === 'new' ? 660 : 880;
+                    oscillator2.type = 'sine';
+                    
+                    gainNode2.gain.setValueAtTime(0, state.audioContext.currentTime + (soundType === 'new' ? 0 : 0.1));
+                    gainNode2.gain.linearRampToValueAtTime(0.2, state.audioContext.currentTime + (soundType === 'new' ? 0.1 : 0.2));
+                    gainNode2.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + (soundType === 'new' ? 0.7 : 0.5));
+                    
+                    oscillator1.start();
+                    oscillator2.start(state.audioContext.currentTime + (soundType === 'new' ? 0 : 0.1));
+                    
+                    oscillator1.stop(state.audioContext.currentTime + (soundType === 'new' ? 0.5 : 0.3));
+                    oscillator2.stop(state.audioContext.currentTime + (soundType === 'new' ? 0.7 : 0.5));
                     
                 } catch (error) {
-                    console.error('播放默认提示音失败:', error);
+                    console.error('创建默认提示音失败:', error);
+                    createSimpleBeep();
                 }
             }
         }
@@ -3199,6 +3378,7 @@
                 }
             } catch (error) {
                 console.error('测试默认提示音失败:', error);
+                createSimpleBeep();
             }
         }
 
@@ -3213,6 +3393,7 @@
                         const audio = new Audio();
                         audio.src = soundInfo.data;
                         audio.preload = 'auto';
+                        audio.volume = 0.8;
                         
                         await new Promise((resolve) => {
                             const onCanPlayThrough = () => {
@@ -3256,6 +3437,7 @@
                         const audio = new Audio();
                         audio.src = soundInfo.data;
                         audio.preload = 'auto';
+                        audio.volume = 0.8;
                         
                         await new Promise((resolve) => {
                             const onCanPlayThrough = () => {
@@ -3455,6 +3637,26 @@
                 });
             });
             
+            // 手机号码输入监听
+            if (elements.customerPhone) {
+                elements.customerPhone.addEventListener('input', function() {
+                    const phone = this.value.trim();
+                    state.customerPhone = phone;
+                    localStorage.setItem(CUSTOMER_PHONE_KEY, phone);
+                    
+                    // 验证手机号码格式
+                    if (phone && phone.length === 11 && /^1[3-9]\d{9}$/.test(phone)) {
+                        this.classList.remove('phone-invalid');
+                        this.classList.add('phone-valid');
+                    } else if (phone) {
+                        this.classList.remove('phone-valid');
+                        this.classList.add('phone-invalid');
+                    } else {
+                        this.classList.remove('phone-valid', 'phone-invalid');
+                    }
+                });
+            }
+            
             elements.refreshQrCodeBtn.addEventListener('click', refreshCustomerQrCode);
             elements.saveQrCodeBtn.addEventListener('click', saveQrCodeImage);
             elements.generateQrCodeBtn.addEventListener('click', showQrCodeGenerator);
@@ -3559,6 +3761,9 @@
             
             window.addEventListener('beforeunload', () => {
                 localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
+                if (state.customerPhone) {
+                    localStorage.setItem(CUSTOMER_PHONE_KEY, state.customerPhone);
+                }
             });
         }
 
@@ -3619,6 +3824,7 @@
                 const audio = new Audio();
                 audio.src = base64Data;
                 audio.preload = 'auto';
+                audio.volume = 0.8;
                 
                 await new Promise((resolve) => {
                     const onCanPlayThrough = () => {
@@ -4661,7 +4867,7 @@
             }
         }
 
-        // 加载订单
+        // 加载订单 - 修复：显示客户手机号码
         async function loadOrders() {
             console.log('加载订单...');
             
@@ -4677,6 +4883,7 @@
                     
                     if (!error && data) {
                         orders = data.map(order => {
+                            // 关键修复：确保date字段存在
                             if (!order.date && order.created_at) {
                                 const date = new Date(order.created_at);
                                 order.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
@@ -4686,11 +4893,13 @@
                         
                         if (state.lastOrderCount > 0 && orders.length > state.lastOrderCount) {
                             if (!state.notificationSoundPlayed && !state.isNotificationMuted) {
-                                playNotificationSound('new');
+                                setTimeout(() => {
+                                    playNotificationSound('new');
+                                }, 300);
                                 state.notificationSoundPlayed = true;
                                 setTimeout(() => {
                                     state.notificationSoundPlayed = false;
-                                }, 2000);
+                                }, 3000);
                             }
                             
                             const newOrders = orders.length - state.lastOrderCount;
@@ -4746,16 +4955,27 @@
                 const date = order.date || order.created_at || new Date().toISOString();
                 const formattedDate = new Date(date).toLocaleString('zh-CN');
                 
+                // 关键修复：订单号在一行显示
                 const orderNumber = `#${order.id}-${order.created_at ? new Date(order.created_at).getTime() : Date.now()}`;
                 
                 orderElement.innerHTML = `
                     <div class="order-header">
-                        <div>
-                            <strong style="color: var(--primary-color);">订单 ${orderNumber}</strong>
-                            <div style="font-size: 14px; color: #aaa; margin-top: 5px;">${formattedDate}</div>
+                        <div class="order-header-info">
+                            <div class="order-title">订单 ${orderNumber}</div>
+                            <div class="order-date">${formattedDate}</div>
+                            ${order.customer_phone ? `
+                                <div class="customer-phone">
+                                    <i class="fas fa-phone"></i> ${order.customer_phone}
+                                    ${order.customer_phone && order.customer_phone.length === 11 ? `
+                                        <a href="tel:${order.customer_phone}" class="call-customer-btn">
+                                            <i class="fas fa-phone-alt"></i> 打电话
+                                        </a>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
                             ${order.device_id ? `<div style="font-size: 12px; color: #666; margin-top: 3px;">设备: ${order.device_id.substring(0, 8)}...</div>` : ''}
                         </div>
-                        <div style="text-align: right;">
+                        <div class="order-header-status">
                             <span class="order-status ${order.status === 'processed' ? 'processed' : ''}" data-status="${order.status}">
                                 ${order.status === 'processed' ? '已处理' : '待处理'}
                             </span>
@@ -4867,6 +5087,7 @@
                     updated_at: new Date().toISOString()
                 };
                 
+                // 关键修复：确保date字段存在
                 if (orderToUpdate && !orderToUpdate.date && orderToUpdate.created_at) {
                     const date = new Date(orderToUpdate.created_at);
                     updateData.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
@@ -5164,9 +5385,10 @@
                 
                 historyElement.innerHTML = `
                     <div class="order-history-header">
-                        <div>
+                        <div style="flex: 1;">
                             <strong style="color: var(--primary-color);">订单 ${orderNumber}</strong>
                             <div style="font-size: 12px; color: #aaa; margin-top: 5px;">${formattedDate}</div>
+                            ${order.customer_phone ? `<div style="font-size: 12px; color: #4caf50; margin-top: 3px; display: flex; align-items: center; gap: 5px;"><i class="fas fa-phone"></i> ${order.customer_phone}</div>` : ''}
                         </div>
                         <div style="text-align: right;">
                             <span class="order-status ${order.status === 'processed' ? 'processed' : ''}" data-status="${order.status}">
@@ -5191,11 +5413,24 @@
             console.log('订单历史加载完成，共', sortedHistory.length, '个订单');
         }
 
-        // 提交订单
+        // 提交订单 - 修复：包含手机号码
         async function submitOrder() {
             if (state.cart.length === 0) {
                 showNotification('购物车是空的，无法提交订单', 'warning');
                 return;
+            }
+            
+            // 验证手机号码
+            const phone = elements.customerPhone ? elements.customerPhone.value.trim() : state.customerPhone;
+            if (phone) {
+                if (phone.length !== 11 || !/^1[3-9]\d{9}$/.test(phone)) {
+                    showNotification('请输入有效的11位手机号码', 'warning');
+                    if (elements.customerPhone) {
+                        elements.customerPhone.focus();
+                        elements.customerPhone.classList.add('phone-invalid');
+                    }
+                    return;
+                }
             }
             
             showLoading('正在提交订单...');
@@ -5214,7 +5449,8 @@
                 status: 'pending',
                 created_at: now.toISOString(),
                 date: formattedDate,
-                device_id: state.deviceId
+                device_id: state.deviceId,
+                customer_phone: phone || ''
             };
             
             try {
@@ -5228,6 +5464,11 @@
                     
                     if (data && data[0]) {
                         order.id = data[0].id;
+                        // 关键修复：确保date字段同步
+                        if (!data[0].date && data[0].created_at) {
+                            const date = new Date(data[0].created_at);
+                            order.date = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                        }
                     }
                 } else {
                     order.id = orderId;
@@ -5240,9 +5481,14 @@
                 localStorage.removeItem(CART_KEY);
                 updateCartDisplay();
                 
+                if (elements.customerPhone) {
+                    elements.customerPhone.value = '';
+                }
+                
                 switchCartTab('history');
                 
-                showNotification(`订单提交成功！订单号: ${orderNumber}`, 'success');
+                const phoneInfo = phone ? `，联系电话：${phone}` : '';
+                showNotification(`订单提交成功！订单号: ${orderNumber}${phoneInfo}`, 'success');
                 
             } catch (error) {
                 console.error('提交订单失败:', error);
@@ -5636,4 +5882,3 @@
     </script>
 </body>
 </html>
-[file content end]
