@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>像素食堂 | 云点餐系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 使用更可靠的QR Code库 -->
@@ -371,6 +371,11 @@
         .qrcode-section p {
             text-align: center;
             margin-bottom: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: clamp(14px, 2.5vw, 16px);
+            padding: 0 10px;
         }
 
         .qrcode-container {
@@ -423,6 +428,9 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            text-align: center;
+            width: 100%;
+            font-size: clamp(13px, 2vw, 15px);
         }
 
         /* 修复：二维码按钮在一行显示 */
@@ -997,19 +1005,19 @@
             
             /* 修复：订单头部信息在一行显示 */
             .order-header {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: row;
+                align-items: flex-start;
             }
             
             .order-header-info .order-title {
-                font-size: 16px;
+                font-size: clamp(14px, 4vw, 16px);
             }
             
             .order-header-status {
-                text-align: left;
-                margin-top: 10px;
-                min-width: auto;
-                align-items: flex-start;
+                text-align: right;
+                margin-top: 0;
+                min-width: 100px;
+                align-items: flex-end;
             }
             
             /* 修复：订单操作按钮在同一行 */
@@ -1019,7 +1027,7 @@
             
             .order-actions .pixel-button {
                 min-width: 100px;
-                font-size: 13px;
+                font-size: clamp(11px, 3vw, 13px);
                 padding: 6px 10px;
             }
         }
@@ -1105,7 +1113,7 @@
             
             /* 修复：订单头部信息在一行显示 */
             .order-header-info .order-title {
-                font-size: 14px;
+                font-size: clamp(12px, 3.5vw, 14px);
             }
             
             /* 修复：订单操作按钮在同一行 */
@@ -1117,7 +1125,7 @@
                 min-width: 30%;
                 max-width: 32%;
                 padding: 5px 8px;
-                font-size: 12px;
+                font-size: clamp(10px, 2.5vw, 12px);
                 margin: 2px;
             }
         }
@@ -1658,11 +1666,11 @@
                         <div class="qrcode-info">
                             <h4>云点餐优势</h4>
                             <ul>
-                                <li><i class="fas fa-cloud"></i> 数据实时云端同步</li>
-                                <li><i class="fas fa-mobile-alt"></i> 手机扫码直接点餐</li>
-                                <li><i class="fas fa-bolt"></i> 订单实时推送到厨房</li>
-                                <li><i class="fas fa-sync"></i> 多设备数据保持一致</li>
-                                <li><i class="fas fa-shield-alt"></i> 企业级数据安全</li>
+                                <li><i class="fas fa-cloud"></i> <span>数据实时云端同步</span></li>
+                                <li><i class="fas fa-mobile-alt"></i> <span>手机扫码直接点餐</span></li>
+                                <li><i class="fas fa-bolt"></i> <span>订单实时推送到厨房</span></li>
+                                <li><i class="fas fa-sync"></i> <span>多设备数据保持一致</span></li>
+                                <li><i class="fas fa-shield-alt"></i> <span>企业级数据安全</span></li>
                             </ul>
                             <div class="url-display">
                                 <i class="fas fa-link"></i> 点餐网址: <span id="customerOrderUrl">https://user-hjw2003.github.io/diner/</span>
@@ -5063,7 +5071,7 @@
                             <span class="order-status ${order.status === 'processed' ? 'processed' : ''}" data-status="${order.status}">
                                 ${order.status === 'processed' ? '已处理' : '待处理'}
                             </span>
-                            <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">${total.toFixed(2)} 元</div>
+                            <div style="font-size: clamp(16px, 4vw, 20px); font-weight: bold; margin-top: 5px;">${total.toFixed(2)} 元</div>
                         </div>
                     </div>
                     <div class="order-items">
@@ -5300,7 +5308,7 @@
                             <button onclick="window.print()" style="padding: 12px 24px; font-size: 16px; background-color: #d32f2f; color: white; border: none; cursor: pointer; border-radius: 4px; margin-right: 10px;">
                                 <i class="fas fa-print"></i> 打印订单
                             </button>
-                            <button onclick="window.close()" style="padding: 12px 24px; font-size: 16px; background-color: #666; color: white; border: none; cursor: pointer; border-radius: 4px;">
+                            <button onclick="window.close()" style="padding: 12px 24px; font-size: 16px; background-color: #666; color: white; border: none; cursor: pointer; margin-left: 10px; border-radius: 4px;">
                                 <i class="fas fa-times"></i> 关闭窗口
                             </button>
                         </div>
@@ -5714,7 +5722,7 @@
                             <span class="order-status ${order.status === 'processed' ? 'processed' : ''}" data-status="${order.status}">
                                 ${order.status === 'processed' ? '已处理' : '待处理'}
                             </span>
-                            <div style="font-size: 18px; font-weight: bold; margin-top: 5px;">${total.toFixed(2)} 元</div>
+                            <div style="font-size: clamp(16px, 4vw, 18px); font-weight: bold; margin-top: 5px;">${total.toFixed(2)} 元</div>
                         </div>
                     </div>
                     <div class="order-history-items">
