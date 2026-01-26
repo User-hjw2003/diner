@@ -747,9 +747,9 @@
             margin-top: 5px;
         }
 
-        /* 修复1：客户电话在一行显示 - 优化字体大小 */
+        /* 修复1：客户电话在一行显示 */
         .customer-phone-container {
-            font-size: 18px;
+            font-size: 14px;
             color: #4caf50;
             margin-top: 5px;
             display: flex;
@@ -757,7 +757,6 @@
             gap: 5px;
             flex-wrap: nowrap;
             overflow: hidden;
-            line-height: 1.2;
         }
 
         .call-customer-btn {
@@ -767,7 +766,7 @@
             padding: 3px 8px;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 12px;
             display: inline-flex;
             align-items: center;
             gap: 3px;
@@ -777,9 +776,6 @@
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-left: 10px;
-            height: 24px;
-            line-height: 18px;
         }
 
         .call-customer-btn:hover {
@@ -824,14 +820,12 @@
             text-overflow: ellipsis;
         }
 
-        /* 修复4：订单标题自适应 - 优化字体大小和显示 */
+        /* 修复4：订单标题自适应 */
         .order-title-compact {
             display: flex;
             align-items: center;
             gap: 5px;
-            flex-wrap: nowrap;
-            font-size: 18px;
-            line-height: 1.2;
+            flex-wrap: wrap;
         }
 
         .order-number {
@@ -839,9 +833,6 @@
             overflow-wrap: break-word;
             line-height: 1.2;
             max-width: 100%;
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--primary-color);
         }
 
         /* 打印按钮样式 */
@@ -1084,35 +1075,27 @@
                 margin: 2px;
             }
             
-            /* 修复4：订单标题在一行显示 - 调整字体大小 */
+            /* 修复4：订单标题在一行显示 */
             .order-header-info .order-title {
-                font-size: clamp(16px, 4vw, 18px);
+                font-size: clamp(12px, 3vw, 14px);
                 line-height: 1.2;
             }
             
             .order-title-compact {
                 gap: 3px;
-                font-size: 16px;
             }
             
-            .order-number {
-                font-size: 16px;
-            }
-            
-            /* 修复1：客户电话在一行显示 - 调整字体大小 */
+            /* 修复1：客户电话在一行显示 */
             .customer-phone-container {
-                font-size: 16px;
+                font-size: 12px;
                 gap: 3px;
                 flex-wrap: nowrap;
-                line-height: 1.2;
             }
             
             .call-customer-btn {
-                font-size: 14px;
-                padding: 2px 6px;
+                font-size: 11px;
+                padding: 2px 5px;
                 flex-shrink: 0;
-                height: 22px;
-                line-height: 16px;
             }
             
             /* 修复：订单头部信息在一行显示 */
@@ -1149,7 +1132,7 @@
                 flex-shrink: 0;
             }
             
-            /* 订单列表按钮组 - 修复4：在一行显示 */
+            /* 订单列表按钮组 */
             .orders-controls {
                 display: flex;
                 flex-wrap: nowrap;
@@ -1157,7 +1140,6 @@
                 overflow-x: auto;
                 padding-bottom: 5px;
                 margin-bottom: 15px;
-                align-items: center;
             }
             
             .orders-controls .pixel-button {
@@ -1165,15 +1147,6 @@
                 padding: 6px 8px;
                 font-size: 11px;
                 flex-shrink: 0;
-            }
-            
-            /* 修复5：订单总数显示在同一行 */
-            .orders-controls #ordersCount {
-                font-size: 12px;
-                white-space: nowrap;
-                flex-shrink: 0;
-                min-width: 60px;
-                text-align: center;
             }
         }
 
@@ -1282,30 +1255,19 @@
                 margin: 1px;
             }
             
-            /* 修复4：订单标题在一行显示 - 调整字体大小 */
+            /* 修复4：订单标题在一行显示 */
             .order-header-info .order-title {
-                font-size: clamp(16px, 3vw, 18px);
+                font-size: clamp(11px, 2.5vw, 12px);
             }
             
-            .order-title-compact {
-                font-size: 16px;
-            }
-            
-            .order-number {
-                font-size: 16px;
-            }
-            
-            /* 修复1：客户电话在一行显示 - 调整字体大小 */
+            /* 修复1：客户电话在一行显示 */
             .customer-phone-container {
-                font-size: 16px;
-                line-height: 1.2;
+                font-size: 11px;
             }
             
             .call-customer-btn {
-                font-size: 14px;
-                padding: 2px 5px;
-                height: 20px;
-                line-height: 14px;
+                font-size: 10px;
+                padding: 2px 4px;
             }
             
             /* 管理后台按钮组 */
@@ -1319,7 +1281,7 @@
                 font-size: 11px;
             }
             
-            /* 订单列表按钮组 - 修复4：在一行显示 */
+            /* 订单列表按钮组 */
             .orders-controls {
                 gap: 3px;
             }
@@ -1328,12 +1290,6 @@
                 min-width: 60px;
                 padding: 5px 6px;
                 font-size: 10px;
-            }
-            
-            /* 修复5：订单总数显示在同一行 */
-            .orders-controls #ordersCount {
-                font-size: 11px;
-                min-width: 50px;
             }
         }
 
@@ -1756,31 +1712,18 @@
             margin-bottom: 20px;
         }
         
-        /* 优化：订单列表按钮组布局 - 修复4和5：在同一行显示 */
+        /* 优化：订单列表按钮组布局 */
         .orders-controls {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 15px;
             align-items: center;
-            overflow-x: auto;
-            padding-bottom: 5px;
         }
         
         .orders-controls .pixel-button {
             flex: 0 1 auto;
             min-width: 100px;
-            white-space: nowrap;
-        }
-        
-        /* 修复5：订单总数显示在同一行 */
-        .orders-controls #ordersCount {
-            font-size: 14px;
-            color: #aaa;
-            white-space: nowrap;
-            min-width: 80px;
-            text-align: center;
-            flex-shrink: 0;
         }
         
         /* 优化：订单标题布局 */
@@ -1788,30 +1731,6 @@
             display: flex;
             flex-direction: column;
             gap: 3px;
-        }
-        
-        /* PC端特定样式 */
-        @media (min-width: 769px) {
-            /* 修复1：PC端客户电话号码字体大小 */
-            .customer-phone-container {
-                font-size: 20px;
-            }
-            
-            /* 修复1：PC端打电话按钮字体大小 */
-            .call-customer-btn {
-                font-size: 16px;
-                height: 28px;
-                line-height: 20px;
-            }
-            
-            /* 修复3：PC端订单标题字体大小 */
-            .order-title-compact {
-                font-size: 20px;
-            }
-            
-            .order-number {
-                font-size: 20px;
-            }
         }
     </style>
 </head>
@@ -1865,7 +1784,7 @@
             <!-- 顾客点餐页面 -->
             <div id="menuPage" class="page active">
                 <h2><i class="fas fa-book"></i> 菜单浏览</h2>
-                <p style="color: #aaa; margin-bottom: 20px;">数据实时连接更新，所有设备保持一致</p>
+                <p style="color: #aaa; margin-bottom: 20px;">数据实时同步更新，所有设备保持一致</p>
                 
                 <!-- 修复：分类按钮靠左对齐 -->
                 <div class="menu-categories">
@@ -1885,8 +1804,8 @@
                     <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
                     <div class="instructions-grid">
                         <div class="instruction-step">
-                            <h4>1. 实时连接</h4>
-                            <p>所有数据云端存储，多设备实时连接更新</p>
+                            <h4>1. 实时同步</h4>
+                            <p>所有数据云端存储，多设备实时同步更新</p>
                         </div>
                         <div class="instruction-step">
                             <h4>2. 浏览菜品</h4>
@@ -1898,7 +1817,7 @@
                         </div>
                         <div class="instruction-step">
                             <h4>4. 提交订单</h4>
-                            <p>在购物车中确认订单信息并提交订单，实时连接到厨房</p>
+                            <p>在购物车中确认订单信息并提交订单，实时同步到厨房</p>
                         </div>
                     </div>
                 </div>
@@ -1919,7 +1838,7 @@
                         <div class="qrcode-info">
                             <h4>云点餐优势</h4>
                             <ul>
-                                <li><i class="fas fa-cloud"></i> <span>数据实时云端连接</span></li>
+                                <li><i class="fas fa-cloud"></i> <span>数据实时云端同步</span></li>
                                 <li><i class="fas fa-mobile-alt"></i> <span>手机扫码直接点餐</span></li>
                                 <li><i class="fas fa-bolt"></i> <span>订单实时推送到厨房</span></li>
                                 <li><i class="fas fa-sync"></i> <span>多设备数据保持一致</span></li>
@@ -1961,7 +1880,7 @@
                 <!-- 管理界面 -->
                 <div id="adminPanel" style="display: none;">
                     <h2><i class="fas fa-cogs"></i> 云数据管理</h2>
-                    <p style="color: #aaa; margin-bottom: 20px;">数据实时连接，所有更改立即生效到所有设备</p>
+                    <p style="color: #aaa; margin-bottom: 20px;">数据实时同步，所有更改立即生效到所有设备</p>
                     
                     <!-- 修复5：管理后台按钮组 -->
                     <div class="admin-controls-row">
@@ -2027,7 +1946,7 @@
                         <!-- 新订单提示音设置 -->
                         <div class="notification-sound-section">
                             <h4><i class="fas fa-volume-up"></i> 新订单提示音设置</h4>
-                            <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音（上传一次，所有设备自动连接）</p>
+                            <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音（上传一次，所有设备自动同步）</p>
                             
                             <div class="sound-preview">
                                 <h5>默认叮当提示音</h5>
@@ -2043,7 +1962,7 @@
                             </div>
                             
                             <div class="sound-preview">
-                                <h5>自定义提示音（云端连接）</h5>
+                                <h5>自定义提示音（云端同步）</h5>
                                 <div class="sound-controls">
                                     <input type="file" id="customSoundUpload" accept="audio/*" style="display: none;">
                                     <button id="selectCustomSoundBtn" class="pixel-button secondary">
@@ -2063,7 +1982,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动连接使用</div>
+                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -2079,7 +1998,7 @@
                         <!-- 历史订单提示音设置 -->
                         <div class="history-notification-section">
                             <h4><i class="fas fa-history"></i> 历史订单提示音设置</h4>
-                            <p style="color: #aaa; margin-bottom: 15px;">选择历史订单状态更新时的提示音（上传一次，所有设备自动连接）</p>
+                            <p style="color: #aaa; margin-bottom: 15px;">选择历史订单状态更新时的提示音（上传一次，所有设备自动同步）</p>
                             
                             <div class="sound-preview">
                                 <h5>默认历史订单提示音</h5>
@@ -2095,7 +2014,7 @@
                             </div>
                             
                             <div class="sound-preview">
-                                <h5>自定义历史订单提示音（云端连接）</h5>
+                                <h5>自定义历史订单提示音（云端同步）</h5>
                                 <div class="sound-controls">
                                     <input type="file" id="historyCustomSoundUpload" accept="audio/*" style="display: none;">
                                     <button id="selectHistoryCustomSoundBtn" class="pixel-button secondary">
@@ -2115,7 +2034,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动连接使用</div>
+                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -2196,13 +2115,13 @@
                     <!-- 订单列表 -->
                     <div id="ordersSection" class="admin-section" style="display: none;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h3 id="ordersHeader"><i class="fas fa-receipt"></i> 云端订单列表 <span class="sync-status-badge"><i class="fas fa-sync"></i> 实时连接</span></h3>
+                            <h3 id="ordersHeader"><i class="fas fa-receipt"></i> 云端订单列表 <span class="sync-status-badge"><i class="fas fa-sync"></i> 实时同步</span></h3>
                             <div class="auto-refresh-indicator">
                                 <div class="dot"></div>
                                 <span>2秒自动刷新</span>
                             </div>
                         </div>
-                        <!-- 修复4和5：订单列表按钮组在同一行显示 -->
+                        <!-- 修复3：订单列表按钮组在一行显示 -->
                         <div class="orders-controls">
                             <span id="ordersCount" style="color: #aaa;">正在加载...</span>
                             <button id="refreshOrdersBtn" class="pixel-button secondary">
@@ -2348,7 +2267,7 @@
 
     <script>
         // 像素食堂云点餐系统 - 完整优化版（解决所有问题）
-        // 修复了布局问题、优化了加载速度、确保实时连接、date字段支持等
+        // 修复了布局问题、优化了加载速度、确保实时同步、date字段支持等
         
         // 配置常量
         const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v12';
@@ -2784,7 +2703,7 @@
                     
                     await loadCloudData();
                     
-                    showNotification('云数据库连接成功！数据实时连接中', 'success');
+                    showNotification('云数据库连接成功！数据实时同步中', 'success');
                 } else {
                     throw new Error('连接测试失败');
                 }
@@ -2965,7 +2884,7 @@
             // 订阅系统设置变化
             setupSystemSettingsRealtimeSubscription();
             
-            updateConnectionStatus('online', '实时连接已连接');
+            updateConnectionStatus('online', '实时同步已连接');
         }
 
         // 清理实时订阅
@@ -3153,15 +3072,15 @@
                             console.log('系统设置变化:', payload);
                             
                             if (payload.new && payload.new.key === 'notification_sound') {
-                                console.log('收到新订单提示音连接通知');
+                                console.log('收到新订单提示音同步通知');
                                 await loadSystemSettingsFromCloud();
-                                showNotification('新订单提示音设置已从云端连接', 'info');
+                                showNotification('新订单提示音设置已从云端同步', 'info');
                             }
                             
                             if (payload.new && payload.new.key === 'history_notification_sound') {
-                                console.log('收到历史订单提示音连接通知');
+                                console.log('收到历史订单提示音同步通知');
                                 await loadSystemSettingsFromCloud();
-                                showNotification('历史订单提示音设置已从云端连接', 'info');
+                                showNotification('历史订单提示音设置已从云端同步', 'info');
                             }
                         }
                     )
@@ -3242,14 +3161,14 @@
             }
         }
 
-        // 从云端连接订单历史
+        // 从云端同步订单历史
         async function syncOrderHistoryFromCloud() {
             if (!state.supabaseClient || !state.isOnline) {
-                console.log('无法从云端连接订单历史: Supabase客户端未初始化或离线');
+                console.log('无法从云端同步订单历史: Supabase客户端未初始化或离线');
                 return;
             }
             
-            console.log('从云端连接订单历史...');
+            console.log('从云端同步订单历史...');
             
             try {
                 const { data: cloudOrders, error } = await state.supabaseClient
@@ -3257,7 +3176,7 @@
                     .select('*')
                     .eq('device_id', state.deviceId)
                     .order('created_at', { ascending: false })
-                    .limit(100); // 修复5：显示100个订单
+                    .limit(50);
                 
                 if (error) {
                     console.error('获取云端订单历史失败:', error);
@@ -3293,13 +3212,13 @@
                     
                     updateOrderHistoryUI();
                     
-                    console.log('订单历史已从云端连接完成');
+                    console.log('订单历史已从云端同步完成');
                 } else {
                     console.log('云端没有您的订单历史');
                 }
                 
             } catch (error) {
-                console.error('连接订单历史失败:', error);
+                console.error('同步订单历史失败:', error);
             }
         }
 
@@ -3405,20 +3324,20 @@
                     state.systemSettings.notificationSound = {
                         type: 'custom',
                         data: base64Data,
-                        filename: '云端连接提示音',
+                        filename: '云端同步提示音',
                         uploaded: new Date().toISOString()
                     };
                     
-                    updateSoundUI(type, '云端连接提示音', base64Data.length);
+                    updateSoundUI(type, '云端同步提示音', base64Data.length);
                 } else {
                     state.systemSettings.historyNotificationSound = {
                         type: 'custom',
                         data: base64Data,
-                        filename: '云端连接提示音',
+                        filename: '云端同步提示音',
                         uploaded: new Date().toISOString()
                     };
                     
-                    updateSoundUI(type, '云端连接提示音', base64Data.length);
+                    updateSoundUI(type, '云端同步提示音', base64Data.length);
                 }
                 
                 console.log(`${type === 'new' ? '新订单' : '历史订单'}提示音已从云端加载并解码`);
@@ -3462,7 +3381,7 @@
                     };
                     
                     elements.useCustomSoundBtn.onclick = function() {
-                        showNotification('已使用云端连接的提示音', 'success');
+                        showNotification('已使用云端同步的提示音', 'success');
                     };
                 }
             } else {
@@ -3478,7 +3397,7 @@
                     };
                     
                     elements.useHistoryCustomSoundBtn.onclick = function() {
-                        showNotification('已使用云端连接的提示音', 'success');
+                        showNotification('已使用云端同步的提示音', 'success');
                     };
                 }
             }
@@ -3821,7 +3740,7 @@
             
             try {
                 await saveSystemSettingsToCloud();
-                showNotification('提示音设置已保存到云端，所有设备将自动连接', 'success');
+                showNotification('提示音设置已保存到云端，所有设备将自动同步', 'success');
             } catch (error) {
                 console.error('保存提示音设置到云端失败:', error);
             }
@@ -3865,7 +3784,7 @@
             switch (status) {
                 case 'online':
                     icon = 'fa-wifi';
-                    text = message || '在线 - 实时连接中';
+                    text = message || '在线 - 实时同步中';
                     break;
                 case 'offline':
                     icon = 'fa-wifi-slash';
@@ -3873,7 +3792,7 @@
                     break;
                 case 'syncing':
                     icon = 'fa-sync fa-spin';
-                    text = message || '正在连接数据...';
+                    text = message || '正在同步数据...';
                     break;
             }
             
@@ -4006,19 +3925,10 @@
                 }
             });
             
-            // 修复6：管理后台按钮点击事件 - 优化点击响应
-            elements.addItemBtn.addEventListener('click', function() {
-                showAddItemForm();
-            });
-            
-            elements.viewOrdersBtn.addEventListener('click', function() {
-                toggleOrdersView();
-            });
-            
-            elements.manageConfigBtn.addEventListener('click', function() {
-                showConfigSection();
-            });
-            
+            // 修复5：管理后台按钮点击事件
+            elements.addItemBtn.addEventListener('click', showAddItemForm);
+            elements.viewOrdersBtn.addEventListener('click', toggleOrdersView);
+            elements.manageConfigBtn.addEventListener('click', showConfigSection);
             elements.logoutBtn.addEventListener('click', adminLogout);
             
             elements.testConnectionBtn.addEventListener('click', testConnectionFromUI);
@@ -4193,7 +4103,7 @@
                             playCustomSound(soundKey);
                         }, 500);
                         
-                        showNotification(`${type === 'new' ? '新订单' : '历史订单'}提示音已上传并保存到云端，所有设备将自动连接使用`, 'success');
+                        showNotification(`${type === 'new' ? '新订单' : '历史订单'}提示音已上传并保存到云端，所有设备将自动同步使用`, 'success');
                         
                     } else {
                         throw new Error('音频解码失败');
@@ -4256,7 +4166,7 @@
             window.addEventListener('online', function() {
                 console.log('网络已恢复');
                 state.isOnline = true;
-                updateConnectionStatus('syncing', '网络已恢复，正在连接...');
+                updateConnectionStatus('syncing', '网络已恢复，正在同步...');
                 
                 setTimeout(async () => {
                     try {
@@ -4444,13 +4354,13 @@
                     <p><strong>项目URL:</strong> <span style="color: #aaa; word-break: break-all;">${config.supabaseUrl}</span></p>
                     <p><strong>连接状态:</strong> <span style="color: ${state.connectionStatus === 'online' ? '#4caf50' : '#f44336'};">${state.connectionStatus}</span></p>
                     <p><strong>数据表:</strong> menu_items, orders, system_settings</p>
-                    <p><strong>实时连接:</strong> <span style="color: ${state.isRealtimeConnected ? '#4caf50' : '#f44336'};">${state.isRealtimeConnected ? '已连接' : '已断开'}</span></p>
+                    <p><strong>实时同步:</strong> <span style="color: ${state.isRealtimeConnected ? '#4caf50' : '#f44336'};">${state.isRealtimeConnected ? '已连接' : '已断开'}</span></p>
                     <p><strong>设备ID:</strong> <span style="color: #aaa; font-size: 12px;">${state.deviceId.substring(0, 20)}...</span></p>
                 `;
             } else {
                 configHtml = `
                     <p><strong>当前配置状态:</strong> <span style="color: #ff9800;">未配置</span></p>
-                    <p>请填写下面的Supabase配置信息以启用云连接功能。</p>
+                    <p>请填写下面的Supabase配置信息以启用云同步功能。</p>
                 `;
             }
             
@@ -4548,7 +4458,7 @@
             }
         }
 
-        // 加载菜单页面 - 优化：预加载和缓存
+        // 加载菜单页面
         async function loadMenuPage() {
             console.log('加载菜单页面...');
             
@@ -4580,7 +4490,7 @@
             }
         }
 
-        // 加载菜品列表 - 优化：使用缓存和预加载，提高加载速度
+        // 加载菜品列表 - 优化：使用缓存和预加载
         async function loadMenuItems() {
             console.log('加载菜品列表...');
             
@@ -4595,7 +4505,6 @@
             
             if (state.supabaseClient && state.isOnline) {
                 try {
-                    // 使用更快的查询方式
                     const { data, error } = await state.supabaseClient
                         .from('menu_items')
                         .select('id, name, category, price, description, image')
@@ -4645,7 +4554,6 @@
                 return;
             }
             
-            // 使用DocumentFragment提高性能
             const fragment = document.createDocumentFragment();
             
             filteredItems.forEach((item) => {
@@ -4653,7 +4561,7 @@
                 itemElement.className = 'menu-item pixel-border';
                 itemElement.innerHTML = `
                     <img src="${item.image || DEFAULT_IMAGE_URL}" alt="${item.name}" class="item-image" 
-                         onerror="this.src='${DEFAULT_IMAGE_URL}'" loading="lazy">
+                         onerror="this.src='${DEFAULT_IMAGE_URL}'">
                     <h3 class="item-name">${item.name}</h3>
                     <p class="item-description">${item.description}</p>
                     <div class="item-footer">
@@ -4667,13 +4575,14 @@
             
             elements.menuItemsContainer.appendChild(fragment);
             
-            // 使用事件委托提高性能
-            elements.menuItemsContainer.addEventListener('click', function(e) {
-                if (e.target.classList.contains('add-to-cart')) {
-                    const itemId = parseInt(e.target.dataset.id);
-                    addToCart(itemId);
-                }
-            });
+            setTimeout(() => {
+                document.querySelectorAll('.add-to-cart').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        addToCart(itemId);
+                    });
+                });
+            }, 0);
         }
 
         // 保存订单历史到本地
@@ -4730,7 +4639,7 @@
             }
         }
 
-        // 显示添加菜品表单 - 修复6：点击按钮弹出界面
+        // 显示添加菜品表单
         function showAddItemForm() {
             elements.itemForm.reset();
             elements.itemId.value = '';
@@ -4802,7 +4711,7 @@
             }
         }
 
-        // 保存菜品 - 优化：提高保存速度
+        // 保存菜品
         async function saveMenuItem(event) {
             event.preventDefault();
             
@@ -5001,16 +4910,21 @@
                 elements.adminItemsContainer.appendChild(categoryElement);
             });
             
-            // 使用事件委托提高性能
-            elements.adminItemsContainer.addEventListener('click', function(e) {
-                if (e.target.classList.contains('edit-item')) {
-                    const itemId = parseInt(e.target.dataset.id);
-                    editMenuItem(itemId);
-                } else if (e.target.classList.contains('delete-item')) {
-                    const itemId = parseInt(e.target.dataset.id);
-                    deleteMenuItem(itemId);
-                }
-            });
+            setTimeout(() => {
+                document.querySelectorAll('.edit-item').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        editMenuItem(itemId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-item').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        deleteMenuItem(itemId);
+                    });
+                });
+            }, 100);
         }
 
         // 更新菜品计数
@@ -5107,7 +5021,7 @@
             }
         }
 
-        // 切换订单视图 - 修复6：点击按钮弹出界面
+        // 切换订单视图
         function toggleOrdersView() {
             if (elements.ordersSection.style.display === 'none') {
                 elements.ordersSection.style.display = 'block';
@@ -5128,6 +5042,10 @@
                 }, 100);
                 
                 loadOrders();
+                
+                setTimeout(() => {
+                    loadOrders();
+                }, 300);
                 
                 startAutoRefresh();
                 
@@ -5185,7 +5103,7 @@
             }
         }
 
-        // 加载订单 - 修复：优化布局和显示，提高加载速度
+        // 加载订单 - 修复：优化布局和显示
         async function loadOrders() {
             console.log('加载订单...');
             
@@ -5193,12 +5111,11 @@
             
             if (state.supabaseClient && state.isOnline) {
                 try {
-                    // 修复5：显示100个订单
                     const { data, error } = await state.supabaseClient
                         .from('orders')
                         .select('*')
                         .order('created_at', { ascending: false })
-                        .limit(100); // 修复5：显示100个订单
+                        .limit(50);
                     
                     if (!error && data) {
                         orders = data.map(order => {
@@ -5274,7 +5191,7 @@
                 const date = order.date || order.created_at || new Date().toISOString();
                 const formattedDate = new Date(date).toLocaleString('zh-CN');
                 
-                // 修复3：订单标题自适应显示
+                // 修复4：订单标题自适应显示
                 const orderNumber = `#${order.id}-${order.created_at ? new Date(order.created_at).getTime() : Date.now()}`;
                 const orderTitle = `订单 ${orderNumber}`;
                 
@@ -5285,7 +5202,7 @@
                                 <div class="order-number">${orderTitle}</div>
                             </div>
                             <div class="order-date">${formattedDate}</div>
-                            <!-- 修复1：客户电话在一行显示 - 优化字体大小 -->
+                            <!-- 修复1：客户电话在一行显示 -->
                             ${order.customer_phone ? `
                                 <div class="customer-phone-container">
                                     <i class="fas fa-phone"></i> ${order.customer_phone}
@@ -5328,19 +5245,28 @@
             
             elements.ordersContainer.appendChild(fragment);
             
-            // 使用事件委托提高性能
-            elements.ordersContainer.addEventListener('click', function(e) {
-                if (e.target.classList.contains('mark-processed')) {
-                    const orderId = parseInt(e.target.dataset.id);
-                    markOrderAsProcessed(orderId);
-                } else if (e.target.classList.contains('delete-order')) {
-                    const orderId = parseInt(e.target.dataset.id);
-                    deleteOrder(orderId);
-                } else if (e.target.classList.contains('print-order')) {
-                    const orderId = parseInt(e.target.dataset.id);
-                    printOrder(orderId);
-                }
-            });
+            setTimeout(() => {
+                document.querySelectorAll('.mark-processed').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const orderId = parseInt(this.dataset.id);
+                        markOrderAsProcessed(orderId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-order').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const orderId = parseInt(this.dataset.id);
+                        deleteOrder(orderId);
+                    });
+                });
+                
+                document.querySelectorAll('.print-order').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const orderId = parseInt(this.dataset.id);
+                        printOrder(orderId);
+                    });
+                });
+            }, 0);
         }
 
         // 打印订单
@@ -5600,9 +5526,9 @@
             }
         }
 
-        // 标记订单为已处理 - 优化：提高处理速度，确保实时连接
+        // 标记订单为已处理
         async function markOrderAsProcessed(orderId) {
-            showLoading('正在更新订单状态并实时连接到所有设备...');
+            showLoading('正在更新订单状态并实时同步到所有设备...');
             
             try {
                 let orderToUpdate = null;
@@ -5648,7 +5574,7 @@
                 
                 await loadOrders();
                 
-                showNotification('订单状态已更新为"已处理"，已实时连接到所有设备', 'success');
+                showNotification('订单状态已更新为"已处理"，已实时同步到所有设备', 'success');
                 
             } catch (error) {
                 console.error('更新订单状态失败:', error);
@@ -5773,19 +5699,28 @@
             
             elements.cartItemsContainer.appendChild(fragment);
             
-            // 使用事件委托提高性能
-            elements.cartItemsContainer.addEventListener('click', function(e) {
-                if (e.target.classList.contains('cart-item-decrease')) {
-                    const itemId = parseInt(e.target.dataset.id);
-                    updateCartItemQuantity(itemId, -1);
-                } else if (e.target.classList.contains('cart-item-increase')) {
-                    const itemId = parseInt(e.target.dataset.id);
-                    updateCartItemQuantity(itemId, 1);
-                } else if (e.target.classList.contains('cart-item-remove')) {
-                    const itemId = parseInt(e.target.dataset.id);
-                    removeFromCart(itemId);
-                }
-            });
+            setTimeout(() => {
+                document.querySelectorAll('.cart-item-decrease').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        updateCartItemQuantity(itemId, -1);
+                    });
+                });
+                
+                document.querySelectorAll('.cart-item-increase').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        updateCartItemQuantity(itemId, 1);
+                    });
+                });
+                
+                document.querySelectorAll('.cart-item-remove').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        removeFromCart(itemId);
+                    });
+                });
+            }, 0);
         }
 
         // 更新购物车商品数量
@@ -5951,7 +5886,7 @@
             console.log('订单历史加载完成，共', sortedHistory.length, '个订单');
         }
 
-        // 提交订单 - 优化：快速提交，提高响应速度
+        // 提交订单 - 优化：快速提交
         async function submitOrder() {
             if (state.cart.length === 0) {
                 showNotification('购物车是空的，无法提交订单', 'warning');
@@ -6038,7 +5973,7 @@
                 
                 switchCartTab('history');
                 
-                showNotification(`订单已保存到本地，云端连接失败: ${error.message}`, 'warning');
+                showNotification(`订单已保存到本地，云端同步失败: ${error.message}`, 'warning');
                 
             } finally {
                 hideLoading();
@@ -6224,7 +6159,7 @@
             showNotification('已清除上传的二维码', 'info');
         }
 
-        // 显示二维码生成器 - 修复6：点击按钮弹出界面
+        // 显示二维码生成器
         function showQrCodeGenerator() {
             elements.itemFormSection.style.display = 'none';
             elements.ordersSection.style.display = 'none';
