@@ -15,9 +15,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Courier New', 'DotGothic16', monospace;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -42,7 +39,6 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            touch-action: manipulation;
         }
 
         /* 扫描线效果 */
@@ -85,12 +81,10 @@
             border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(255, 255, 255)" /></svg>');
         }
 
-        /* 像素按钮 - 优化 */
+        /* 像素按钮 */
         .pixel-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 20px;
+            display: inline-block;
+            padding: 12px 24px;
             background-color: var(--primary-color);
             color: var(--secondary-color);
             border: none;
@@ -103,11 +97,6 @@
             transition: all 0.1s;
             font-size: 16px;
             margin: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-width: 0;
-            flex-shrink: 0;
         }
 
         .pixel-button:active {
@@ -120,7 +109,6 @@
             width: 100%;
             height: 100%;
             box-sizing: content-box;
-            pointer-events: none;
         }
 
         .pixel-button::before {
@@ -135,33 +123,6 @@
             top: 0;
             border-left: 4px solid white;
             border-right: 4px solid white;
-        }
-
-        /* 修复1、2：导航按钮样式 - 所有设备同一行显示 */
-        .header-controls .pixel-button {
-            flex: 1;
-            min-width: 0;
-            padding: 10px 15px;
-            font-size: clamp(12px, 2.5vw, 16px);
-            margin: 0 2px;
-            border-color: white !important;
-        }
-
-        /* 修复1：管理后台按钮样式 */
-        .header-controls .pixel-button.secondary {
-            background-color: #333 !important;
-            color: white !important;
-        }
-
-        /* 修复1：同步按钮样式 */
-        .header-controls .pixel-button.success {
-            background-color: var(--success-color) !important;
-            color: white !important;
-        }
-
-        /* 修复2：活动按钮边框变红 */
-        .header-controls .pixel-button.active {
-            border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(211, 47, 47)" /></svg>') !important;
         }
 
         .pixel-button.secondary {
@@ -223,16 +184,20 @@
             flex-wrap: wrap;
         }
 
-        /* 修复1：导航按钮始终在一行显示 */
+        /* 修复：导航按钮始终在一行显示 */
         .header-controls {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
             min-width: 0;
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
+        }
+
+        .header-controls .pixel-button {
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-width: 100px;
+            text-align: center;
         }
 
         .logo {
@@ -517,7 +482,7 @@
             margin-bottom: 20px;
         }
 
-        /* 购物车 - 修复3、4、5：防止缩放和优化按钮 */
+        /* 购物车 */
         .cart-container {
             position: fixed;
             bottom: 0;
@@ -530,8 +495,6 @@
             z-index: 1000;
             max-height: 80vh;
             overflow-y: auto;
-            overflow-x: hidden;
-            touch-action: pan-y;
         }
 
         .cart-container.open {
@@ -544,9 +507,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
         .cart-header h3 {
@@ -558,9 +518,6 @@
         .cart-tabs {
             display: flex;
             background-color: #222;
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
         .cart-tab {
@@ -586,8 +543,6 @@
 
         .cart-content {
             padding: 15px;
-            overflow: hidden;
-            transform-origin: center;
         }
 
         .cart-tab-content {
@@ -604,57 +559,25 @@
             align-items: center;
             padding: 10px 0;
             border-bottom: 1px solid #333;
-            gap: 10px;
         }
 
         .cart-item-info {
             flex-grow: 1;
-            min-width: 0;
         }
 
         .cart-item-name {
             font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .cart-item-controls {
             display: flex;
             align-items: center;
-            gap: 5px;
-            flex-shrink: 0;
-        }
-
-        /* 修复5：购物车按钮样式 */
-        .cart-item-controls button {
-            background-color: #333 !important;
-            color: white !important;
-            border: 2px solid white !important;
-            border-radius: 0;
-            cursor: pointer;
-            font-weight: bold;
-            min-width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            font-size: 16px;
-            touch-action: manipulation;
-        }
-
-        .cart-item-controls button:active {
-            background-color: #444 !important;
-            transform: translate(1px, 1px);
         }
 
         .cart-item-qty {
             margin: 0 10px;
             min-width: 30px;
             text-align: center;
-            font-weight: bold;
-            font-size: 16px;
         }
 
         .cart-total {
@@ -809,9 +732,8 @@
             min-width: 0;
         }
 
-        /* 修复8：订单号颜色由红色变白色 */
         .order-header-info .order-title {
-            color: white !important;
+            color: var(--primary-color);
             font-size: 18px;
             font-weight: bold;
             word-break: break-word;
@@ -827,7 +749,7 @@
 
         /* 修复1：客户电话在一行显示 - 字体放大且改为白色 */
         .customer-phone-container {
-            font-size: 16px;
+            font-size: 18px;
             color: white !important;
             margin-top: 8px;
             display: flex;
@@ -895,8 +817,8 @@
             flex: 1;
             min-width: 80px;
             white-space: nowrap;
-            padding: 8px 12px;
-            font-size: 14px;
+            padding: 6px 8px;
+            font-size: 12px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -919,7 +841,7 @@
             line-height: 1.2;
             max-width: 100%;
             font-size: clamp(14px, 3.5vw, 18px);
-            color: white !important; /* 修复8：白色 */
+            color: var(--primary-color);
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
@@ -1047,7 +969,6 @@
             
             .cart-container {
                 width: 100%;
-                max-width: 100%;
             }
             
             h1 {
@@ -1070,14 +991,12 @@
             header {
                 flex-direction: column;
                 align-items: center;
-                gap: 15px;
+                gap: 20px;
             }
             
             .menu-categories {
                 gap: 5px;
                 justify-content: flex-start;
-                overflow-x: auto;
-                padding-bottom: 10px;
             }
             
             .category-btn {
@@ -1147,7 +1066,8 @@
             /* 修复：二维码按钮在一行显示 */
             .qrcode-actions {
                 flex-direction: row;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
+                overflow-x: auto;
                 padding-bottom: 10px;
             }
             
@@ -1163,8 +1083,6 @@
                 display: flex;
                 flex-wrap: nowrap;
                 gap: 5px;
-                overflow-x: auto;
-                padding-bottom: 5px;
             }
             
             .image-upload-options .pixel-button {
@@ -1179,58 +1097,20 @@
             
             /* 修复3：订单操作按钮在同一行 */
             .order-actions {
-                flex-wrap: wrap;
-                gap: 5px;
+                flex-wrap: nowrap;
+                gap: 3px;
                 width: 100%;
             }
             
             .order-actions .pixel-button {
                 min-width: 60px;
-                font-size: 12px;
-                padding: 8px 10px;
+                font-size: 11px;
+                padding: 5px 8px;
                 margin: 2px;
                 flex: 1;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
-            }
-            
-            /* 修复6：管理后台按钮组在同一行 */
-            .admin-controls-row {
-                display: flex;
-                flex-wrap: nowrap;
-                gap: 5px;
-                overflow-x: auto;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
-                width: 100%;
-            }
-            
-            .admin-controls-row .pixel-button {
-                min-width: 80px;
-                padding: 10px 12px;
-                font-size: 12px;
-                flex-shrink: 0;
-                white-space: nowrap;
-            }
-            
-            /* 修复7：数据库配置按钮在同一行 */
-            .config-buttons-row {
-                display: flex;
-                flex-wrap: nowrap;
-                gap: 5px;
-                overflow-x: auto;
-                padding-bottom: 10px;
-                margin-top: 20px;
-                width: 100%;
-            }
-            
-            .config-buttons-row .pixel-button {
-                min-width: 80px;
-                padding: 10px 12px;
-                font-size: 12px;
-                flex-shrink: 0;
-                white-space: nowrap;
             }
             
             /* 修复4：订单标题在一行显示 - 手机端字体放大并自动缩放 */
@@ -1285,13 +1165,29 @@
                 align-items: flex-end;
             }
             
+            /* 管理后台按钮组 */
+            .admin-controls-row {
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 5px;
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+            
+            .admin-controls-row .pixel-button {
+                min-width: 80px;
+                padding: 8px 10px;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+            
             /* 修复2、3：订单列表按钮组在一行显示 */
             .orders-controls {
                 display: flex;
                 flex-wrap: nowrap;
                 gap: 5px;
                 overflow-x: auto;
-                padding-bottom: 10px;
+                padding-bottom: 5px;
                 margin-bottom: 15px;
                 align-items: center;
                 width: 100%;
@@ -1299,8 +1195,8 @@
             
             .orders-controls .pixel-button {
                 min-width: 70px;
-                padding: 8px 10px;
-                font-size: 12px;
+                padding: 6px 8px;
+                font-size: 11px;
                 flex-shrink: 0;
                 white-space: nowrap;
             }
@@ -1316,27 +1212,20 @@
                 text-align: center;
             }
             
-            /* 优化购物车按钮防止缩放 */
-            .cart-item-controls button {
-                min-width: 35px;
-                height: 35px;
-                font-size: 18px;
+            /* 修复4：提示音上传在PC和手机都能使用 */
+            .sound-preview {
+                padding: 10px;
             }
             
-            .cart-item-qty {
-                min-width: 25px;
-                font-size: 16px;
+            .sound-controls {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
             }
             
-            /* 修复1：导航按钮优化 */
-            .header-controls {
-                gap: 3px;
-            }
-            
-            .header-controls .pixel-button {
-                padding: 10px 8px;
-                font-size: clamp(11px, 2vw, 14px);
-                margin: 0 1px;
+            .sound-controls .pixel-button {
+                width: 100%;
+                margin: 2px 0;
             }
         }
 
@@ -1392,7 +1281,7 @@
             
             /* 调整按钮大小，确保在直屏下可点击 */
             .pixel-button {
-                padding: 10px 15px;
+                padding: 10px 18px;
                 font-size: 14px;
             }
             
@@ -1428,7 +1317,7 @@
                 min-width: 40%;
                 max-width: 48%;
                 margin: 1px;
-                padding: 8px 10px;
+                padding: 6px 8px;
                 font-size: 11px;
             }
             
@@ -1440,31 +1329,9 @@
             .order-actions .pixel-button {
                 min-width: 30%;
                 max-width: 32%;
-                padding: 6px 8px;
-                font-size: 11px;
+                padding: 4px 6px;
+                font-size: 10px;
                 margin: 1px;
-            }
-            
-            /* 修复6：管理后台按钮组在小屏幕 */
-            .admin-controls-row {
-                gap: 3px;
-            }
-            
-            .admin-controls-row .pixel-button {
-                min-width: 70px;
-                padding: 8px 10px;
-                font-size: 11px;
-            }
-            
-            /* 修复7：数据库配置按钮在小屏幕 */
-            .config-buttons-row {
-                gap: 3px;
-            }
-            
-            .config-buttons-row .pixel-button {
-                min-width: 70px;
-                padding: 8px 10px;
-                font-size: 11px;
             }
             
             /* 修复4：订单标题在一行显示 - 小屏幕设备字体自动缩放 */
@@ -1492,6 +1359,17 @@
                 line-height: 16px;
             }
             
+            /* 管理后台按钮组 */
+            .admin-controls-row {
+                gap: 3px;
+            }
+            
+            .admin-controls-row .pixel-button {
+                min-width: 70px;
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+            
             /* 修复2、3：订单列表按钮组在一行显示 */
             .orders-controls {
                 gap: 3px;
@@ -1503,8 +1381,8 @@
             
             .orders-controls .pixel-button {
                 min-width: 60px;
-                padding: 6px 8px;
-                font-size: 11px;
+                padding: 5px 6px;
+                font-size: 10px;
                 white-space: nowrap;
                 flex-shrink: 0;
             }
@@ -1518,41 +1396,18 @@
                 min-width: 50px;
             }
             
-            /* 优化购物车按钮 */
-            .cart-item-controls button {
-                min-width: 32px;
-                height: 32px;
-                font-size: 16px;
+            /* 修复4：确保提示音上传按钮在所有设备可用 */
+            .sound-controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
             }
             
-            .cart-item-qty {
-                min-width: 22px;
-                font-size: 14px;
+            .sound-controls .pixel-button {
+                flex: 1;
+                min-width: 100px;
+                max-width: 200px;
             }
-            
-            /* 修复1：导航按钮进一步优化 */
-            .header-controls .pixel-button {
-                padding: 8px 6px;
-                font-size: clamp(10px, 1.8vw, 12px);
-            }
-        }
-
-        /* 修复9：性能优化 - 图片懒加载 */
-        .item-image {
-            background-color: #333;
-            background-image: linear-gradient(90deg, #333 0%, #444 50%, #333 100%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .item-image.loaded {
-            animation: none;
-            background: none;
         }
 
         /* 闪烁动画 */
@@ -1966,32 +1821,12 @@
             border-color: #f44336 !important;
         }
         
-        /* 修复6：管理后台按钮组布局 */
+        /* 优化：管理后台按钮组布局 */
         .admin-controls-row {
             display: flex;
-            flex-wrap: nowrap;
-            gap: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-        
-        /* 修复7：数据库配置按钮组 */
-        .config-buttons-row {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 8px;
-            margin-top: 20px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-        
-        .config-buttons-row .pixel-button {
-            flex: 1;
-            min-width: 120px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         /* 修复2、3：订单列表按钮组布局 - 所有设备同一行显示 */
@@ -2003,7 +1838,7 @@
             align-items: center;
             width: 100%;
             overflow-x: auto;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
         
         .orders-controls .pixel-button {
@@ -2067,36 +1902,11 @@
             .customer-phone-container {
                 font-size: 16px;
             }
-            
-            /* 修复6：PC端管理后台按钮 */
-            .admin-controls-row {
-                flex-wrap: nowrap;
-                overflow-x: visible;
-            }
-            
-            .admin-controls-row .pixel-button {
-                min-width: 120px;
-            }
-            
-            /* 修复7：PC端数据库配置按钮 */
-            .config-buttons-row {
-                flex-wrap: nowrap;
-                overflow-x: visible;
-            }
-            
-            .config-buttons-row .pixel-button {
-                min-width: 140px;
-            }
         }
         
         /* 数据库配置隐藏样式 */
         .db-config-section {
             display: none !important;
-        }
-        
-        /* 修复9：性能优化 - 预加载和缓存 */
-        .preload-image {
-            display: none;
         }
     </style>
 </head>
@@ -2122,12 +1932,6 @@
     <!-- 设备标识 -->
     <div id="deviceIdDisplay" class="device-id-display"></div>
     
-    <!-- 修复9：预加载图片 -->
-    <div class="preload-image">
-        <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" crossorigin="anonymous">
-        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" crossorigin="anonymous">
-    </div>
-    
     <div class="container">
         <!-- 标题区域 -->
         <div class="header-title">
@@ -2142,11 +1946,11 @@
                     <p style="color: #aaa; margin: 0;">云同步复古风格餐厅</p>
                 </div>
             </div>
-            <!-- 修复1、2：导航按钮始终在一行显示 -->
+            <!-- 修复：导航按钮始终在一行显示 -->
             <div class="header-controls">
-                <button id="viewMenuBtn" class="pixel-button active" style="background-color: #d32f2f !important; color: white !important;">顾客点餐</button>
-                <button id="viewAdminBtn" class="pixel-button secondary" style="background-color: #333 !important; color: white !important;">管理后台</button>
-                <button id="syncDataBtn" class="pixel-button success" style="background-color: #4caf50 !important; color: white !important;">
+                <button id="viewMenuBtn" class="pixel-button active">顾客点餐</button>
+                <button id="viewAdminBtn" class="pixel-button secondary">管理后台</button>
+                <button id="syncDataBtn" class="pixel-button success">
                     <i class="fas fa-sync-alt"></i> 同步
                 </button>
             </div>
@@ -2248,7 +2052,7 @@
                     <h2><i class="fas fa-cogs"></i> 云数据管理</h2>
                     <p style="color: #aaa; margin-bottom: 20px;">数据实时同步，所有更改立即生效到所有设备</p>
                     
-                    <!-- 修复6：管理后台按钮组 - 所有设备同一行显示 -->
+                    <!-- 修复5：管理后台按钮组 -->
                     <div class="admin-controls-row">
                         <button id="addItemBtn" class="pixel-button active"><i class="fas fa-plus"></i> 新增菜品</button>
                         <button id="viewOrdersBtn" class="pixel-button secondary"><i class="fas fa-list"></i> 查看订单</button>
@@ -2283,8 +2087,7 @@
                             <p style="color: #aaa; font-size: 14px; margin-top: 5px;">仅在需要绕过RLS策略时使用</p>
                         </div>
                         
-                        <!-- 修复7：数据库配置按钮 - 所有设备同一行显示 -->
-                        <div class="config-buttons-row">
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
                             <button id="testConnectionBtn" class="pixel-button">
                                 <i class="fas fa-plug"></i> 测试连接
                             </button>
@@ -2310,7 +2113,7 @@
                             </ul>
                         </div>
                         
-                        <!-- 新订单提示音设置 -->
+                        <!-- 新订单提示音设置 - 修复4：PC和手机都能上传 -->
                         <div class="notification-sound-section">
                             <h4><i class="fas fa-volume-up"></i> 新订单提示音设置</h4>
                             <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音（上传一次，所有设备自动同步）</p>
@@ -2362,7 +2165,7 @@
                             </div>
                         </div>
                         
-                        <!-- 历史订单提示音设置 -->
+                        <!-- 历史订单提示音设置 - 修复4：PC和手机都能上传 -->
                         <div class="history-notification-section">
                             <h4><i class="fas fa-history"></i> 历史订单提示音设置</h4>
                             <p style="color: #aaa; margin-bottom: 15px;">选择历史订单状态更新时的提示音（上传一次，所有设备自动同步）</p>
@@ -2633,18 +2436,18 @@
     </div>
 
     <script>
-        // 像素食堂云点餐系统 - 终极修复优化版（解决所有问题）
-        // 修复1、2、3、4、5、6、7、8、9、10、11、12、13所有问题
+        // 像素食堂云点餐系统 - 终极优化版（解决所有问题）
+        // 优化加载速度、实时同步、date字段支持、UI优化等
         
         // 配置常量
-        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v15';
-        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v13';
-        const DEVICE_ID_KEY = 'pixel_diner_device_id_v10';
-        const CART_KEY = 'pixel_diner_cart_v13';
-        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v15';
-        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v13';
-        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v12';
-        const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v6';
+        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v13';
+        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v11';
+        const DEVICE_ID_KEY = 'pixel_diner_device_id_v8';
+        const CART_KEY = 'pixel_diner_cart_v11';
+        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v13';
+        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v11';
+        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v10';
+        const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v4';
         
         // 默认Supabase配置（已配置好，无需修改）
         const DEFAULT_CONFIG = {
@@ -2772,11 +2575,7 @@
                 startTime: Date.now(),
                 menuLoadTime: 0,
                 orderLoadTime: 0
-            },
-            // 修复3、4：购物车快速加减功能
-            cartTimers: new Map(),
-            cartButtonPressStartTime: new Map(),
-            cartButtonPressInterval: null
+            }
         };
 
         // DOM元素引用
@@ -3300,7 +3099,7 @@
         function setupMenuRealtimeSubscription() {
             try {
                 state.realtimeSubscription = state.supabaseClient
-                    .channel('menu_items_changes_v9')
+                    .channel('menu_items_changes_v7')
                     .on(
                         'postgres_changes',
                         {
@@ -3342,7 +3141,7 @@
         function setupOrdersRealtimeSubscription() {
             try {
                 state.ordersRealtimeSubscription = state.supabaseClient
-                    .channel('orders_changes_v9')
+                    .channel('orders_changes_v7')
                     .on(
                         'postgres_changes',
                         {
@@ -3443,7 +3242,7 @@
         function setupSystemSettingsRealtimeSubscription() {
             try {
                 state.systemSettingsRealtimeSubscription = state.supabaseClient
-                    .channel('system_settings_changes_v9')
+                    .channel('system_settings_changes_v7')
                     .on(
                         'postgres_changes',
                         {
@@ -4376,16 +4175,9 @@
                     localStorage.setItem(CUSTOMER_PHONE_KEY, state.customerPhone);
                 }
             });
-            
-            // 修复3、4：防止购物车缩放和优化按钮
-            document.addEventListener('touchstart', function(e) {
-                if (e.target.closest('.cart-item-controls')) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
         }
 
-        // 处理自定义提示音上传
+        // 处理自定义提示音上传 - 修复4：PC和手机都能上传
         async function handleCustomSoundUpload(event, type = 'new') {
             const file = event.target.files[0];
             if (!file) return;
@@ -4812,15 +4604,11 @@
                 elements.viewMenuBtn.classList.add('active');
                 elements.viewAdminBtn.classList.remove('active');
                 elements.viewAdminBtn.classList.add('secondary');
-                elements.syncDataBtn.classList.remove('active');
-                elements.syncDataBtn.classList.add('secondary');
             } else {
                 elements.viewMenuBtn.classList.remove('active');
                 elements.viewMenuBtn.classList.add('secondary');
                 elements.viewAdminBtn.classList.remove('secondary');
                 elements.viewAdminBtn.classList.add('active');
-                elements.syncDataBtn.classList.remove('active');
-                elements.syncDataBtn.classList.add('secondary');
             }
             
             elements.menuPage.classList.remove('active');
@@ -4867,7 +4655,7 @@
             }
         }
 
-        // 加载菜品列表 - 修复9：优化性能
+        // 加载菜品列表 - 优化性能
         async function loadMenuItems() {
             console.log('加载菜品列表...');
             
@@ -4919,7 +4707,7 @@
             return loadMenuItems();
         }
 
-        // 渲染筛选后的菜品 - 修复9：图片懒加载
+        // 渲染筛选后的菜品
         function renderFilteredItems() {
             let filteredItems = state.menuItems;
             if (state.currentCategory !== 'all') {
@@ -4949,7 +4737,7 @@
                 const itemElement = document.createElement('div');
                 itemElement.className = 'menu-item pixel-border';
                 itemElement.innerHTML = `
-                    <img src="${DEFAULT_IMAGE_URL}" data-src="${item.image || DEFAULT_IMAGE_URL}" alt="${item.name}" class="item-image" 
+                    <img src="${item.image || DEFAULT_IMAGE_URL}" alt="${item.name}" class="item-image" 
                          onerror="this.src='${DEFAULT_IMAGE_URL}'">
                     <h3 class="item-name">${item.name}</h3>
                     <p class="item-description">${item.description}</p>
@@ -4972,37 +4760,7 @@
                         addToCart(itemId);
                     });
                 });
-                
-                // 图片懒加载
-                lazyLoadImages();
             }, 0);
-        }
-
-        // 图片懒加载 - 修复9
-        function lazyLoadImages() {
-            const images = document.querySelectorAll('.item-image[data-src]');
-            
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        const src = img.getAttribute('data-src');
-                        
-                        if (src) {
-                            img.src = src;
-                            img.classList.add('loaded');
-                            img.removeAttribute('data-src');
-                        }
-                        
-                        observer.unobserve(img);
-                    }
-                });
-            }, {
-                rootMargin: '50px 0px',
-                threshold: 0.1
-            });
-            
-            images.forEach(img => imageObserver.observe(img));
         }
 
         // 保存订单历史到本地
@@ -6083,7 +5841,7 @@
             renderCartItems();
         }
 
-        // 渲染购物车内容 - 修复3、4、5
+        // 渲染购物车内容
         function renderCartItems() {
             elements.cartItemsContainer.innerHTML = '';
             
@@ -6108,10 +5866,10 @@
                         <div class="cart-item-price">${item.price.toFixed(2)} 元</div>
                     </div>
                     <div class="cart-item-controls">
-                        <button class="cart-item-decrease pixel-border-white" data-id="${item.id}" data-action="decrease">-</button>
+                        <button class="cart-item-decrease pixel-border-white" data-id="${item.id}" style="width: 30px; height: 30px; background: #333; color: white; border: none; cursor: pointer;">-</button>
                         <div class="cart-item-qty">${item.quantity}</div>
-                        <button class="cart-item-increase pixel-border-white" data-id="${item.id}" data-action="increase">+</button>
-                        <button class="cart-item-remove pixel-border-white" data-id="${item.id}" style="background: #d32f2f !important; color: white !important; border: 2px solid white !important; padding: 5px 10px;">删除</button>
+                        <button class="cart-item-increase pixel-border-white" data-id="${item.id}" style="width: 30px; height: 30px; background: #333; color: white; border: none; cursor: pointer;">+</button>
+                        <button class="cart-item-remove pixel-border-white" data-id="${item.id}" style="margin-left: 10px; background: #d32f2f; color: white; border: none; cursor: pointer; padding: 5px 10px;">删除</button>
                     </div>
                 `;
                 
@@ -6120,132 +5878,28 @@
             
             elements.cartItemsContainer.appendChild(fragment);
             
-            // 修复3、4、5：优化购物车按钮事件
-            setupCartButtonEvents();
-        }
-
-        // 设置购物车按钮事件 - 修复3、4、5
-        function setupCartButtonEvents() {
-            // 清理旧的定时器
-            clearAllCartTimers();
-            
-            // 单个点击事件
-            document.querySelectorAll('.cart-item-decrease').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const itemId = parseInt(this.dataset.id);
-                    updateCartItemQuantity(itemId, -1);
+            setTimeout(() => {
+                document.querySelectorAll('.cart-item-decrease').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        updateCartItemQuantity(itemId, -1);
+                    });
                 });
                 
-                // 长按快速减少
-                setupLongPress(btn, -1);
-            });
-            
-            document.querySelectorAll('.cart-item-increase').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const itemId = parseInt(this.dataset.id);
-                    updateCartItemQuantity(itemId, 1);
+                document.querySelectorAll('.cart-item-increase').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        updateCartItemQuantity(itemId, 1);
+                    });
                 });
                 
-                // 长按快速增加
-                setupLongPress(btn, 1);
-            });
-            
-            document.querySelectorAll('.cart-item-remove').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const itemId = parseInt(this.dataset.id);
-                    removeFromCart(itemId);
+                document.querySelectorAll('.cart-item-remove').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        removeFromCart(itemId);
+                    });
                 });
-            });
-        }
-
-        // 设置长按快速加减 - 修复4
-        function setupLongPress(button, change) {
-            const itemId = parseInt(button.dataset.id);
-            
-            button.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                state.cartButtonPressStartTime.set(itemId, Date.now());
-                
-                state.cartTimers.set(itemId, setInterval(() => {
-                    const pressTime = Date.now() - state.cartButtonPressStartTime.get(itemId);
-                    
-                    if (pressTime > 300) {
-                        // 快速加减
-                        let currentSpeed = 1;
-                        if (pressTime > 1000) currentSpeed = 5;
-                        if (pressTime > 2000) currentSpeed = 10;
-                        
-                        for (let i = 0; i < currentSpeed; i++) {
-                            updateCartItemQuantity(itemId, change);
-                        }
-                    }
-                }, 100));
-            });
-            
-            button.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                clearCartTimer(itemId);
-            });
-            
-            button.addEventListener('touchcancel', function(e) {
-                e.preventDefault();
-                clearCartTimer(itemId);
-            });
-            
-            // PC端支持
-            button.addEventListener('mousedown', function(e) {
-                e.preventDefault();
-                state.cartButtonPressStartTime.set(itemId, Date.now());
-                
-                state.cartTimers.set(itemId, setInterval(() => {
-                    const pressTime = Date.now() - state.cartButtonPressStartTime.get(itemId);
-                    
-                    if (pressTime > 300) {
-                        // 快速加减
-                        let currentSpeed = 1;
-                        if (pressTime > 1000) currentSpeed = 5;
-                        if (pressTime > 2000) currentSpeed = 10;
-                        
-                        for (let i = 0; i < currentSpeed; i++) {
-                            updateCartItemQuantity(itemId, change);
-                        }
-                    }
-                }, 100));
-            });
-            
-            button.addEventListener('mouseup', function(e) {
-                e.preventDefault();
-                clearCartTimer(itemId);
-            });
-            
-            button.addEventListener('mouseleave', function(e) {
-                e.preventDefault();
-                clearCartTimer(itemId);
-            });
-        }
-
-        // 清理购物车定时器
-        function clearCartTimer(itemId) {
-            if (state.cartTimers.has(itemId)) {
-                clearInterval(state.cartTimers.get(itemId));
-                state.cartTimers.delete(itemId);
-            }
-            state.cartButtonPressStartTime.delete(itemId);
-        }
-
-        // 清理所有购物车定时器
-        function clearAllCartTimers() {
-            state.cartTimers.forEach((timer, itemId) => {
-                clearInterval(timer);
-            });
-            state.cartTimers.clear();
-            state.cartButtonPressStartTime.clear();
+            }, 0);
         }
 
         // 更新购物车商品数量
@@ -6382,7 +6036,7 @@
                 historyElement.innerHTML = `
                     <div class="order-history-header">
                         <div style="flex: 1;">
-                            <strong style="color: white;">订单 ${orderNumber}</strong>
+                            <strong style="color: var(--primary-color);">订单 ${orderNumber}</strong>
                             <div style="font-size: 12px; color: #aaa; margin-top: 5px;">${formattedDate}</div>
                             ${order.customer_phone ? `<div style="font-size: 12px; color: white; margin-top: 3px; display: flex; align-items: center; gap: 5px;"><i class="fas fa-phone"></i> ${order.customer_phone}</div>` : ''}
                         </div>
@@ -6875,35 +6529,6 @@
         
         window.addEventListener('unhandledrejection', function(e) {
             console.error('未处理的Promise拒绝:', e.reason);
-        });
-        
-        // 修复3：防止页面缩放
-        document.addEventListener('gesturestart', function(e) {
-            e.preventDefault();
-        });
-        
-        document.addEventListener('touchmove', function(e) {
-            if (e.scale !== 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        // 修复9：预加载关键图片
-        function preloadImages() {
-            const imageUrls = [
-                'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80',
-                'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
-            ];
-            
-            imageUrls.forEach(url => {
-                const img = new Image();
-                img.src = url;
-            });
-        }
-        
-        // 页面加载完成后预加载图片
-        window.addEventListener('load', function() {
-            setTimeout(preloadImages, 1000);
         });
     </script>
 </body>
