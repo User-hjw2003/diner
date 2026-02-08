@@ -2313,7 +2313,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
+                                <div class="sound-info">支持MP3、WAV、OGG、WEBM、M4A、AAC、MP4、FLAC、OPUS格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -2365,7 +2365,7 @@
                                         <i class="fas fa-check"></i> 使用此提示音
                                     </button>
                                 </div>
-                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
+                                <div class="sound-info">支持MP3、WAV、OGG、WEBM、M4A、AAC、MP4、FLAC、OPUS格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
                             </div>
                             
                             <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -2602,14 +2602,14 @@
         // 修复所有问题，优化性能和用户体验
         
         // 配置常量
-        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v14';
-        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v12';
-        const DEVICE_ID_KEY = 'pixel_diner_device_id_v9';
-        const CART_KEY = 'pixel_diner_cart_v12';
-        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v14';
-        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v12';
-        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v11';
-        const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v5';
+        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v15';
+        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v13';
+        const DEVICE_ID_KEY = 'pixel_diner_device_id_v10';
+        const CART_KEY = 'pixel_diner_cart_v13';
+        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v15';
+        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v13';
+        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v12';
+        const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v6';
         
         // 默认Supabase配置（已配置好，无需修改）
         const DEFAULT_CONFIG = {
@@ -3266,7 +3266,7 @@
         function setupMenuRealtimeSubscription() {
             try {
                 state.realtimeSubscription = state.supabaseClient
-                    .channel('menu_items_changes_v8')
+                    .channel('menu_items_changes_v9')
                     .on(
                         'postgres_changes',
                         {
@@ -3308,7 +3308,7 @@
         function setupOrdersRealtimeSubscription() {
             try {
                 state.ordersRealtimeSubscription = state.supabaseClient
-                    .channel('orders_changes_v8')
+                    .channel('orders_changes_v9')
                     .on(
                         'postgres_changes',
                         {
@@ -3409,7 +3409,7 @@
         function setupSystemSettingsRealtimeSubscription() {
             try {
                 state.systemSettingsRealtimeSubscription = state.supabaseClient
-                    .channel('system_settings_changes_v8')
+                    .channel('system_settings_changes_v9')
                     .on(
                         'postgres_changes',
                         {
@@ -4371,14 +4371,14 @@
             
             console.log(`开始上传${type === 'new' ? '新订单' : '历史订单'}提示音:`, file.name, file.size, file.type);
             
-            const validAudioTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/ogg', 'audio/webm', 'audio/x-m4a', 'audio/aac'];
+            const validAudioTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/ogg', 'audio/webm', 'audio/x-m4a', 'audio/aac', 'audio/mp4', 'audio/flac', 'audio/opus'];
             const validExtensions = ['.mp3', '.wav', '.ogg', '.webm', '.m4a', '.aac', '.mp4', '.flac', '.opus'];
             
             const hasValidType = validAudioTypes.includes(file.type);
             const hasValidExtension = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
             
             if (!hasValidType && !hasValidExtension) {
-                showNotification('请选择音频文件 (MP3, WAV, OGG, M4A, AAC, FLAC, OPUS等)', 'warning');
+                showNotification('请选择音频文件 (MP3, WAV, OGG, WEBM, M4A, AAC, MP4, FLAC, OPUS等)', 'warning');
                 return;
             }
             
@@ -6554,6 +6554,7 @@
                 state.orderHistory.push(order);
                 saveOrderHistoryToLocal();
                 
+                // 修复问题2：提交订单后清空购物车
                 state.cart = [];
                 localStorage.removeItem(CART_KEY);
                 updateCartDisplay();
@@ -6575,6 +6576,7 @@
                 state.orderHistory.push(order);
                 saveOrderHistoryToLocal();
                 
+                // 修复问题2：提交订单后清空购物车
                 state.cart = [];
                 localStorage.removeItem(CART_KEY);
                 updateCartDisplay();
