@@ -2602,16 +2602,16 @@
         // 修复所有问题，优化性能和用户体验
         
         // 配置常量
-        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v15';
-        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v13';
-        const DEVICE_ID_KEY = 'pixel_diner_device_id_v10';
-        const CART_KEY = 'pixel_diner_cart_v13';
-        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v15';
-        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v13';
-        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v12';
-        const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v6';
+        const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v14';
+        const SYSTEM_SETTINGS_KEY = 'pixel_diner_system_settings_v12';
+        const DEVICE_ID_KEY = 'pixel_diner_device_id_v9';
+        const CART_KEY = 'pixel_diner_cart_v12';
+        const ORDER_HISTORY_KEY = 'pixel_diner_order_history_v14';
+        const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v12';
+        const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v11';
+        const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v5';
         
-        // 默认Supabase配置（已配置好，无需修改）- 修复问题11
+        // 默认Supabase配置（已配置好，无需修改）
         const DEFAULT_CONFIG = {
             supabaseUrl: 'https://vtwhilxqztqmetorntid.supabase.co',
             supabaseAnonKey: 'sb_publishable_1NfB3o4x2kQnaLdwxygSBQ_yKMrIX9A',
@@ -3060,9 +3060,6 @@
                         await loadCloudData();
                     }, 1000);
                     
-                    // 修复问题11：更新配置显示
-                    updateConfigDisplay();
-                    
                     showNotification('云数据库连接成功！数据实时同步中', 'success');
                 } else {
                     throw new Error('连接测试失败');
@@ -3114,25 +3111,6 @@
             } catch (error) {
                 console.error('数据库连接测试失败:', error);
                 throw error;
-            }
-        }
-
-        // 更新配置显示 - 修复问题11
-        function updateConfigDisplay() {
-            const config = DEFAULT_CONFIG;
-            let configHtml = '';
-            
-            configHtml = `
-                <p><strong>当前配置状态:</strong> <span style="color: #4caf50;">已配置</span></p>
-                <p><strong>项目URL:</strong> <span style="color: #aaa; word-break: break-all;">${config.supabaseUrl}</span></p>
-                <p><strong>连接状态:</strong> <span style="color: ${state.connectionStatus === 'online' ? '#4caf50' : '#f44336'};">${state.connectionStatus}</span></p>
-                <p><strong>数据表:</strong> menu_items, orders, system_settings</p>
-                <p><strong>实时同步:</strong> <span style="color: ${state.isRealtimeConnected ? '#4caf50' : '#f44336'};">${state.isRealtimeConnected ? '已连接' : '已断开'}</span></p>
-                <p><strong>设备ID:</strong> <span style="color: #aaa; font-size: 12px;">${state.deviceId.substring(0, 20)}...</span></p>
-            `;
-            
-            if (elements.currentConfig) {
-                elements.currentConfig.innerHTML = configHtml;
             }
         }
 
@@ -3288,7 +3266,7 @@
         function setupMenuRealtimeSubscription() {
             try {
                 state.realtimeSubscription = state.supabaseClient
-                    .channel('menu_items_changes_v9')
+                    .channel('menu_items_changes_v8')
                     .on(
                         'postgres_changes',
                         {
@@ -3330,7 +3308,7 @@
         function setupOrdersRealtimeSubscription() {
             try {
                 state.ordersRealtimeSubscription = state.supabaseClient
-                    .channel('orders_changes_v9')
+                    .channel('orders_changes_v8')
                     .on(
                         'postgres_changes',
                         {
@@ -3431,7 +3409,7 @@
         function setupSystemSettingsRealtimeSubscription() {
             try {
                 state.systemSettingsRealtimeSubscription = state.supabaseClient
-                    .channel('system_settings_changes_v9')
+                    .channel('system_settings_changes_v8')
                     .on(
                         'postgres_changes',
                         {
@@ -4393,16 +4371,19 @@
             
             console.log(`开始上传${type === 'new' ? '新订单' : '历史订单'}提示音:`, file.name, file.size, file.type);
             
-            // 修复问题15：放宽音频文件限制，允许任意格式
-            const validAudioTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/ogg', 'audio/webm', 'audio/x-m4a', 'audio/aac', 'audio/mp3', 'audio/flac', 'audio/opus', 'audio/x-mpeg'];
-            const validExtensions = ['.mp3', '.wav', '.ogg', '.webm', '.m4a', '.aac', '.mp4', '.flac', '.opus', '.mpeg', '.mpga', '.mid', '.midi', '.x-midi'];
+            const validAudioTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/ogg', 'audio/webm', 'audio/x-m4a', 'audio/aac'];
+            const validExtensions = ['.mp3', '.wav', '.ogg', '.webm', '.m4a', '.aac', '.mp4', '.flac', '.opus'];
             
             const hasValidType = validAudioTypes.includes(file.type);
             const hasValidExtension = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
             
-            // 修复问题15：不限制文件大小
-            if (file.size > 100 * 1024 * 1024) {
-                showNotification('音频文件大小不能超过100MB', 'warning');
+            if (!hasValidType && !hasValidExtension) {
+                showNotification('请选择音频文件 (MP3, WAV, OGG, M4A, AAC, FLAC, OPUS等)', 'warning');
+                return;
+            }
+            
+            if (file.size > 50 * 1024 * 1024) {
+                showNotification('音频文件大小不能超过50MB', 'warning');
                 return;
             }
             
@@ -4435,55 +4416,75 @@
                 }
                 
                 if (state.audioContext) {
-                    try {
-                        const audioBuffer = await decodeAudioData(base64Data);
+                    const audioBuffer = await decodeAudioData(base64Data);
+                    
+                    if (audioBuffer) {
+                        const soundKey = type === 'new' ? 'notification' : 'history';
+                        state.audioBuffers.set(soundKey, audioBuffer);
                         
-                        if (audioBuffer) {
-                            const soundKey = type === 'new' ? 'notification' : 'history';
-                            state.audioBuffers.set(soundKey, audioBuffer);
+                        if (type === 'new') {
+                            state.systemSettings.notificationSound = {
+                                type: 'custom',
+                                data: base64Data,
+                                filename: file.name,
+                                size: file.size,
+                                uploaded: new Date().toISOString()
+                            };
+                            
+                            updateSoundUI(type, file.name, file.size);
+                        } else {
+                            state.systemSettings.historyNotificationSound = {
+                                type: 'custom',
+                                data: base64Data,
+                                filename: file.name,
+                                size: file.size,
+                                uploaded: new Date().toISOString()
+                            };
+                            
+                            updateSoundUI(type, file.name, file.size);
                         }
-                    } catch (audioError) {
-                        console.warn('音频解码失败，使用备用方案:', audioError);
-                    }
-                }
-                
-                if (type === 'new') {
-                    state.systemSettings.notificationSound = {
-                        type: 'custom',
-                        data: base64Data,
-                        filename: file.name,
-                        size: file.size,
-                        uploaded: new Date().toISOString()
-                    };
-                    
-                    updateSoundUI(type, file.name, file.size);
-                } else {
-                    state.systemSettings.historyNotificationSound = {
-                        type: 'custom',
-                        data: base64Data,
-                        filename: file.name,
-                        size: file.size,
-                        uploaded: new Date().toISOString()
-                    };
-                    
-                    updateSoundUI(type, file.name, file.size);
-                }
-                
-                await saveNotificationSoundSettings();
-                
-                setTimeout(() => {
-                    if (state.audioBuffers.has(type === 'new' ? 'notification' : 'history')) {
-                        playCustomSound(type === 'new' ? 'notification' : 'history');
+                        
+                        await saveNotificationSoundSettings();
+                        
+                        setTimeout(() => {
+                            playCustomSound(soundKey);
+                        }, 500);
+                        
+                        showNotification(`${type === 'new' ? '新订单' : '历史订单'}提示音已上传并保存到云端，所有设备将自动同步使用`, 'success');
+                        
                     } else {
-                        playDefaultNotificationSound(type);
+                        throw new Error('音频解码失败');
                     }
-                }, 500);
-                
-                showNotification(`${type === 'new' ? '新订单' : '历史订单'}提示音已上传并保存到云端，所有设备将自动同步使用`, 'success');
+                } else {
+                    if (type === 'new') {
+                        state.systemSettings.notificationSound = {
+                            type: 'custom',
+                            data: base64Data,
+                            filename: file.name,
+                            size: file.size,
+                            uploaded: new Date().toISOString()
+                        };
+                        
+                        updateSoundUI(type, file.name, file.size);
+                    } else {
+                        state.systemSettings.historyNotificationSound = {
+                            type: 'custom',
+                            data: base64Data,
+                            filename: file.name,
+                            size: file.size,
+                            uploaded: new Date().toISOString()
+                        };
+                        
+                        updateSoundUI(type, file.name, file.size);
+                    }
+                    
+                    await saveNotificationSoundSettings();
+                    showNotification(`${type === 'new' ? '新订单' : '历史订单'}提示音已上传（使用备用方案）`, 'warning');
+                }
                 
             } catch (error) {
                 console.error('处理自定义提示音上传失败:', error);
-                showNotification('音频文件上传失败，请重试', 'error');
+                showNotification('音频文件上传失败，请确保文件格式正确且大小不超过50MB', 'error');
             } finally {
                 hideLoading();
                 setTimeout(() => {
@@ -4689,7 +4690,26 @@
             
             updateAdminButtonState('config');
             
-            updateConfigDisplay();
+            const config = loadConfig();
+            let configHtml = '';
+            
+            if (config.supabaseUrl && config.supabaseAnonKey) {
+                configHtml = `
+                    <p><strong>当前配置状态:</strong> <span style="color: #4caf50;">已配置</span></p>
+                    <p><strong>项目URL:</strong> <span style="color: #aaa; word-break: break-all;">${config.supabaseUrl}</span></p>
+                    <p><strong>连接状态:</strong> <span style="color: ${state.connectionStatus === 'online' ? '#4caf50' : '#f44336'};">${state.connectionStatus}</span></p>
+                    <p><strong>数据表:</strong> menu_items, orders, system_settings</p>
+                    <p><strong>实时同步:</strong> <span style="color: ${state.isRealtimeConnected ? '#4caf50' : '#f44336'};">${state.isRealtimeConnected ? '已连接' : '已断开'}</span></p>
+                    <p><strong>设备ID:</strong> <span style="color: #aaa; font-size: 12px;">${state.deviceId.substring(0, 20)}...</span></p>
+                `;
+            } else {
+                configHtml = `
+                    <p><strong>当前配置状态:</strong> <span style="color: #ff9800;">未配置</span></p>
+                    <p>请填写下面的Supabase配置信息以启用云同步功能。</p>
+                `;
+            }
+            
+            elements.currentConfig.innerHTML = configHtml;
             
             // 滚动到配置区域
             setTimeout(() => {
@@ -5086,17 +5106,15 @@
             let image = '';
             if (state.imageSourceType === 'upload' && elements.imageUpload.files[0]) {
                 try {
-                    // 修复问题3：优化图片处理，允许任意图片格式
+                    // 优化图片处理，压缩大图片
                     const file = elements.imageUpload.files[0];
-                    
-                    // 修复问题3：不限制图片大小，但压缩大图片
-                    if (file.size > 10 * 1024 * 1024) {
-                        showNotification('图片文件较大，正在压缩...', 'info');
-                        image = await compressImage(file, 1024, 0.7);
-                    } else {
-                        // 直接转换为Base64
-                        image = await readFileAsDataURL(file);
+                    if (file.size > 5 * 1024 * 1024) {
+                        showNotification('图片文件太大，请选择小于5MB的图片', 'warning');
+                        return;
                     }
+                    
+                    // 使用更高效的图片处理方式
+                    image = await compressImage(file);
                 } catch (error) {
                     console.error('图片处理失败:', error);
                     showNotification('图片处理失败，请使用网络图片', 'error');
@@ -6438,7 +6456,7 @@
             console.log('订单历史加载完成，共', sortedHistory.length, '个订单');
         }
 
-        // 修复问题4、8、9：提交订单 - 优化性能
+        // 修复问题8、9：提交订单 - 优化性能
         async function submitOrder() {
             if (state.cart.length === 0) {
                 showNotification('购物车是空的，无法提交订单', 'warning');
@@ -6536,7 +6554,6 @@
                 state.orderHistory.push(order);
                 saveOrderHistoryToLocal();
                 
-                // 修复问题4：提交订单后清空购物车
                 state.cart = [];
                 localStorage.removeItem(CART_KEY);
                 updateCartDisplay();
@@ -6558,7 +6575,6 @@
                 state.orderHistory.push(order);
                 saveOrderHistoryToLocal();
                 
-                // 修复问题4：提交订单后清空购物车
                 state.cart = [];
                 localStorage.removeItem(CART_KEY);
                 updateCartDisplay();
