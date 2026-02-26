@@ -1964,7 +1964,7 @@
     </div>
 
     <script>
-        // 像素食堂云点餐系统 - 终极优化版
+        // 像素食堂云点餐系统 - 修复版（解决菜品实时同步问题）
         (function() {
             // 配置常量
             const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_final';
@@ -2034,7 +2034,9 @@
                 audioSources: new Map(),
                 cartButtonTimer: null,
                 cartButtonInterval: null,
-                isButtonPressed: false
+                isButtonPressed: false,
+                // 新增：强制刷新标记
+                forceMenuRefresh: false
             };
 
             let elements = {};
@@ -2101,8 +2103,17 @@
             }
 
             function setupEventListeners() {
-                elements.viewMenuBtn?.addEventListener('click', () => { switchPage('menu'); loadMenuItems(); });
-                elements.viewAdminBtn?.addEventListener('click', () => { switchPage('admin'); loadAdminPage(); });
+                elements.viewMenuBtn?.addEventListener('click', () => { 
+                    switchPage('menu'); 
+                    // 强制刷新菜单
+                    loadMenuItems(true);
+                });
+                
+                elements.viewAdminBtn?.addEventListener('click', () => { 
+                    switchPage('admin'); 
+                    loadAdminPage();
+                });
+                
                 elements.syncDataBtn?.addEventListener('click', syncData);
                 
                 elements.categoryButtons?.forEach(btn => {
@@ -2110,7 +2121,8 @@
                         elements.categoryButtons.forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
                         state.currentCategory = this.dataset.category;
-                        loadMenuItems();
+                        // 重新渲染当前分类的菜品
+                        renderFilteredItems();
                     });
                 });
                 
@@ -2245,7 +2257,15 @@
                 try {
                     state.orderHistory = JSON.parse(localStorage.getItem(ORDER_HISTORY_KEY)) || [];
                     state.cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-                    state.menuItems = JSON.parse(localStorage.getItem(MENU_CACHE_KEY)) || [...DEFAULT_MENU_ITEMS];
+                    
+                    // 从缓存加载菜单
+                    const cachedMenu = localStorage.getItem(MENU_CACHE_KEY);
+                    if (cachedMenu) {
+                        state.menuItems = JSON.parse(cachedMenu);
+                    } else {
+                        state.menuItems = [...DEFAULT_MENU_ITEMS];
+                    }
+                    
                     state.systemSettings = JSON.parse(localStorage.getItem(SYSTEM_SETTINGS_KEY)) || { 
                         notificationSound: null, historyNotificationSound: null, notificationMuted: false, historyNotificationMuted: false 
                     };
@@ -2253,8 +2273,10 @@
                     if (elements.customerPhone) elements.customerPhone.value = state.customerPhone;
                 } catch (e) {
                     console.error('加载本地数据失败', e);
+                    state.menuItems = [...DEFAULT_MENU_ITEMS];
                 }
                 updateCartDisplay();
+                renderFilteredItems();
             }
 
             async function initAudioContext() {
@@ -2288,7 +2310,8 @@
                     if (isConnected) {
                         updateConnectionStatus('online', '实时连接');
                         setupRealtimeSubscription();
-                        await loadCloudData();
+                        await loadMenuItems(true); // 强制从云端加载
+                        await loadSystemSettingsFromCloud();
                     } else {
                         updateConnectionStatus('offline', '实时连接');
                     }
@@ -2345,16 +2368,22 @@
                 if (state.realtimeSubscription) state.supabaseClient.removeChannel(state.realtimeSubscription);
                 if (state.ordersRealtimeSubscription) state.supabaseClient.removeChannel(state.ordersRealtimeSubscription);
                 
-                // 菜单订阅
+                // 菜单订阅 - 立即刷新顾客点餐页面
                 state.realtimeSubscription = state.supabaseClient
                     .channel('menu_items_changes_final')
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, () => {
-                        debounce(() => {
-                            loadMenuItems();
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, (payload) => {
+                        console.log('菜单变更:', payload);
+                        // 强制从云端重新加载菜单
+                        loadMenuItems(true).then(() => {
+                            // 同时刷新管理后台列表
                             if (state.adminLoggedIn) loadAdminItems();
-                        }, 300)();
+                            showNotification('菜品数据已更新', 'info');
+                        });
                     })
-                    .subscribe();
+                    .subscribe((status) => {
+                        console.log('菜单订阅状态:', status);
+                        state.isRealtimeConnected = status === 'SUBSCRIBED';
+                    });
                 
                 // 订单订阅
                 state.ordersRealtimeSubscription = state.supabaseClient
@@ -2378,7 +2407,9 @@
                             debounce(() => loadOrders(), 300)();
                         }
                     })
-                    .subscribe();
+                    .subscribe((status) => {
+                        console.log('订单订阅状态:', status);
+                    });
             }
 
             function debounce(func, wait) {
@@ -2503,11 +2534,7 @@
                 }
             }
 
-            async function loadCloudData() {
-                await loadMenuItems(true);
-                await loadSystemSettingsFromCloud();
-            }
-
+            // 修复：强制从云端加载菜单
             async function loadMenuItems(force = false) {
                 const cacheValid = !force && state.cache.lastUpdated && (Date.now() - state.cache.lastUpdated < state.cache.expires);
                 
@@ -2529,6 +2556,7 @@
                             state.menuItems = data;
                             saveMenuCache(data);
                             renderFilteredItems();
+                            console.log('从云端加载菜品成功:', data.length);
                             return;
                         }
                     } catch (error) {
@@ -2537,7 +2565,12 @@
                 }
                 
                 // 使用本地数据
-                state.menuItems = JSON.parse(localStorage.getItem(MENU_CACHE_KEY)) || [...DEFAULT_MENU_ITEMS];
+                const cached = localStorage.getItem(MENU_CACHE_KEY);
+                if (cached) {
+                    state.menuItems = JSON.parse(cached);
+                } else {
+                    state.menuItems = [...DEFAULT_MENU_ITEMS];
+                }
                 renderFilteredItems();
             }
 
@@ -2549,15 +2582,25 @@
             }
 
             function renderFilteredItems() {
+                if (!elements.menuItemsContainer) return;
+                
                 let filtered = state.menuItems;
                 if (state.currentCategory !== 'all') {
                     filtered = state.menuItems.filter(item => item.category === state.currentCategory);
                 } else {
+                    // 按主菜→小食→饮品→甜点排序
                     const order = { main: 1, side: 2, drink: 3, dessert: 4 };
                     filtered.sort((a, b) => (order[a.category] || 99) - (order[b.category] || 99));
                 }
                 
-                elements.menuItemsContainer.innerHTML = filtered.length ? '' : '<div class="empty-message"><p>暂无菜品</p><p>请前往管理后台添加菜品</p></div>';
+                elements.menuItemsContainer.innerHTML = '';
+                
+                if (!filtered.length) {
+                    elements.menuItemsContainer.innerHTML = '<div class="empty-message"><p>暂无菜品</p><p>请前往管理后台添加菜品</p></div>';
+                    return;
+                }
+                
+                const fragment = document.createDocumentFragment();
                 
                 filtered.forEach(item => {
                     const el = document.createElement('div');
@@ -2566,15 +2609,18 @@
                         <img src="${item.image || DEFAULT_IMAGE_URL}" alt="${item.name}" class="item-image" 
                              onerror="this.src='${DEFAULT_IMAGE_URL}'" loading="lazy">
                         <h3 class="item-name">${item.name}</h3>
-                        <p class="item-description">${item.description}</p>
+                        <p class="item-description">${item.description || '暂无描述'}</p>
                         <div class="item-footer">
                             <div class="item-price">${item.price.toFixed(2)} 元</div>
                             <button class="add-to-cart pixel-border-white" data-id="${item.id}">加入购物车</button>
                         </div>
                     `;
-                    elements.menuItemsContainer.appendChild(el);
+                    fragment.appendChild(el);
                 });
                 
+                elements.menuItemsContainer.appendChild(fragment);
+                
+                // 绑定加入购物车事件
                 document.querySelectorAll('.add-to-cart').forEach(btn => {
                     btn.addEventListener('click', () => addToCart(parseInt(btn.dataset.id)));
                 });
@@ -2588,6 +2634,8 @@
             }
 
             function renderCartItems() {
+                if (!elements.cartItemsContainer) return;
+                
                 elements.cartItemsContainer.innerHTML = '';
                 if (!state.cart.length) {
                     elements.cartItemsContainer.innerHTML = '<div class="empty-message"><p>购物车是空的</p><p>快去添加一些菜品吧！</p></div>';
@@ -2699,6 +2747,7 @@
             }
 
             function toggleCart() {
+                if (!elements.cartContainer) return;
                 elements.cartContainer.classList.toggle('open');
                 document.body.classList.toggle('no-scroll', elements.cartContainer.classList.contains('open'));
                 if (elements.cartContainer.classList.contains('open') && state.currentCartTab === 'history') {
@@ -2716,9 +2765,16 @@
             }
 
             function loadOrderHistory() {
+                if (!elements.orderHistoryContainer) return;
+                
                 const myOrders = state.orderHistory.filter(o => o.device_id === state.deviceId).sort((a, b) => new Date(b.date || b.created_at) - new Date(a.date || a.created_at));
                 
-                elements.orderHistoryContainer.innerHTML = myOrders.length ? '' : '<div class="empty-message"><p>暂无订单历史</p></div>';
+                elements.orderHistoryContainer.innerHTML = '';
+                
+                if (!myOrders.length) {
+                    elements.orderHistoryContainer.innerHTML = '<div class="empty-message"><p>暂无订单历史</p></div>';
+                    return;
+                }
                 
                 myOrders.forEach(order => {
                     const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
@@ -3091,8 +3147,6 @@
                 
                 elements.menuPage?.classList.toggle('active', page === 'menu');
                 elements.adminPage?.classList.toggle('active', page === 'admin');
-                
-                if (page === 'menu') loadMenuItems();
             }
 
             function loadAdminPage() {
@@ -3241,30 +3295,37 @@
                 showLoading(state.editingItemId ? '更新中...' : '添加中...');
                 
                 try {
+                    let savedItem;
                     if (state.supabaseClient && state.isOnline) {
                         if (state.editingItemId) {
-                            await state.supabaseClient.from('menu_items').update(itemData).eq('id', state.editingItemId);
+                            const { data } = await state.supabaseClient.from('menu_items').update(itemData).eq('id', state.editingItemId).select();
+                            savedItem = data?.[0];
                         } else {
-                            await state.supabaseClient.from('menu_items').insert([itemData]);
+                            const { data } = await state.supabaseClient.from('menu_items').insert([itemData]).select();
+                            savedItem = data?.[0];
                         }
                     } else {
                         const items = [...state.menuItems];
                         if (state.editingItemId) {
                             const idx = items.findIndex(i => i.id === state.editingItemId);
                             if (idx >= 0) items[idx] = { ...items[idx], ...itemData };
+                            savedItem = items[idx];
                         } else {
                             const newId = items.length ? Math.max(...items.map(i => i.id)) + 1 : 1;
-                            items.push({ id: newId, ...itemData });
+                            const newItem = { id: newId, ...itemData };
+                            items.push(newItem);
+                            savedItem = newItem;
                         }
                         state.menuItems = items;
                         saveMenuCache(items);
                     }
                     
-                    // 清除缓存，强制刷新
+                    // 强制重新加载菜单
                     state.cache.menuItems = null;
                     state.cache.lastUpdated = null;
                     
-                    await Promise.all([loadAdminItems(), loadMenuItems(true)]);
+                    await loadMenuItems(true);
+                    await loadAdminItems();
                     
                     elements.itemForm.reset();
                     elements.imagePreview.style.display = 'none';
@@ -3286,6 +3347,8 @@
             }
 
             async function loadAdminItems() {
+                if (!elements.adminItemsContainer) return;
+                
                 if (state.supabaseClient && state.isOnline) {
                     try {
                         const { data } = await state.supabaseClient.from('menu_items').select('*').order('id');
@@ -3322,7 +3385,7 @@
                             <img src="${item.image || DEFAULT_IMAGE_URL}" alt="${item.name}" style="width:80px;height:80px;object-fit:cover;margin-right:15px;border:2px solid var(--primary-color);" onerror="this.src='${DEFAULT_IMAGE_URL}'">
                             <div style="flex:1">
                                 <div style="color:var(--primary-color);font-weight:bold">${item.name}</div>
-                                <div style="color:#aaa;font-size:14px;margin:5px 0">${item.description}</div>
+                                <div style="color:#aaa;font-size:14px;margin:5px 0">${item.description || '暂无描述'}</div>
                                 <div style="font-weight:bold">${item.price.toFixed(2)}元</div>
                             </div>
                             <div>
@@ -3388,7 +3451,8 @@
                     state.menuItems = state.menuItems.filter(i => i.id !== id);
                     saveMenuCache(state.menuItems);
                     
-                    await Promise.all([loadAdminItems(), loadMenuItems(true)]);
+                    await loadAdminItems();
+                    await loadMenuItems(true);
                     showNotification('删除成功', 'success');
                     
                 } catch (error) {
@@ -3472,7 +3536,12 @@
                     if (data) {
                         if (elements.ordersCount) elements.ordersCount.textContent = `共 ${data.length} 个订单`;
                         
-                        elements.ordersContainer.innerHTML = data.length ? '' : '<div class="empty-message"><p>暂无订单</p></div>';
+                        elements.ordersContainer.innerHTML = '';
+                        
+                        if (!data.length) {
+                            elements.ordersContainer.innerHTML = '<div class="empty-message"><p>暂无订单</p></div>';
+                            return;
+                        }
                         
                         data.forEach(order => {
                             const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
