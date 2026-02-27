@@ -42,10 +42,12 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        /* 防止双击缩放 */
         html {
             touch-action: manipulation;
         }
 
+        /* 扫描线效果 */
         body::before {
             content: "";
             position: fixed;
@@ -70,6 +72,7 @@
             100% { background-position: 0 100%; }
         }
 
+        /* 像素边框效果 */
         .pixel-border {
             border-style: solid;
             border-width: var(--pixel-border);
@@ -84,6 +87,7 @@
             border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(255, 255, 255)" /></svg>');
         }
 
+        /* 像素按钮 */
         .pixel-button {
             display: inline-block;
             padding: 12px 24px;
@@ -147,6 +151,7 @@
             background-color: var(--warning-color);
         }
 
+        /* 标题样式 */
         h1, h2, h3 {
             color: var(--primary-color);
             text-transform: uppercase;
@@ -173,6 +178,7 @@
             background-color: var(--primary-color);
         }
 
+        /* 布局容器 */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -234,6 +240,7 @@
             order: 0;
         }
 
+        /* 主内容区域 */
         .app-container {
             display: flex;
             flex-direction: column;
@@ -241,6 +248,7 @@
             overflow-x: hidden;
         }
 
+        /* 页面切换 */
         .page {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -255,6 +263,7 @@
             to { opacity: 1; }
         }
 
+        /* 顾客点餐页面 - 分类按钮靠左对齐 */
         .menu-categories {
             display: flex;
             flex-wrap: wrap;
@@ -307,6 +316,8 @@
             margin-bottom: 15px;
             border: 2px solid var(--primary-color);
             background-color: #333;
+            background-size: cover;
+            background-position: center;
         }
 
         .item-name {
@@ -350,6 +361,7 @@
             background-color: var(--primary-color);
         }
 
+        /* 使用说明样式 */
         .instructions {
             padding: 20px;
             margin-top: 30px;
@@ -376,6 +388,7 @@
             font-size: 18px;
         }
 
+        /* 二维码区域样式 */
         .qrcode-section {
             padding: 25px;
             background-color: #1a1a1a;
@@ -509,6 +522,7 @@
             margin-bottom: 20px;
         }
 
+        /* 购物车 */
         .cart-container {
             position: fixed;
             bottom: 0;
@@ -671,6 +685,7 @@
             touch-action: manipulation;
         }
 
+        /* 订单历史 */
         .order-history-item {
             background-color: #222;
             padding: 15px;
@@ -700,6 +715,7 @@
             border-bottom: 1px dashed #333;
         }
 
+        /* 管理后台 */
         .admin-login {
             max-width: 400px;
             margin: 50px auto;
@@ -729,6 +745,7 @@
             margin-bottom: 40px;
         }
 
+        /* 表单样式 */
         .form-group {
             margin-bottom: 20px;
         }
@@ -909,6 +926,7 @@
             background-color: #2196f3 !important;
         }
 
+        /* 通知 */
         .notification {
             position: fixed;
             top: 20px;
@@ -927,6 +945,7 @@
             to { transform: translateX(0); }
         }
 
+        /* 连接状态指示器 */
         .connection-status {
             position: fixed;
             top: 10px;
@@ -961,6 +980,7 @@
             50% { opacity: 0.7; }
         }
 
+        /* 加载指示器 */
         .loading {
             display: inline-block;
             width: 20px;
@@ -1012,6 +1032,7 @@
             font-size: 10px;
         }
 
+        /* 新订单通知 */
         .new-order-notification {
             position: fixed;
             top: 80px;
@@ -1033,6 +1054,7 @@
             font-size: 20px;
         }
 
+        /* 自动刷新状态指示器 */
         .auto-refresh-indicator {
             display: inline-flex;
             align-items: center;
@@ -1057,6 +1079,7 @@
             50% { opacity: 0.7; }
         }
 
+        /* 提示音配置样式 */
         .notification-sound-section {
             margin-top: 20px;
             padding: 20px;
@@ -1098,6 +1121,7 @@
             background-color: #4caf50 !important;
         }
 
+        /* 历史订单提示音区域 */
         .history-notification-section {
             margin-top: 20px;
             padding: 20px;
@@ -1480,7 +1504,7 @@
                     <button class="category-btn pixel-border" data-category="dessert">甜点</button>
                 </div>
                 
-                <div id="menuItemsContainer" class="menu-items">
+                <div class="menu-items" id="menuItemsContainer">
                     <!-- 菜品将通过JavaScript动态加载 -->
                 </div>
                 
@@ -1966,10 +1990,13 @@
             const DEFAULT_MENU_ITEMS = [
                 { id: 1, name: '像素汉堡', category: 'main', price: 28.00, description: '经典牛肉汉堡搭配特制像素酱', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
                 { id: 2, name: '意式披萨', category: 'main', price: 45.00, description: '意大利传统工艺，薄脆饼底配丰富配料', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
-                { id: 3, name: '复古薯条', category: 'side', price: 12.00, description: '香脆薯条配像素芝士酱', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
-                { id: 4, name: '像素可乐', category: 'drink', price: 8.00, description: '经典可乐，冰爽解渴', image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
-                { id: 5, name: '复古奶昔', category: 'drink', price: 18.00, description: '香草奶昔配彩色糖粒', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
-                { id: 6, name: '像素蛋糕', category: 'dessert', price: 22.00, description: '巧克力蛋糕配像素糖霜', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }
+                { id: 3, name: '复古牛排', category: 'main', price: 68.00, description: '经典煎牛排配时令蔬菜', image: 'https://images.unsplash.com/photo-1546964124-0cce460f38ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
+                { id: 4, name: '复古薯条', category: 'side', price: 12.00, description: '香脆薯条配像素芝士酱', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
+                { id: 5, name: '像素可乐', category: 'drink', price: 8.00, description: '经典可乐，冰爽解渴', image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
+                { id: 6, name: '复古奶昔', category: 'drink', price: 18.00, description: '香草奶昔配彩色糖粒', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
+                { id: 7, name: '像素蛋糕', category: 'dessert', price: 22.00, description: '巧克力蛋糕配像素糖霜', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
+                { id: 8, name: '豆腐', category: 'side', price: 18.00, description: '香煎豆腐配特制酱料', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' },
+                { id: 9, name: '鸡蛋', category: 'side', price: 28.00, description: '经典煎鸡蛋', image: 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }
             ];
             
             const DEFAULT_IMAGE_URL = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
@@ -1998,7 +2025,7 @@
                 isHistoryNotificationMuted: false,
                 audioContext: null,
                 gainNode: null,
-                cache: { menuItems: null, lastUpdated: null, expires: 2 * 60 * 1000 },
+                cache: { menuItems: null, lastUpdated: null, expires: 30 * 1000 }, // 30秒缓存，更快更新
                 systemSettings: { notificationSound: null, historyNotificationSound: null, notificationMuted: false, historyNotificationMuted: false },
                 deviceId: null,
                 isRealtimeConnected: false,
@@ -2011,10 +2038,10 @@
                 cartButtonTimer: null,
                 cartButtonInterval: null,
                 isButtonPressed: false,
+                // 实时订阅通道
                 realtimeChannel: null,
                 ordersChannel: null,
-                // 新增：强制刷新标记
-                lastMenuUpdate: 0
+                systemChannel: null
             };
 
             let elements = {};
@@ -2249,6 +2276,10 @@
                     };
                     state.customerPhone = localStorage.getItem(CUSTOMER_PHONE_KEY) || '';
                     if (elements.customerPhone) elements.customerPhone.value = state.customerPhone;
+                    
+                    state.isNotificationMuted = state.systemSettings.notificationMuted || false;
+                    state.isHistoryNotificationMuted = state.systemSettings.historyNotificationMuted || false;
+                    updateNotificationSoundUI();
                 } catch (e) {
                     console.error('加载本地数据失败', e);
                     state.menuItems = [...DEFAULT_MENU_ITEMS];
@@ -2279,7 +2310,7 @@
                         {
                             auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
                             global: { headers: { apikey: DEFAULT_CONFIG.supabaseAnonKey, Authorization: `Bearer ${DEFAULT_CONFIG.supabaseAnonKey}` } },
-                            realtime: { params: { eventsPerSecond: 5 } },
+                            realtime: { params: { eventsPerSecond: 10 } },
                             db: { schema: 'public' }
                         }
                     );
@@ -2346,20 +2377,23 @@
                 // 清理旧订阅
                 if (state.realtimeChannel) state.supabaseClient.removeChannel(state.realtimeChannel);
                 if (state.ordersChannel) state.supabaseClient.removeChannel(state.ordersChannel);
+                if (state.systemChannel) state.supabaseClient.removeChannel(state.systemChannel);
                 
-                // 菜单订阅 - 使用更可靠的通道名称
+                // 菜单订阅 - 立即刷新顾客点餐页面
                 state.realtimeChannel = state.supabaseClient
                     .channel('menu-items-realtime')
                     .on('postgres_changes', 
                         { event: '*', schema: 'public', table: 'menu_items' }, 
                         (payload) => {
                             console.log('菜单变更:', payload);
-                            // 强制从云端重新加载菜单
-                            loadMenuItems(true).then(() => {
-                                // 同时刷新管理后台列表
-                                if (state.adminLoggedIn) loadAdminItems();
-                                showNotification('菜品数据已更新', 'info');
-                            });
+                            // 强制从云端重新加载菜单 - 立即执行
+                            setTimeout(() => {
+                                loadMenuItems(true).then(() => {
+                                    // 同时刷新管理后台列表
+                                    if (state.adminLoggedIn) loadAdminItems();
+                                    showNotification('菜单已更新', 'info');
+                                });
+                            }, 100);
                         }
                     )
                     .subscribe((status) => {
@@ -2404,6 +2438,23 @@
                     )
                     .subscribe((status) => {
                         console.log('订单订阅状态:', status);
+                    });
+                
+                // 系统设置订阅 - 用于提示音同步
+                state.systemChannel = state.supabaseClient
+                    .channel('system-settings-realtime')
+                    .on('postgres_changes', 
+                        { event: 'UPDATE', schema: 'public', table: 'system_settings' }, 
+                        async (payload) => {
+                            console.log('系统设置变更:', payload);
+                            if (payload.new && payload.new.key) {
+                                await loadSystemSettingsFromCloud();
+                                showNotification('提示音设置已同步', 'info');
+                            }
+                        }
+                    )
+                    .subscribe((status) => {
+                        console.log('系统设置订阅状态:', status);
                     });
             }
 
@@ -2474,6 +2525,9 @@
                             date: order.date || (order.created_at ? formatDate(order.created_at) : '')
                         }));
                         saveOrderHistoryToLocal();
+                        if (state.currentCartTab === 'history' && elements.cartContainer?.classList.contains('open')) {
+                            loadOrderHistory();
+                        }
                     }
                 } catch (error) {
                     console.error('同步订单历史失败:', error);
@@ -2501,6 +2555,8 @@
                                 if (elements.customSoundFileName) elements.customSoundFileName.textContent = soundInfo.filename || '自定义提示音';
                                 if (elements.customSoundFileSize) elements.customSoundFileSize.textContent = soundInfo.size ? formatFileSize(soundInfo.size) : '';
                                 if (elements.customSoundFileInfo) elements.customSoundFileInfo.style.display = 'flex';
+                            } else {
+                                state.systemSettings.notificationSound = { type: 'default' };
                             }
                         } catch (e) {
                             console.error('解析新订单提示音失败:', e);
@@ -2525,6 +2581,8 @@
                                 if (elements.historyCustomSoundFileName) elements.historyCustomSoundFileName.textContent = soundInfo.filename || '自定义提示音';
                                 if (elements.historyCustomSoundFileSize) elements.historyCustomSoundFileSize.textContent = soundInfo.size ? formatFileSize(soundInfo.size) : '';
                                 if (elements.historyCustomSoundFileInfo) elements.historyCustomSoundFileInfo.style.display = 'flex';
+                            } else {
+                                state.systemSettings.historyNotificationSound = { type: 'default' };
                             }
                         } catch (e) {
                             console.error('解析历史订单提示音失败:', e);
@@ -2558,26 +2616,20 @@
                     } else {
                         state.systemSettings.historyNotificationSound = { type: 'custom', data: base64Data };
                     }
+                    return true;
                 } catch (error) {
                     console.error('加载自定义提示音失败:', error);
-                    throw error;
+                    return false;
                 }
             }
 
             // 修复：强制从云端加载菜单
             async function loadMenuItems(force = false) {
-                const now = Date.now();
-                // 避免频繁加载（至少间隔2秒）
-                if (!force && state.lastMenuUpdate && (now - state.lastMenuUpdate) < 2000) {
-                    return;
-                }
-                
-                const cacheValid = !force && state.cache.lastUpdated && (now - state.cache.lastUpdated < state.cache.expires);
+                const cacheValid = !force && state.cache.lastUpdated && (Date.now() - state.cache.lastUpdated < state.cache.expires);
                 
                 if (cacheValid && state.cache.menuItems) {
                     state.menuItems = state.cache.menuItems;
                     renderFilteredItems();
-                    state.lastMenuUpdate = now;
                     return;
                 }
                 
@@ -2593,7 +2645,6 @@
                             state.menuItems = data;
                             saveMenuCache(data);
                             renderFilteredItems();
-                            state.lastMenuUpdate = now;
                             console.log('从云端加载菜品成功:', data.length);
                             return;
                         } else if (error) {
@@ -2616,7 +2667,6 @@
                     state.menuItems = [...DEFAULT_MENU_ITEMS];
                 }
                 renderFilteredItems();
-                state.lastMenuUpdate = now;
             }
 
             function saveMenuCache(items) {
@@ -2656,7 +2706,7 @@
                         <h3 class="item-name">${item.name}</h3>
                         <p class="item-description">${item.description || '暂无描述'}</p>
                         <div class="item-footer">
-                            <div class="item-price">${item.price.toFixed(2)} 元</div>
+                            <div class="item-price">${Number(item.price).toFixed(2)} 元</div>
                             <button class="add-to-cart pixel-border-white" data-id="${item.id}">加入购物车</button>
                         </div>
                     `;
@@ -2672,9 +2722,9 @@
             }
 
             function updateCartDisplay() {
-                const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+                const totalItems = state.cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
                 if (elements.cartCount) elements.cartCount.textContent = totalItems;
-                if (elements.cartTotal) elements.cartTotal.textContent = state.cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
+                if (elements.cartTotal) elements.cartTotal.textContent = state.cart.reduce((sum, item) => sum + (Number(item.price) * (item.quantity || 1)), 0).toFixed(2);
                 renderCartItems();
             }
 
@@ -2693,11 +2743,11 @@
                     el.innerHTML = `
                         <div class="cart-item-info">
                             <div class="cart-item-name">${item.name}</div>
-                            <div class="cart-item-price">${item.price.toFixed(2)} 元</div>
+                            <div class="cart-item-price">${Number(item.price).toFixed(2)} 元</div>
                         </div>
                         <div class="cart-item-controls">
                             <button class="cart-control-button cart-item-decrease" data-id="${item.id}">-</button>
-                            <div class="cart-item-qty">${item.quantity}</div>
+                            <div class="cart-item-qty">${item.quantity || 1}</div>
                             <button class="cart-control-button cart-item-increase" data-id="${item.id}">+</button>
                             <button class="cart-item-remove" data-id="${item.id}">删除</button>
                         </div>
@@ -2762,7 +2812,7 @@
             function updateCartItemQuantity(id, change) {
                 const idx = state.cart.findIndex(item => item.id === id);
                 if (idx >= 0) {
-                    state.cart[idx].quantity += change;
+                    state.cart[idx].quantity = (state.cart[idx].quantity || 1) + change;
                     if (state.cart[idx].quantity <= 0) state.cart.splice(idx, 1);
                     updateCartDisplay();
                     localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
@@ -2782,7 +2832,7 @@
                 
                 const existing = state.cart.find(i => i.id === id);
                 if (existing) {
-                    existing.quantity++;
+                    existing.quantity = (existing.quantity || 1) + 1;
                 } else {
                     state.cart.push({ ...item, quantity: 1 });
                 }
@@ -2829,7 +2879,7 @@
                         items = [];
                     }
                     
-                    const total = order.total || items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
+                    const total = order.total || items.reduce((sum, i) => sum + (Number(i.price) || 0) * (i.quantity || 1), 0);
                     const date = order.date || order.created_at || new Date().toISOString();
                     
                     const el = document.createElement('div');
@@ -2837,10 +2887,10 @@
                     el.innerHTML = `
                         <div class="order-history-header">
                             <div><strong style="color: white;">订单 #${order.id}</strong><div style="font-size:12px;color:#aaa">${new Date(date).toLocaleString()}</div></div>
-                            <div><span class="order-status ${order.status === 'processed' ? 'processed' : ''}">${order.status === 'processed' ? '已处理' : '待处理'}</span><div style="font-size:16px;font-weight:bold">${total.toFixed(2)}元</div></div>
+                            <div><span class="order-status ${order.status === 'processed' ? 'processed' : ''}">${order.status === 'processed' ? '已处理' : '待处理'}</span><div style="font-size:16px;font-weight:bold">${Number(total).toFixed(2)}元</div></div>
                         </div>
                         <div class="order-history-items">
-                            ${items.map(i => `<div class="order-history-item-row"><div>${i.name} × ${i.quantity || 1}</div><div>${((i.price || 0) * (i.quantity || 1)).toFixed(2)}元</div></div>`).join('')}
+                            ${items.map(i => `<div class="order-history-item-row"><div>${i.name} × ${i.quantity || 1}</div><div>${(Number(i.price) * (i.quantity || 1)).toFixed(2)}元</div></div>`).join('')}
                         </div>
                     `;
                     elements.orderHistoryContainer.appendChild(el);
@@ -2872,12 +2922,17 @@
                 
                 const now = new Date();
                 // 深拷贝购物车数据
-                const cartItems = JSON.parse(JSON.stringify(state.cart));
+                const cartItems = JSON.parse(JSON.stringify(state.cart)).map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: Number(item.price),
+                    quantity: item.quantity || 1
+                }));
                 
                 const order = {
                     order_number: `ORDER-${Date.now()}-${now.getTime()}`,
                     items: cartItems,
-                    total: cartItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0),
+                    total: cartItems.reduce((sum, i) => sum + (i.price * i.quantity), 0),
                     status: 'pending',
                     created_at: now.toISOString(),
                     date: formatDate(now),
@@ -2893,32 +2948,25 @@
                             .select();
                         
                         if (error) throw error;
-                        
-                        if (data && data[0]) {
-                            order.id = data[0].id;
-                        }
+                        if (data && data[0]) order.id = data[0].id;
                     } else {
                         order.id = Date.now();
                     }
                     
-                    // 添加到订单历史
                     state.orderHistory.push(order);
                     saveOrderHistoryToLocal();
                     
-                    // 清空购物车
                     state.cart = [];
                     localStorage.removeItem(CART_KEY);
                     updateCartDisplay();
                     
-                    // 清空手机号输入
                     if (elements.customerPhone) {
                         elements.customerPhone.value = '';
                         elements.customerPhone.classList.remove('phone-valid', 'phone-invalid');
                     }
                     
-                    // 切换到订单历史标签
                     switchCartTab('history');
-                    showNotification(`订单提交成功！订单号: ${order.order_number}`, 'success');
+                    showNotification(`订单提交成功！订单号: #${order.id}`, 'success');
                     
                 } catch (error) {
                     console.error('提交订单失败:', error);
@@ -3104,11 +3152,13 @@
                     if (progressBar) progressBar.style.width = '100%';
                     
                     // 尝试解码音频
+                    let audioLoaded = false;
                     if (state.audioContext) {
                         try {
                             const audioBuffer = await decodeAudioData(base64Data);
                             if (audioBuffer) {
                                 state.audioBuffers.set(type === 'new' ? 'notification' : 'history', audioBuffer);
+                                audioLoaded = true;
                             }
                         } catch (audioError) {
                             console.warn('音频解码失败，但将继续保存base64数据:', audioError);
@@ -3129,15 +3179,6 @@
                         if (fileInfo) fileInfo.style.display = 'flex';
                         if (elements.testCustomSoundBtn) elements.testCustomSoundBtn.style.display = 'inline-block';
                         if (elements.useCustomSoundBtn) elements.useCustomSoundBtn.style.display = 'inline-block';
-                        
-                        // 设置试听按钮事件
-                        elements.testCustomSoundBtn.onclick = () => {
-                            playCustomSound('notification');
-                        };
-                        
-                        elements.useCustomSoundBtn.onclick = () => {
-                            showNotification('已使用自定义提示音', 'success');
-                        };
                     } else {
                         state.systemSettings.historyNotificationSound = { 
                             type: 'custom', 
@@ -3151,15 +3192,6 @@
                         if (fileInfo) fileInfo.style.display = 'flex';
                         if (elements.testHistoryCustomSoundBtn) elements.testHistoryCustomSoundBtn.style.display = 'inline-block';
                         if (elements.useHistoryCustomSoundBtn) elements.useHistoryCustomSoundBtn.style.display = 'inline-block';
-                        
-                        // 设置试听按钮事件
-                        elements.testHistoryCustomSoundBtn.onclick = () => {
-                            playCustomSound('history');
-                        };
-                        
-                        elements.useHistoryCustomSoundBtn.onclick = () => {
-                            showNotification('已使用自定义历史订单提示音', 'success');
-                        };
                     }
                     
                     // 保存到云端
@@ -3178,7 +3210,7 @@
                     
                 } catch (error) {
                     console.error('上传失败:', error);
-                    showNotification('上传失败，请重试', 'error');
+                    showNotification('上传失败，请重试: ' + error.message, 'error');
                 } finally {
                     hideLoading();
                     if (progress) setTimeout(() => { progress.style.display = 'none'; }, 1000);
@@ -3203,7 +3235,7 @@
                     return await state.audioContext.decodeAudioData(bytes.buffer);
                 } catch (error) {
                     console.error('音频解码失败:', error);
-                    return null;
+                    throw error;
                 }
             }
 
@@ -3216,18 +3248,12 @@
             function showNewOrderNotification(order) {
                 if (!state.adminLoggedIn) return;
                 
-                let items = [];
-                try {
-                    items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
-                } catch (e) {
-                    items = [];
-                }
-                
-                const total = order.total || items.reduce((s, i) => s + (i.price || 0) * (i.quantity || 1), 0);
+                const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                const total = order.total || items.reduce((s, i) => s + (Number(i.price) || 0) * (i.quantity || 1), 0);
                 const phone = order.customer_phone ? ` - 电话: ${order.customer_phone}` : '';
                 
                 if (elements.newOrderMessage) {
-                    elements.newOrderMessage.textContent = `新订单 #${order.id} - ${total.toFixed(2)}元${phone}`;
+                    elements.newOrderMessage.textContent = `新订单 #${order.id} - ${Number(total).toFixed(2)}元${phone}`;
                 }
                 if (elements.newOrderNotification) {
                     elements.newOrderNotification.style.display = 'block';
@@ -3440,12 +3466,10 @@
                     // 强制重新加载菜单
                     state.cache.menuItems = null;
                     state.cache.lastUpdated = null;
-                    state.lastMenuUpdate = 0;
                     
                     // 等待一下确保云端数据已更新
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    await new Promise(resolve => setTimeout(resolve, 500));
                     
-                    // 重新加载所有数据
                     await loadMenuItems(true);
                     await loadAdminItems();
                     
@@ -3511,7 +3535,7 @@
                             <div style="flex:1">
                                 <div style="color:var(--primary-color);font-weight:bold">${item.name}</div>
                                 <div style="color:#aaa;font-size:14px;margin:5px 0">${item.description || '暂无描述'}</div>
-                                <div style="font-weight:bold">${item.price.toFixed(2)}元</div>
+                                <div style="font-weight:bold">${Number(item.price).toFixed(2)}元</div>
                             </div>
                             <div>
                                 <button class="edit-item pixel-border-white" data-id="${item.id}" style="background:#333;color:white;border:none;padding:5px 10px;margin-right:5px">编辑</button>
@@ -3676,7 +3700,7 @@
                                 items = [];
                             }
                             
-                            const total = order.total || items.reduce((s, i) => s + (i.price || 0) * (i.quantity || 1), 0);
+                            const total = order.total || items.reduce((s, i) => s + (Number(i.price) || 0) * (i.quantity || 1), 0);
                             const date = order.date || order.created_at || new Date().toISOString();
                             
                             const el = document.createElement('div');
@@ -3691,11 +3715,11 @@
                                     </div>
                                     <div class="order-header-status">
                                         <span class="order-status ${order.status === 'processed' ? 'processed' : ''}">${order.status === 'processed' ? '已处理' : '待处理'}</span>
-                                        <div style="font-size:18px;font-weight:bold;margin-top:5px">${total.toFixed(2)}元</div>
+                                        <div style="font-size:18px;font-weight:bold;margin-top:5px">${Number(total).toFixed(2)}元</div>
                                     </div>
                                 </div>
                                 <div class="order-items">
-                                    ${items.map(i => `<div class="order-item-row"><div>${i.name} × ${i.quantity || 1}</div><div>${((i.price || 0) * (i.quantity || 1)).toFixed(2)}元</div></div>`).join('')}
+                                    ${items.map(i => `<div class="order-item-row"><div>${i.name} × ${i.quantity || 1}</div><div>${(Number(i.price) * (i.quantity || 1)).toFixed(2)}元</div></div>`).join('')}
                                 </div>
                                 <div class="order-actions">
                                     <button class="mark-processed pixel-button" data-id="${order.id}">标记已处理</button>
