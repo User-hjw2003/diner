@@ -42,12 +42,10 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* 防止双击缩放 */
         html {
             touch-action: manipulation;
         }
 
-        /* 扫描线效果 */
         body::before {
             content: "";
             position: fixed;
@@ -72,7 +70,6 @@
             100% { background-position: 0 100%; }
         }
 
-        /* 像素边框效果 */
         .pixel-border {
             border-style: solid;
             border-width: var(--pixel-border);
@@ -87,7 +84,6 @@
             border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(255, 255, 255)" /></svg>');
         }
 
-        /* 像素按钮 */
         .pixel-button {
             display: inline-block;
             padding: 12px 24px;
@@ -151,7 +147,6 @@
             background-color: var(--warning-color);
         }
 
-        /* 标题样式 */
         h1, h2, h3 {
             color: var(--primary-color);
             text-transform: uppercase;
@@ -178,7 +173,6 @@
             background-color: var(--primary-color);
         }
 
-        /* 布局容器 */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -240,7 +234,6 @@
             order: 0;
         }
 
-        /* 主内容区域 */
         .app-container {
             display: flex;
             flex-direction: column;
@@ -248,7 +241,6 @@
             overflow-x: hidden;
         }
 
-        /* 页面切换 */
         .page {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -263,7 +255,6 @@
             to { opacity: 1; }
         }
 
-        /* 顾客点餐页面 - 分类按钮靠左对齐 */
         .menu-categories {
             display: flex;
             flex-wrap: wrap;
@@ -316,8 +307,6 @@
             margin-bottom: 15px;
             border: 2px solid var(--primary-color);
             background-color: #333;
-            background-size: cover;
-            background-position: center;
         }
 
         .item-name {
@@ -361,7 +350,6 @@
             background-color: var(--primary-color);
         }
 
-        /* 使用说明样式 */
         .instructions {
             padding: 20px;
             margin-top: 30px;
@@ -388,7 +376,6 @@
             font-size: 18px;
         }
 
-        /* 二维码区域样式 */
         .qrcode-section {
             padding: 25px;
             background-color: #1a1a1a;
@@ -522,7 +509,6 @@
             margin-bottom: 20px;
         }
 
-        /* 购物车 */
         .cart-container {
             position: fixed;
             bottom: 0;
@@ -685,7 +671,6 @@
             touch-action: manipulation;
         }
 
-        /* 订单历史 */
         .order-history-item {
             background-color: #222;
             padding: 15px;
@@ -715,7 +700,6 @@
             border-bottom: 1px dashed #333;
         }
 
-        /* 管理后台 */
         .admin-login {
             max-width: 400px;
             margin: 50px auto;
@@ -745,7 +729,6 @@
             margin-bottom: 40px;
         }
 
-        /* 表单样式 */
         .form-group {
             margin-bottom: 20px;
         }
@@ -926,7 +909,6 @@
             background-color: #2196f3 !important;
         }
 
-        /* 通知 */
         .notification {
             position: fixed;
             top: 20px;
@@ -945,7 +927,6 @@
             to { transform: translateX(0); }
         }
 
-        /* 连接状态指示器 */
         .connection-status {
             position: fixed;
             top: 10px;
@@ -980,7 +961,6 @@
             50% { opacity: 0.7; }
         }
 
-        /* 加载指示器 */
         .loading {
             display: inline-block;
             width: 20px;
@@ -1032,7 +1012,6 @@
             font-size: 10px;
         }
 
-        /* 新订单通知 */
         .new-order-notification {
             position: fixed;
             top: 80px;
@@ -1054,7 +1033,6 @@
             font-size: 20px;
         }
 
-        /* 自动刷新状态指示器 */
         .auto-refresh-indicator {
             display: inline-flex;
             align-items: center;
@@ -1079,7 +1057,6 @@
             50% { opacity: 0.7; }
         }
 
-        /* 提示音配置样式 */
         .notification-sound-section {
             margin-top: 20px;
             padding: 20px;
@@ -1121,7 +1098,6 @@
             background-color: #4caf50 !important;
         }
 
-        /* 历史订单提示音区域 */
         .history-notification-section {
             margin-top: 20px;
             padding: 20px;
@@ -1504,7 +1480,7 @@
                     <button class="category-btn pixel-border" data-category="dessert">甜点</button>
                 </div>
                 
-                <div class="menu-items" id="menuItemsContainer">
+                <div id="menuItemsContainer" class="menu-items">
                     <!-- 菜品将通过JavaScript动态加载 -->
                 </div>
                 
@@ -1964,7 +1940,7 @@
     </div>
 
     <script>
-        // 像素食堂云点餐系统 - 终极修复版（解决菜品实时同步和提示音上传问题）
+        // 像素食堂云点餐系统 - 终极修复版（解决所有问题）
         (function() {
             // 配置常量
             const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_final';
@@ -2035,9 +2011,10 @@
                 cartButtonTimer: null,
                 cartButtonInterval: null,
                 isButtonPressed: false,
-                // 新增：实时订阅通道
                 realtimeChannel: null,
-                ordersChannel: null
+                ordersChannel: null,
+                // 新增：强制刷新标记
+                lastMenuUpdate: 0
             };
 
             let elements = {};
@@ -2589,11 +2566,18 @@
 
             // 修复：强制从云端加载菜单
             async function loadMenuItems(force = false) {
-                const cacheValid = !force && state.cache.lastUpdated && (Date.now() - state.cache.lastUpdated < state.cache.expires);
+                const now = Date.now();
+                // 避免频繁加载（至少间隔2秒）
+                if (!force && state.lastMenuUpdate && (now - state.lastMenuUpdate) < 2000) {
+                    return;
+                }
+                
+                const cacheValid = !force && state.cache.lastUpdated && (now - state.cache.lastUpdated < state.cache.expires);
                 
                 if (cacheValid && state.cache.menuItems) {
                     state.menuItems = state.cache.menuItems;
                     renderFilteredItems();
+                    state.lastMenuUpdate = now;
                     return;
                 }
                 
@@ -2609,6 +2593,7 @@
                             state.menuItems = data;
                             saveMenuCache(data);
                             renderFilteredItems();
+                            state.lastMenuUpdate = now;
                             console.log('从云端加载菜品成功:', data.length);
                             return;
                         } else if (error) {
@@ -2631,6 +2616,7 @@
                     state.menuItems = [...DEFAULT_MENU_ITEMS];
                 }
                 renderFilteredItems();
+                state.lastMenuUpdate = now;
             }
 
             function saveMenuCache(items) {
@@ -2836,7 +2822,13 @@
                 }
                 
                 myOrders.forEach(order => {
-                    const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                    let items = [];
+                    try {
+                        items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                    } catch (e) {
+                        items = [];
+                    }
+                    
                     const total = order.total || items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
                     const date = order.date || order.created_at || new Date().toISOString();
                     
@@ -2879,10 +2871,13 @@
                 showLoading('正在提交订单...');
                 
                 const now = new Date();
+                // 深拷贝购物车数据
+                const cartItems = JSON.parse(JSON.stringify(state.cart));
+                
                 const order = {
                     order_number: `ORDER-${Date.now()}-${now.getTime()}`,
-                    items: JSON.parse(JSON.stringify(state.cart)),
-                    total: state.cart.reduce((sum, i) => sum + i.price * i.quantity, 0),
+                    items: cartItems,
+                    total: cartItems.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0),
                     status: 'pending',
                     created_at: now.toISOString(),
                     date: formatDate(now),
@@ -2892,27 +2887,38 @@
                 
                 try {
                     if (state.supabaseClient && state.isOnline) {
-                        const { data, error } = await state.supabaseClient.from('orders').insert([order]).select();
+                        const { data, error } = await state.supabaseClient
+                            .from('orders')
+                            .insert([order])
+                            .select();
+                        
                         if (error) throw error;
-                        if (data && data[0]) order.id = data[0].id;
+                        
+                        if (data && data[0]) {
+                            order.id = data[0].id;
+                        }
                     } else {
                         order.id = Date.now();
                     }
                     
+                    // 添加到订单历史
                     state.orderHistory.push(order);
                     saveOrderHistoryToLocal();
                     
+                    // 清空购物车
                     state.cart = [];
                     localStorage.removeItem(CART_KEY);
                     updateCartDisplay();
                     
+                    // 清空手机号输入
                     if (elements.customerPhone) {
                         elements.customerPhone.value = '';
                         elements.customerPhone.classList.remove('phone-valid', 'phone-invalid');
                     }
                     
+                    // 切换到订单历史标签
                     switchCartTab('history');
-                    showNotification(`订单提交成功！${phone ? '电话：' + phone : ''}`, 'success');
+                    showNotification(`订单提交成功！订单号: ${order.order_number}`, 'success');
                     
                 } catch (error) {
                     console.error('提交订单失败:', error);
@@ -3123,6 +3129,15 @@
                         if (fileInfo) fileInfo.style.display = 'flex';
                         if (elements.testCustomSoundBtn) elements.testCustomSoundBtn.style.display = 'inline-block';
                         if (elements.useCustomSoundBtn) elements.useCustomSoundBtn.style.display = 'inline-block';
+                        
+                        // 设置试听按钮事件
+                        elements.testCustomSoundBtn.onclick = () => {
+                            playCustomSound('notification');
+                        };
+                        
+                        elements.useCustomSoundBtn.onclick = () => {
+                            showNotification('已使用自定义提示音', 'success');
+                        };
                     } else {
                         state.systemSettings.historyNotificationSound = { 
                             type: 'custom', 
@@ -3136,6 +3151,15 @@
                         if (fileInfo) fileInfo.style.display = 'flex';
                         if (elements.testHistoryCustomSoundBtn) elements.testHistoryCustomSoundBtn.style.display = 'inline-block';
                         if (elements.useHistoryCustomSoundBtn) elements.useHistoryCustomSoundBtn.style.display = 'inline-block';
+                        
+                        // 设置试听按钮事件
+                        elements.testHistoryCustomSoundBtn.onclick = () => {
+                            playCustomSound('history');
+                        };
+                        
+                        elements.useHistoryCustomSoundBtn.onclick = () => {
+                            showNotification('已使用自定义历史订单提示音', 'success');
+                        };
                     }
                     
                     // 保存到云端
@@ -3192,7 +3216,13 @@
             function showNewOrderNotification(order) {
                 if (!state.adminLoggedIn) return;
                 
-                const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                let items = [];
+                try {
+                    items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                } catch (e) {
+                    items = [];
+                }
+                
                 const total = order.total || items.reduce((s, i) => s + (i.price || 0) * (i.quantity || 1), 0);
                 const phone = order.customer_phone ? ` - 电话: ${order.customer_phone}` : '';
                 
@@ -3410,10 +3440,12 @@
                     // 强制重新加载菜单
                     state.cache.menuItems = null;
                     state.cache.lastUpdated = null;
+                    state.lastMenuUpdate = 0;
                     
                     // 等待一下确保云端数据已更新
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                     
+                    // 重新加载所有数据
                     await loadMenuItems(true);
                     await loadAdminItems();
                     
@@ -3637,7 +3669,13 @@
                         }
                         
                         data.forEach(order => {
-                            const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                            let items = [];
+                            try {
+                                items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                            } catch (e) {
+                                items = [];
+                            }
+                            
                             const total = order.total || items.reduce((s, i) => s + (i.price || 0) * (i.quantity || 1), 0);
                             const date = order.date || order.created_at || new Date().toISOString();
                             
