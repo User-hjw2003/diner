@@ -1022,10 +1022,6 @@
             animation: pulse 2s infinite;
         }
 
-        .sync-status-badge i {
-            font-size: 10px;
-        }
-
         /* 设备标识 */
         .device-id-display {
             position: fixed;
@@ -1051,11 +1047,6 @@
             max-width: 300px;
             box-shadow: 0 0 20px rgba(0,0,0,0.3);
             cursor: pointer;
-        }
-
-        .new-order-notification i {
-            margin-right: 10px;
-            font-size: 20px;
         }
 
         /* 自动刷新指示器 */
@@ -1110,14 +1101,15 @@
 
         .sound-preview {
             background-color: #333;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 15px;
+            margin: 15px 0;
             border-left: 4px solid var(--primary-color);
         }
 
         .sound-preview h5 {
             color: var(--primary-color);
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
 
         .sound-controls {
@@ -1125,12 +1117,14 @@
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
+            margin: 10px 0;
         }
 
         .sound-info {
             font-size: 12px;
             color: #aaa;
-            margin-top: 5px;
+            margin-top: 10px;
+            line-height: 1.5;
         }
 
         .upload-progress {
@@ -1155,17 +1149,21 @@
             align-items: center;
             gap: 10px;
             margin-top: 10px;
+            padding: 8px;
+            background-color: #2a2a2a;
+            border-radius: 4px;
         }
 
         .sound-file-name {
-            color: #aaa;
-            font-size: 12px;
+            color: #4caf50;
+            font-size: 13px;
             word-break: break-all;
+            flex: 1;
         }
 
         .sound-file-size {
             color: #888;
-            font-size: 11px;
+            font-size: 12px;
         }
 
         /* 手机号码输入框 */
@@ -1198,7 +1196,7 @@
         .config-buttons-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 5px;
+            gap: 10px;
             margin-top: 20px;
         }
 
@@ -1280,31 +1278,6 @@
             }
         }
 
-        @media (max-width: 480px) {
-            .category-btn {
-                font-size: 12px;
-                padding: 6px 8px;
-                min-width: 60px;
-            }
-            
-            .orders-controls .pixel-button {
-                min-width: 70px;
-                font-size: 11px;
-                padding: 6px 8px;
-            }
-            
-            #ordersCount {
-                font-size: 11px;
-                min-width: 60px;
-            }
-            
-            .config-buttons-row .pixel-button {
-                min-width: 70px;
-                font-size: 11px;
-                padding: 6px 8px;
-            }
-        }
-
         .empty-message {
             text-align: center;
             padding: 40px;
@@ -1353,20 +1326,21 @@
             justify-content: center;
         }
 
-        .lazy-image {
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-
-        .lazy-image.loaded {
-            opacity: 1;
-        }
-
         body.no-scroll {
             overflow: hidden;
             position: fixed;
             width: 100%;
             height: 100%;
+        }
+
+        /* 打印样式 */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -1518,7 +1492,7 @@
                         <button id="logoutBtn" class="pixel-button warning"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
                     </div>
                     
-                    <!-- 数据库配置管理 -->
+                    <!-- 数据库配置管理（包含提示音功能） -->
                     <div id="configSection" class="admin-section pixel-border" style="display: none; padding: 20px;">
                         <h3><i class="fas fa-database"></i> 云数据库配置</h3>
                         <div style="background-color: #222; padding: 20px; margin: 20px 0;">
@@ -1530,17 +1504,17 @@
                         
                         <div class="form-group">
                             <label class="form-label">Supabase项目URL</label>
-                            <input type="text" id="supabaseUrl" class="form-input" placeholder="https://your-project.supabase.co">
+                            <input type="text" id="supabaseUrl" class="form-input" placeholder="https://your-project.supabase.co" value="https://vtwhilxqztqmetorntid.supabase.co">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">Supabase匿名密钥</label>
-                            <input type="text" id="supabaseAnonKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                            <input type="text" id="supabaseAnonKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value="sb_publishable_1NfB3o4x2kQnaLdwxygSBQ_yKMrIX9A">
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">服务角色密钥（可选）</label>
-                            <input type="text" id="supabaseServiceKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                            <input type="text" id="supabaseServiceKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value="sb_secret_xJxAqV-6Jllc4JbSXjEqhQ_L5yGYgCX">
                         </div>
                         
                         <div class="config-buttons-row">
@@ -1558,14 +1532,108 @@
                             </button>
                         </div>
                         
-                        <div class="instructions" style="margin-top: 30px;">
-                            <h4><i class="fas fa-info-circle"></i> 配置说明</h4>
-                            <ul style="color: #aaa; padding-left: 20px;">
-                                <li>在 <a href="https://supabase.com" target="_blank" style="color: var(--primary-color);">Supabase官网</a> 创建免费账户和项目</li>
-                                <li>在项目设置中找到API设置，复制URL和anon key</li>
-                                <li>在数据库中创建 menu_items、orders 和 system_settings 表</li>
-                                <li>执行SQL脚本初始化数据库</li>
-                            </ul>
+                        <!-- 新订单提示音设置 -->
+                        <div class="notification-sound-section">
+                            <h4><i class="fas fa-volume-up"></i> 新订单提示音设置</h4>
+                            <p style="color: #aaa; margin-bottom: 15px;">选择收到新订单时的提示音（上传一次，所有设备自动同步）</p>
+                            
+                            <div class="sound-preview">
+                                <h5>默认叮当提示音</h5>
+                                <div class="sound-controls">
+                                    <button id="testDefaultSoundBtn" class="pixel-button secondary">
+                                        <i class="fas fa-play"></i> 试听
+                                    </button>
+                                    <button id="useDefaultSoundBtn" class="pixel-button success">
+                                        <i class="fas fa-check"></i> 使用此提示音
+                                    </button>
+                                </div>
+                                <div class="sound-info">清脆的"叮当"声，适合新订单提醒</div>
+                            </div>
+                            
+                            <div class="sound-preview">
+                                <h5>自定义提示音（云端同步）</h5>
+                                <div class="sound-controls">
+                                    <input type="file" id="customSoundUpload" accept="audio/*" style="display: none;">
+                                    <button id="selectCustomSoundBtn" class="pixel-button secondary">
+                                        <i class="fas fa-upload"></i> 上传自定义提示音
+                                    </button>
+                                    <div id="uploadProgress" class="upload-progress">
+                                        <div id="uploadProgressBar" class="upload-progress-bar"></div>
+                                    </div>
+                                    <div id="customSoundFileInfo" class="sound-file-info" style="display: none;">
+                                        <div id="customSoundFileName" class="sound-file-name"></div>
+                                        <div id="customSoundFileSize" class="sound-file-size"></div>
+                                    </div>
+                                    <button id="testCustomSoundBtn" class="pixel-button secondary" style="display: none;">
+                                        <i class="fas fa-play"></i> 试听
+                                    </button>
+                                    <button id="useCustomSoundBtn" class="pixel-button secondary" style="display: none;">
+                                        <i class="fas fa-check"></i> 使用此提示音
+                                    </button>
+                                </div>
+                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
+                            </div>
+                            
+                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                <button id="muteNotificationsBtn" class="pixel-button warning">
+                                    <i class="fas fa-volume-mute"></i> 关闭提示音
+                                </button>
+                                <button id="enableNotificationsBtn" class="pixel-button success" style="display: none;">
+                                    <i class="fas fa-volume-up"></i> 开启提示音
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 历史订单提示音设置 -->
+                        <div class="history-notification-section">
+                            <h4><i class="fas fa-history"></i> 历史订单提示音设置</h4>
+                            <p style="color: #aaa; margin-bottom: 15px;">选择历史订单状态更新时的提示音（上传一次，所有设备自动同步）</p>
+                            
+                            <div class="sound-preview">
+                                <h5>默认历史订单提示音</h5>
+                                <div class="sound-controls">
+                                    <button id="testHistoryDefaultSoundBtn" class="pixel-button secondary">
+                                        <i class="fas fa-play"></i> 试听
+                                    </button>
+                                    <button id="useHistoryDefaultSoundBtn" class="pixel-button success">
+                                        <i class="fas fa-check"></i> 使用此提示音
+                                    </button>
+                                </div>
+                                <div class="sound-info">历史订单状态更新提示音</div>
+                            </div>
+                            
+                            <div class="sound-preview">
+                                <h5>自定义历史订单提示音（云端同步）</h5>
+                                <div class="sound-controls">
+                                    <input type="file" id="historyCustomSoundUpload" accept="audio/*" style="display: none;">
+                                    <button id="selectHistoryCustomSoundBtn" class="pixel-button secondary">
+                                        <i class="fas fa-upload"></i> 上传自定义提示音
+                                    </button>
+                                    <div id="historyUploadProgress" class="upload-progress">
+                                        <div id="historyUploadProgressBar" class="upload-progress-bar"></div>
+                                    </div>
+                                    <div id="historyCustomSoundFileInfo" class="sound-file-info" style="display: none;">
+                                        <div id="historyCustomSoundFileName" class="sound-file-name"></div>
+                                        <div id="historyCustomSoundFileSize" class="sound-file-size"></div>
+                                    </div>
+                                    <button id="testHistoryCustomSoundBtn" class="pixel-button secondary" style="display: none;">
+                                        <i class="fas fa-play"></i> 试听
+                                    </button>
+                                    <button id="useHistoryCustomSoundBtn" class="pixel-button secondary" style="display: none;">
+                                        <i class="fas fa-check"></i> 使用此提示音
+                                    </button>
+                                </div>
+                                <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
+                            </div>
+                            
+                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                <button id="muteHistoryNotificationsBtn" class="pixel-button warning">
+                                    <i class="fas fa-volume-mute"></i> 关闭历史订单提示音
+                                </button>
+                                <button id="enableHistoryNotificationsBtn" class="pixel-button success" style="display: none;">
+                                    <i class="fas fa-volume-up"></i> 开启历史订单提示音
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -1745,6 +1813,9 @@
         <span id="notificationText"></span>
     </div>
 
+    <!-- 打印订单的隐藏容器 -->
+    <div id="printContainer" style="display: none;"></div>
+
     <script>
         // ==================== 像素食堂云点餐系统 - 完整功能版 ====================
         
@@ -1757,6 +1828,7 @@
         const MENU_CACHE_KEY = 'pixel_diner_menu_cache_v12';
         const CACHE_TIMESTAMP_KEY = 'pixel_diner_cache_timestamp_v11';
         const CUSTOMER_PHONE_KEY = 'pixel_diner_customer_phone_v5';
+        const SOUND_SETTINGS_KEY = 'pixel_diner_sound_settings_v1';
         
         // 默认Supabase配置
         const DEFAULT_CONFIG = {
@@ -1801,7 +1873,17 @@
             cache: { menuItems: null, lastUpdated: null, expires: 2 * 60 * 1000 },
             cartButtonTimer: null,
             cartButtonInterval: null,
-            isButtonPressed: false
+            isButtonPressed: false,
+            
+            // 提示音相关状态
+            audioContext: null,
+            notificationSound: null,
+            historyNotificationSound: null,
+            isNotificationMuted: false,
+            isHistoryNotificationMuted: false,
+            customNotificationSound: null,
+            customHistoryNotificationSound: null,
+            audioBuffers: new Map()
         };
 
         // DOM元素引用
@@ -1813,10 +1895,14 @@
             setupEventListeners();
             loadLocalData();
             
+            // 初始化音频上下文
+            initAudioContext();
+            
             setTimeout(() => {
                 initSupabase();
                 initQrCode();
                 setupNetworkListeners();
+                loadSoundSettings();
             }, 100);
         }
 
@@ -1837,7 +1923,17 @@
                 'imageUpload','imageUrl','imagePreview','cancelEditBtn','adminItemsContainer',
                 'itemsCount','refreshItemsBtn','ordersSection','ordersHeader','ordersContainer',
                 'ordersCount','refreshOrdersBtn','clearOrdersBtn','toggleAutoRefreshBtn',
-                'notification','notificationText','deviceIdDisplay'
+                'notification','notificationText','deviceIdDisplay',
+                // 提示音相关元素
+                'testDefaultSoundBtn','useDefaultSoundBtn','customSoundUpload','selectCustomSoundBtn',
+                'testCustomSoundBtn','useCustomSoundBtn','uploadProgress','uploadProgressBar',
+                'customSoundFileInfo','customSoundFileName','customSoundFileSize',
+                'muteNotificationsBtn','enableNotificationsBtn',
+                'testHistoryDefaultSoundBtn','useHistoryDefaultSoundBtn','historyCustomSoundUpload',
+                'selectHistoryCustomSoundBtn','testHistoryCustomSoundBtn','useHistoryCustomSoundBtn',
+                'historyUploadProgress','historyUploadProgressBar','historyCustomSoundFileInfo',
+                'historyCustomSoundFileName','historyCustomSoundFileSize',
+                'muteHistoryNotificationsBtn','enableHistoryNotificationsBtn','printContainer'
             ];
             
             ids.forEach(id => { elements[id] = document.getElementById(id); });
@@ -1845,11 +1941,290 @@
             elements.cartTabs = document.querySelectorAll('.cart-tab');
         }
 
+        // ==================== 音频相关 ====================
+        function initAudioContext() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    state.audioContext = new AudioContext();
+                }
+            } catch (error) {
+                console.error('音频上下文初始化失败:', error);
+            }
+        }
+
+        async function decodeAudioData(base64Data) {
+            if (!state.audioContext) return null;
+            try {
+                const base64Content = base64Data.split(',')[1] || base64Data;
+                const binaryString = atob(base64Content);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return await state.audioContext.decodeAudioData(bytes.buffer);
+            } catch (error) {
+                console.error('音频解码失败:', error);
+                return null;
+            }
+        }
+
+        function playSound(type = 'notification') {
+            if (type === 'notification' && state.isNotificationMuted) return;
+            if (type === 'history' && state.isHistoryNotificationMuted) return;
+            
+            const audioBuffer = state.audioBuffers.get(type);
+            if (!audioBuffer || !state.audioContext) {
+                playDefaultBeep(type);
+                return;
+            }
+            
+            try {
+                if (state.audioContext.state === 'suspended') {
+                    state.audioContext.resume().then(() => {
+                        playAudioBuffer(audioBuffer);
+                    });
+                } else {
+                    playAudioBuffer(audioBuffer);
+                }
+            } catch (error) {
+                console.error('播放提示音失败:', error);
+                playDefaultBeep(type);
+            }
+        }
+
+        function playAudioBuffer(buffer) {
+            if (!state.audioContext) return;
+            const source = state.audioContext.createBufferSource();
+            source.buffer = buffer;
+            const gainNode = state.audioContext.createGain();
+            gainNode.gain.value = 0.5;
+            source.connect(gainNode);
+            gainNode.connect(state.audioContext.destination);
+            source.start();
+        }
+
+        function playDefaultBeep(type = 'notification') {
+            if (!state.audioContext) {
+                // 使用Web Audio API创建简单蜂鸣声
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContext) return;
+                    state.audioContext = new AudioContext();
+                } catch {
+                    return;
+                }
+            }
+            
+            try {
+                const oscillator = state.audioContext.createOscillator();
+                const gainNode = state.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(state.audioContext.destination);
+                
+                oscillator.frequency.value = type === 'notification' ? 880 : 660;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, state.audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, state.audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, state.audioContext.currentTime + 0.5);
+                
+                if (state.audioContext.state === 'suspended') {
+                    state.audioContext.resume().then(() => {
+                        oscillator.start();
+                        oscillator.stop(state.audioContext.currentTime + 0.5);
+                    });
+                } else {
+                    oscillator.start();
+                    oscillator.stop(state.audioContext.currentTime + 0.5);
+                }
+            } catch (error) {
+                console.error('播放默认提示音失败:', error);
+            }
+        }
+
+        function loadSoundSettings() {
+            const saved = localStorage.getItem(SOUND_SETTINGS_KEY);
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+                    state.isNotificationMuted = settings.notificationMuted || false;
+                    state.isHistoryNotificationMuted = settings.historyMuted || false;
+                    
+                    if (settings.notificationSound) {
+                        state.customNotificationSound = settings.notificationSound;
+                        decodeAudioData(settings.notificationSound.data).then(buffer => {
+                            if (buffer) state.audioBuffers.set('notification', buffer);
+                        });
+                    }
+                    
+                    if (settings.historySound) {
+                        state.customHistoryNotificationSound = settings.historySound;
+                        decodeAudioData(settings.historySound.data).then(buffer => {
+                            if (buffer) state.audioBuffers.set('history', buffer);
+                        });
+                    }
+                } catch (e) {
+                    console.error('加载提示音设置失败:', e);
+                }
+            }
+            updateSoundUI();
+        }
+
+        function saveSoundSettings() {
+            const settings = {
+                notificationMuted: state.isNotificationMuted,
+                historyMuted: state.isHistoryNotificationMuted,
+                notificationSound: state.customNotificationSound,
+                historySound: state.customHistoryNotificationSound
+            };
+            localStorage.setItem(SOUND_SETTINGS_KEY, JSON.stringify(settings));
+            
+            // 同步到云端
+            if (state.supabaseClient && state.isOnline) {
+                state.supabaseClient
+                    .from('system_settings')
+                    .upsert({ key: 'sound_settings', value: JSON.stringify(settings) })
+                    .then(() => console.log('提示音设置已同步到云端'))
+                    .catch(err => console.error('同步提示音设置失败:', err));
+            }
+        }
+
+        function updateSoundUI() {
+            // 更新新订单提示音UI
+            if (elements.muteNotificationsBtn && elements.enableNotificationsBtn) {
+                elements.muteNotificationsBtn.style.display = state.isNotificationMuted ? 'none' : 'inline-block';
+                elements.enableNotificationsBtn.style.display = state.isNotificationMuted ? 'inline-block' : 'none';
+            }
+            
+            // 更新历史订单提示音UI
+            if (elements.muteHistoryNotificationsBtn && elements.enableHistoryNotificationsBtn) {
+                elements.muteHistoryNotificationsBtn.style.display = state.isHistoryNotificationMuted ? 'none' : 'inline-block';
+                elements.enableHistoryNotificationsBtn.style.display = state.isHistoryNotificationMuted ? 'inline-block' : 'none';
+            }
+            
+            // 显示自定义提示音信息
+            if (state.customNotificationSound && elements.customSoundFileInfo) {
+                elements.customSoundFileName.textContent = state.customNotificationSound.filename || '自定义提示音';
+                elements.customSoundFileSize.textContent = formatFileSize(state.customNotificationSound.size);
+                elements.customSoundFileInfo.style.display = 'flex';
+                elements.testCustomSoundBtn.style.display = 'inline-block';
+                elements.useCustomSoundBtn.style.display = 'inline-block';
+            }
+            
+            if (state.customHistoryNotificationSound && elements.historyCustomSoundFileInfo) {
+                elements.historyCustomSoundFileName.textContent = state.customHistoryNotificationSound.filename || '自定义提示音';
+                elements.historyCustomSoundFileSize.textContent = formatFileSize(state.customHistoryNotificationSound.size);
+                elements.historyCustomSoundFileInfo.style.display = 'flex';
+                elements.testHistoryCustomSoundBtn.style.display = 'inline-block';
+                elements.useHistoryCustomSoundBtn.style.display = 'inline-block';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        async function handleSoundUpload(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.size > 10 * 1024 * 1024) {
+                showNotification('音频文件不能超过10MB', 'warning');
+                return;
+            }
+            
+            const progressBar = type === 'notification' ? elements.uploadProgressBar : elements.historyUploadProgressBar;
+            const progressDiv = type === 'notification' ? elements.uploadProgress : elements.historyUploadProgress;
+            
+            progressDiv.style.display = 'block';
+            progressBar.style.width = '0%';
+            
+            try {
+                // 模拟上传进度
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    if (progress <= 90) {
+                        progressBar.style.width = progress + '%';
+                    }
+                }, 100);
+                
+                const reader = new FileReader();
+                const base64Data = await new Promise((resolve, reject) => {
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+                
+                clearInterval(interval);
+                progressBar.style.width = '100%';
+                
+                // 解码音频
+                const audioBuffer = await decodeAudioData(base64Data);
+                
+                const soundData = {
+                    data: base64Data,
+                    filename: file.name,
+                    size: file.size,
+                    type: file.type
+                };
+                
+                if (type === 'notification') {
+                    state.customNotificationSound = soundData;
+                    if (audioBuffer) state.audioBuffers.set('notification', audioBuffer);
+                    
+                    elements.customSoundFileName.textContent = file.name;
+                    elements.customSoundFileSize.textContent = formatFileSize(file.size);
+                    elements.customSoundFileInfo.style.display = 'flex';
+                    elements.testCustomSoundBtn.style.display = 'inline-block';
+                    elements.useCustomSoundBtn.style.display = 'inline-block';
+                    
+                    elements.testCustomSoundBtn.onclick = () => playSound('notification');
+                    elements.useCustomSoundBtn.onclick = () => {
+                        showNotification('已使用自定义提示音', 'success');
+                        saveSoundSettings();
+                    };
+                } else {
+                    state.customHistoryNotificationSound = soundData;
+                    if (audioBuffer) state.audioBuffers.set('history', audioBuffer);
+                    
+                    elements.historyCustomSoundFileName.textContent = file.name;
+                    elements.historyCustomSoundFileSize.textContent = formatFileSize(file.size);
+                    elements.historyCustomSoundFileInfo.style.display = 'flex';
+                    elements.testHistoryCustomSoundBtn.style.display = 'inline-block';
+                    elements.useHistoryCustomSoundBtn.style.display = 'inline-block';
+                    
+                    elements.testHistoryCustomSoundBtn.onclick = () => playSound('history');
+                    elements.useHistoryCustomSoundBtn.onclick = () => {
+                        showNotification('已使用自定义提示音', 'success');
+                        saveSoundSettings();
+                    };
+                }
+                
+                saveSoundSettings();
+                showNotification('提示音上传成功', 'success');
+                
+            } catch (error) {
+                console.error('上传失败:', error);
+                showNotification('上传失败，请重试', 'error');
+            } finally {
+                setTimeout(() => {
+                    progressDiv.style.display = 'none';
+                    progressBar.style.width = '0%';
+                }, 1000);
+            }
+        }
+
         function setupEventListeners() {
             elements.viewMenuBtn.addEventListener('click', () => switchPage('menu'));
             elements.viewAdminBtn.addEventListener('click', () => switchPage('admin'));
             elements.syncDataBtn.addEventListener('click', syncData);
             
+            // 分类按钮点击
             elements.categoryButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
                     elements.categoryButtons.forEach(b => b.classList.remove('active'));
@@ -1859,10 +2234,12 @@
                 });
             });
             
+            // 购物车相关
             elements.cartToggle.addEventListener('click', toggleCart);
             elements.closeCartBtn.addEventListener('click', toggleCart);
             elements.submitOrderBtn.addEventListener('click', submitOrder);
             
+            // 购物车标签页切换
             elements.cartTabs.forEach(tab => {
                 tab.addEventListener('click', function() {
                     elements.cartTabs.forEach(t => t.classList.remove('active'));
@@ -1874,6 +2251,7 @@
                 });
             });
             
+            // 手机号输入验证
             if (elements.customerPhone) {
                 elements.customerPhone.addEventListener('input', function() {
                     state.customerPhone = this.value.trim();
@@ -1882,6 +2260,7 @@
                 });
             }
             
+            // 二维码相关
             elements.refreshQrCodeBtn.addEventListener('click', refreshCustomerQrCode);
             elements.saveQrCodeBtn.addEventListener('click', saveQrCodeImage);
             elements.generateQrCodeBtn.addEventListener('click', showQrCodeGenerator);
@@ -1889,19 +2268,73 @@
             elements.downloadQrCodeBtn.addEventListener('click', downloadQrCodeImage);
             elements.printQrCodeBtn.addEventListener('click', printQrCode);
             
+            // 管理后台登录
             elements.loginBtn.addEventListener('click', adminLogin);
             elements.adminPassword.addEventListener('keypress', e => { if (e.key === 'Enter') adminLogin(); });
             
-            elements.addItemBtn.addEventListener('click', showAddItemForm);
-            elements.viewOrdersBtn.addEventListener('click', toggleOrdersView);
-            elements.manageConfigBtn.addEventListener('click', showConfigSection);
+            // 管理后台按钮 - 页面跳转
+            elements.addItemBtn.addEventListener('click', () => {
+                showSection('itemFormSection');
+                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('secondary');
+                });
+                elements.addItemBtn.classList.remove('secondary');
+                elements.addItemBtn.classList.add('active');
+                showAddItemForm();
+            });
+            
+            elements.viewOrdersBtn.addEventListener('click', () => {
+                showSection('ordersSection');
+                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('secondary');
+                });
+                elements.viewOrdersBtn.classList.remove('secondary');
+                elements.viewOrdersBtn.classList.add('active');
+                loadOrders();
+                startAutoRefresh();
+            });
+            
+            elements.generateQrCodeBtn.addEventListener('click', () => {
+                showSection('qrcodeSection');
+                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('secondary');
+                });
+                elements.generateQrCodeBtn.classList.remove('secondary');
+                elements.generateQrCodeBtn.classList.add('active');
+                if (!state.qrCodeGenerated) generateAdminQrCode();
+            });
+            
+            elements.manageConfigBtn.addEventListener('click', () => {
+                showSection('configSection');
+                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('secondary');
+                });
+                elements.manageConfigBtn.classList.remove('secondary');
+                elements.manageConfigBtn.classList.add('active');
+                showConfigSection();
+            });
+            
             elements.logoutBtn.addEventListener('click', adminLogout);
             
+            // 数据库配置按钮
             elements.testConnectionBtn.addEventListener('click', testConnectionFromUI);
             elements.saveConfigBtn.addEventListener('click', saveConfigFromUI);
             elements.resetConfigBtn.addEventListener('click', resetConfig);
-            elements.closeConfigBtn.addEventListener('click', hideConfigSection);
+            elements.closeConfigBtn.addEventListener('click', () => {
+                showSection('itemFormSection');
+                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('secondary');
+                });
+                elements.addItemBtn.classList.remove('secondary');
+                elements.addItemBtn.classList.add('active');
+            });
             
+            // 菜品表单
             elements.itemForm.addEventListener('submit', saveMenuItem);
             elements.cancelEditBtn.addEventListener('click', cancelEdit);
             elements.uploadImageBtn.addEventListener('click', () => switchImageSource('upload'));
@@ -1909,6 +2342,7 @@
             elements.imageUpload.addEventListener('change', handleImageUpload);
             elements.imageUrl.addEventListener('input', updateImagePreviewFromUrl);
             
+            // 刷新按钮
             elements.refreshItemsBtn.addEventListener('click', loadAdminItems);
             elements.refreshOrdersBtn.addEventListener('click', loadOrders);
             elements.clearOrdersBtn.addEventListener('click', clearAllOrders);
@@ -1916,9 +2350,68 @@
                 elements.toggleAutoRefreshBtn.addEventListener('click', toggleAutoRefresh);
             }
             
+            // 提示音相关事件
+            elements.testDefaultSoundBtn.addEventListener('click', () => playDefaultBeep('notification'));
+            elements.useDefaultSoundBtn.addEventListener('click', () => {
+                state.customNotificationSound = null;
+                state.audioBuffers.delete('notification');
+                if (elements.customSoundFileInfo) elements.customSoundFileInfo.style.display = 'none';
+                if (elements.testCustomSoundBtn) elements.testCustomSoundBtn.style.display = 'none';
+                if (elements.useCustomSoundBtn) elements.useCustomSoundBtn.style.display = 'none';
+                saveSoundSettings();
+                showNotification('已切换到默认提示音', 'success');
+            });
+            
+            elements.selectCustomSoundBtn.addEventListener('click', () => elements.customSoundUpload.click());
+            elements.customSoundUpload.addEventListener('change', (e) => handleSoundUpload(e, 'notification'));
+            
+            elements.muteNotificationsBtn.addEventListener('click', () => {
+                state.isNotificationMuted = true;
+                updateSoundUI();
+                saveSoundSettings();
+                showNotification('新订单提示音已关闭', 'info');
+            });
+            
+            elements.enableNotificationsBtn.addEventListener('click', () => {
+                state.isNotificationMuted = false;
+                updateSoundUI();
+                saveSoundSettings();
+                showNotification('新订单提示音已开启', 'success');
+            });
+            
+            elements.testHistoryDefaultSoundBtn.addEventListener('click', () => playDefaultBeep('history'));
+            elements.useHistoryDefaultSoundBtn.addEventListener('click', () => {
+                state.customHistoryNotificationSound = null;
+                state.audioBuffers.delete('history');
+                if (elements.historyCustomSoundFileInfo) elements.historyCustomSoundFileInfo.style.display = 'none';
+                if (elements.testHistoryCustomSoundBtn) elements.testHistoryCustomSoundBtn.style.display = 'none';
+                if (elements.useHistoryCustomSoundBtn) elements.useHistoryCustomSoundBtn.style.display = 'none';
+                saveSoundSettings();
+                showNotification('已切换到默认历史订单提示音', 'success');
+            });
+            
+            elements.selectHistoryCustomSoundBtn.addEventListener('click', () => elements.historyCustomSoundUpload.click());
+            elements.historyCustomSoundUpload.addEventListener('change', (e) => handleSoundUpload(e, 'history'));
+            
+            elements.muteHistoryNotificationsBtn.addEventListener('click', () => {
+                state.isHistoryNotificationMuted = true;
+                updateSoundUI();
+                saveSoundSettings();
+                showNotification('历史订单提示音已关闭', 'info');
+            });
+            
+            elements.enableHistoryNotificationsBtn.addEventListener('click', () => {
+                state.isHistoryNotificationMuted = false;
+                updateSoundUI();
+                saveSoundSettings();
+                showNotification('历史订单提示音已开启', 'success');
+            });
+            
+            // 通知点击关闭
             elements.notification.addEventListener('click', () => elements.notification.style.display = 'none');
             elements.newOrderNotification.addEventListener('click', () => elements.newOrderNotification.style.display = 'none');
             
+            // 页面关闭前保存数据
             window.addEventListener('beforeunload', () => {
                 localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
                 localStorage.setItem(CUSTOMER_PHONE_KEY, state.customerPhone);
@@ -1939,6 +2432,18 @@
                 input.classList.remove('phone-valid', 'phone-invalid');
                 return false;
             }
+        }
+
+        function showSection(sectionId) {
+            elements.itemFormSection.style.display = 'none';
+            elements.ordersSection.style.display = 'none';
+            elements.qrcodeSection.style.display = 'none';
+            elements.configSection.style.display = 'none';
+            
+            if (sectionId === 'itemFormSection') elements.itemFormSection.style.display = 'block';
+            else if (sectionId === 'ordersSection') elements.ordersSection.style.display = 'block';
+            else if (sectionId === 'qrcodeSection') elements.qrcodeSection.style.display = 'block';
+            else if (sectionId === 'configSection') elements.configSection.style.display = 'block';
         }
 
         function loadLocalData() {
@@ -2065,12 +2570,14 @@
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
                         if (payload.eventType === 'INSERT' && state.adminLoggedIn) {
                             showNewOrderNotification(payload.new);
+                            playSound('notification');
                         }
                         if (state.adminLoggedIn && elements.ordersSection.style.display !== 'none') {
                             loadOrders();
                         }
                         if (payload.eventType === 'UPDATE' && payload.new.device_id === state.deviceId) {
                             updateLocalOrderStatus(payload.new);
+                            playSound('history');
                         }
                     })
                     .subscribe();
@@ -2380,7 +2887,19 @@
                 elements.customerPhone.classList.remove('phone-valid', 'phone-invalid');
                 
                 showNotification('订单提交成功！', 'success');
-                toggleCart();
+                
+                // 跳转到订单历史页面
+                elements.cartTabs.forEach(t => t.classList.remove('active'));
+                elements.cartTabs[1].classList.add('active');
+                document.querySelectorAll('.cart-tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById('historyCartTab').classList.add('active');
+                state.currentCartTab = 'history';
+                loadOrderHistory();
+                
+                // 如果购物车是打开的，保持在打开状态
+                if (!elements.cartContainer.classList.contains('open')) {
+                    toggleCart();
+                }
             } catch (error) {
                 console.error('提交订单失败:', error);
                 showNotification('订单提交失败', 'error');
@@ -2507,19 +3026,13 @@
             elements.imagePreview.style.display = 'none';
             elements.imageUrl.style.display = 'none';
             elements.imageUrl.value = '';
-            elements.itemFormSection.style.display = 'block';
-            elements.ordersSection.style.display = 'none';
-            elements.qrcodeSection.style.display = 'none';
-            elements.configSection.style.display = 'none';
             switchImageSource('upload');
             state.editingItemId = null;
             
-            document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('secondary');
-            });
-            elements.addItemBtn.classList.remove('secondary');
-            elements.addItemBtn.classList.add('active');
+            // 滚动到表单区域
+            setTimeout(() => {
+                elements.itemFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
 
         function switchImageSource(source) {
@@ -2703,10 +3216,7 @@
                     switchImageSource('url');
                     elements.imageUrl.value = item.image || '';
                     
-                    elements.itemFormSection.style.display = 'block';
-                    elements.ordersSection.style.display = 'none';
-                    elements.qrcodeSection.style.display = 'none';
-                    elements.configSection.style.display = 'none';
+                    showSection('itemFormSection');
                     
                     document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
                         btn.classList.remove('active');
@@ -2716,6 +3226,10 @@
                     elements.addItemBtn.classList.add('active');
                     
                     state.editingItemId = id;
+                    
+                    setTimeout(() => {
+                        elements.itemFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
                 });
             });
             
@@ -2744,32 +3258,21 @@
 
         // ==================== 订单管理 ====================
         function toggleOrdersView() {
-            if (elements.ordersSection.style.display === 'none') {
-                elements.ordersSection.style.display = 'block';
-                elements.itemFormSection.style.display = 'none';
-                elements.qrcodeSection.style.display = 'none';
-                elements.configSection.style.display = 'none';
-                
-                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('secondary');
-                });
-                elements.viewOrdersBtn.classList.remove('secondary');
-                elements.viewOrdersBtn.classList.add('active');
-                
-                loadOrders();
-                startAutoRefresh();
-            } else {
-                elements.ordersSection.style.display = 'none';
-                elements.itemFormSection.style.display = 'block';
-                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('secondary');
-                });
-                elements.addItemBtn.classList.remove('secondary');
-                elements.addItemBtn.classList.add('active');
-                stopAutoRefresh();
-            }
+            showSection('ordersSection');
+            
+            document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('secondary');
+            });
+            elements.viewOrdersBtn.classList.remove('secondary');
+            elements.viewOrdersBtn.classList.add('active');
+            
+            loadOrders();
+            startAutoRefresh();
+            
+            setTimeout(() => {
+                elements.ordersHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
 
         function startAutoRefresh() {
@@ -2844,6 +3347,7 @@
                     
                     const el = document.createElement('div');
                     el.className = 'order-item';
+                    el.dataset.orderId = order.id;
                     el.innerHTML = `
                         <div class="order-header">
                             <div class="order-header-info">
@@ -2938,7 +3442,105 @@
         }
 
         function printOrder(id) {
-            showNotification('打印功能开发中', 'info');
+            const orderElement = document.querySelector(`.order-item[data-order-id="${id}"]`);
+            if (!orderElement) return;
+            
+            // 克隆订单元素用于打印
+            const printContent = orderElement.cloneNode(true);
+            
+            // 移除按钮，只保留信息
+            printContent.querySelector('.order-actions').remove();
+            
+            // 创建打印样式
+            const printStyles = `
+                <style>
+                    body { 
+                        font-family: 'Courier New', monospace; 
+                        padding: 20px;
+                        background: white;
+                        color: black;
+                    }
+                    .order-item {
+                        border: 2px solid #d32f2f;
+                        padding: 20px;
+                        margin: 20px;
+                        background: white;
+                    }
+                    .order-header {
+                        display: flex;
+                        justify-content: space-between;
+                        border-bottom: 2px solid #d32f2f;
+                        padding-bottom: 10px;
+                        margin-bottom: 15px;
+                    }
+                    .order-number {
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: #d32f2f;
+                    }
+                    .order-date {
+                        color: #666;
+                        margin-top: 5px;
+                    }
+                    .customer-phone-container {
+                        margin-top: 10px;
+                        color: #333;
+                    }
+                    .order-status {
+                        display: inline-block;
+                        padding: 5px 10px;
+                        background: #d32f2f;
+                        color: white;
+                        font-weight: bold;
+                    }
+                    .order-status.processed {
+                        background: #4caf50;
+                    }
+                    .order-items {
+                        margin-top: 15px;
+                    }
+                    .order-item-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 5px 0;
+                        border-bottom: 1px dashed #ccc;
+                    }
+                    .print-footer {
+                        margin-top: 30px;
+                        text-align: center;
+                        color: #666;
+                        font-size: 12px;
+                        border-top: 1px solid #ccc;
+                        padding-top: 10px;
+                    }
+                    @media print {
+                        .no-print { display: none; }
+                    }
+                </style>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>订单打印 - #${id}</title>
+                    ${printStyles}
+                </head>
+                <body>
+                    ${printContent.outerHTML}
+                    <div class="print-footer">
+                        <p>打印时间: ${new Date().toLocaleString('zh-CN')}</p>
+                        <p>像素食堂云点餐系统</p>
+                    </div>
+                    <div class="no-print" style="text-align:center;margin-top:20px;">
+                        <button onclick="window.print()" style="padding:10px 20px;background:#d32f2f;color:white;border:none;cursor:pointer;margin-right:10px;">打印</button>
+                        <button onclick="window.close()" style="padding:10px 20px;background:#666;color:white;border:none;cursor:pointer;">关闭</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
 
         // ==================== 二维码 ====================
@@ -3006,14 +3608,41 @@
         }
 
         function printQrCode() {
-            showNotification('打印功能开发中', 'info');
+            const canvas = elements.adminQrCode.querySelector('canvas');
+            if (!canvas) return;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>二维码打印</title>
+                    <style>
+                        body { text-align: center; padding: 40px; font-family: Arial, sans-serif; }
+                        h1 { color: #d32f2f; }
+                        img { width: 300px; height: 300px; margin: 20px; }
+                        .url { margin: 20px; color: #666; word-break: break-all; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>像素食堂点餐二维码</h1>
+                    <img src="${canvas.toDataURL()}" alt="二维码">
+                    <div class="url">${elements.qrCodeUrl.value}</div>
+                    <div class="no-print">
+                        <button onclick="window.print()" style="padding:10px 20px;background:#d32f2f;color:white;border:none;cursor:pointer;">打印</button>
+                        <button onclick="window.close()" style="padding:10px 20px;background:#666;color:white;border:none;cursor:pointer;">关闭</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
 
         function showQrCodeGenerator() {
-            elements.itemFormSection.style.display = 'none';
-            elements.ordersSection.style.display = 'none';
-            elements.qrcodeSection.style.display = 'block';
-            elements.configSection.style.display = 'none';
+            showSection('qrcodeSection');
             
             document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
                 btn.classList.remove('active');
@@ -3023,14 +3652,15 @@
             elements.generateQrCodeBtn.classList.add('active');
             
             if (!state.qrCodeGenerated) generateAdminQrCode();
+            
+            setTimeout(() => {
+                elements.qrcodeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
 
         // ==================== 数据库配置 ====================
         function showConfigSection() {
-            elements.itemFormSection.style.display = 'none';
-            elements.ordersSection.style.display = 'none';
-            elements.qrcodeSection.style.display = 'none';
-            elements.configSection.style.display = 'block';
+            showSection('configSection');
             
             document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
                 btn.classList.remove('active');
@@ -3050,18 +3680,10 @@
                 <p><strong>设备ID:</strong> <span style="color:#aaa;">${state.deviceId.substring(0, 20)}...</span></p>
             `;
             elements.currentConfig.innerHTML = statusHtml;
-        }
-
-        function hideConfigSection() {
-            elements.configSection.style.display = 'none';
-            elements.itemFormSection.style.display = 'block';
             
-            document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('secondary');
-            });
-            elements.addItemBtn.classList.remove('secondary');
-            elements.addItemBtn.classList.add('active');
+            setTimeout(() => {
+                elements.configSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
 
         async function testConnectionFromUI() {
