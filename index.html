@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>像素食堂 | 云点餐系统 · 终极同步版</title>
+    <title>像素食堂 | 云点餐系统 · 终极修复版</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 使用更可靠的QR Code库 -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -194,34 +194,29 @@
 
         .header-controls {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
-            min-width: 0;
-            width: 100%;
             justify-content: center;
+            gap: 10px;
+            width: 100%;
             margin-top: 20px;
-            order: 2;
         }
 
         .header-controls .pixel-button {
-            white-space: nowrap;
-            flex-shrink: 0;
+            flex: 0 1 auto;
             min-width: 100px;
-            text-align: center;
-            font-size: clamp(14px, 3vw, 16px);
-            padding: 10px 20px;
-            margin: 0 5px;
+            white-space: nowrap;
+            font-size: clamp(12px, 2.5vw, 16px);
+            padding: 8px 16px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            flex-shrink: 0;
-            order: 1;
-            width: 100%;
             justify-content: center;
+            width: 100%;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .logo i {
@@ -234,7 +229,6 @@
             text-align: center;
             margin-bottom: 30px;
             width: 100%;
-            order: 0;
         }
 
         /* 主内容区域 */
@@ -260,27 +254,29 @@
             to { opacity: 1; }
         }
 
-        /* 顾客点餐页面 */
+        /* 顾客点餐页面 - 分类按钮自动换行 */
         .menu-categories {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 30px;
             justify-content: flex-start;
+            align-items: center;
         }
 
         .category-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background-color: #222;
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: clamp(14px, 2.5vw, 16px);
             transition: all 0.3s;
             white-space: nowrap;
-            min-width: 80px;
+            flex: 0 1 auto;
             text-align: center;
             touch-action: manipulation;
+            border-radius: 4px;
         }
 
         .category-btn.active {
@@ -313,8 +309,6 @@
             margin-bottom: 15px;
             border: 2px solid var(--primary-color);
             background-color: #333;
-            background-size: cover;
-            background-position: center;
         }
 
         .item-name {
@@ -396,11 +390,9 @@
         .qrcode-section p {
             text-align: center;
             margin-bottom: 20px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             font-size: clamp(14px, 2.5vw, 16px);
             padding: 0 10px;
+            word-wrap: break-word;
         }
 
         .qrcode-container {
@@ -416,14 +408,12 @@
             background-color: white;
             padding: 20px;
             border-radius: 8px;
-            display: inline-block;
-            width: 250px;
-            height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 250px;
+            height: 250px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            position: relative;
         }
 
         .qrcode-info {
@@ -465,9 +455,6 @@
             border-left: 4px solid var(--primary-color);
             word-break: break-all;
             font-size: clamp(12px, 2vw, 14px);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             text-align: left;
         }
 
@@ -478,7 +465,6 @@
             align-items: center;
             gap: 10px;
             margin-top: 20px;
-            width: 100%;
         }
 
         .qrcode-actions .pixel-button {
@@ -486,8 +472,6 @@
             min-width: 140px;
             max-width: 200px;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             padding: 10px 15px;
             font-size: 14px;
         }
@@ -610,13 +594,18 @@
             font-weight: bold;
         }
 
+        .cart-item-price {
+            color: #aaa;
+            font-size: 14px;
+        }
+
         .cart-item-controls {
             display: flex;
             align-items: center;
+            gap: 5px;
         }
 
         .cart-item-qty {
-            margin: 0 10px;
             min-width: 30px;
             text-align: center;
             color: white;
@@ -624,7 +613,7 @@
             font-weight: bold;
         }
 
-        .cart-item-decrease, .cart-item-increase {
+        .cart-control-button {
             width: 35px;
             height: 35px;
             background: #000 !important;
@@ -641,8 +630,11 @@
             -webkit-user-select: none;
         }
 
+        .cart-control-button:active {
+            background-color: #333 !important;
+        }
+
         .cart-item-remove {
-            margin-left: 10px;
             background: #d32f2f !important;
             color: white !important;
             border: none;
@@ -650,6 +642,7 @@
             padding: 5px 10px;
             font-size: 14px;
             touch-action: manipulation;
+            white-space: nowrap;
         }
 
         .cart-total {
@@ -679,7 +672,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            touch-action: manipulation;
         }
 
         /* 订单历史 */
@@ -688,7 +680,6 @@
             padding: 15px;
             margin-bottom: 15px;
             border-left: 4px solid var(--primary-color);
-            transition: all 0.3s ease;
         }
 
         .order-history-header {
@@ -731,12 +722,23 @@
             text-align: center;
         }
 
+        /* 管理后台按钮组 - 自动换行 */
         .admin-controls-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 20px;
             justify-content: center;
+            align-items: center;
+        }
+
+        .admin-controls-row .pixel-button {
+            flex: 0 1 auto;
+            min-width: 100px;
+            white-space: nowrap;
+            font-size: clamp(12px, 2vw, 14px);
+            padding: 8px 12px;
+            margin: 2px;
         }
 
         .admin-section {
@@ -769,6 +771,14 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 10px;
+        }
+
+        .image-upload-options .pixel-button {
+            flex: 1;
+            min-width: 100px;
+            white-space: nowrap;
+            font-size: 14px;
+            padding: 8px 12px;
         }
 
         .image-preview {
@@ -810,8 +820,6 @@
             font-size: 18px;
             font-weight: bold;
             word-break: break-word;
-            overflow-wrap: break-word;
-            line-height: 1.3;
         }
 
         .order-header-info .order-date {
@@ -821,36 +829,29 @@
         }
 
         .customer-phone-container {
-            font-size: 18px;
+            font-size: 16px;
             color: white !important;
             margin-top: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: nowrap;
-            overflow: hidden;
-            line-height: 1.2;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            max-width: 100%;
+            flex-wrap: wrap;
         }
 
         .call-customer-btn {
             background-color: #2196f3 !important;
             color: white;
             border: none;
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             text-decoration: none;
             white-space: nowrap;
-            flex-shrink: 0;
             height: 28px;
-            line-height: 20px;
         }
 
         .order-header-status {
@@ -870,6 +871,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 5px;
+            font-size: 14px;
         }
 
         .order-actions {
@@ -877,42 +879,28 @@
             flex-wrap: wrap;
             gap: 5px;
             margin-top: 15px;
-            align-items: center;
         }
 
         .order-actions .pixel-button {
             flex: 1;
-            min-width: 80px;
+            min-width: 70px;
             white-space: nowrap;
             padding: 6px 8px;
             font-size: 12px;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .order-title-compact {
             display: flex;
             align-items: center;
             gap: 5px;
-            flex-wrap: nowrap;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
+            flex-wrap: wrap;
         }
 
         .order-number {
             word-break: break-all;
-            overflow-wrap: break-word;
-            line-height: 1.2;
-            max-width: 100%;
-            font-size: clamp(14px, 3.5vw, 18px);
+            font-size: clamp(14px, 3vw, 18px);
             color: white !important;
             font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: block;
         }
 
         .print-order-btn {
@@ -931,6 +919,8 @@
             z-index: 1001;
             animation: slideIn 0.3s ease;
             display: none;
+            max-width: 90%;
+            word-wrap: break-word;
         }
 
         @keyframes slideIn {
@@ -1044,8 +1034,8 @@
             z-index: 1001;
             animation: slideIn 0.3s ease;
             display: none;
-            max-width: 300px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            max-width: 90%;
+            word-wrap: break-word;
             cursor: pointer;
         }
 
@@ -1125,6 +1115,7 @@
             color: #aaa;
             margin-top: 10px;
             line-height: 1.5;
+            word-wrap: break-word;
         }
 
         .upload-progress {
@@ -1152,6 +1143,7 @@
             padding: 8px;
             background-color: #2a2a2a;
             border-radius: 4px;
+            flex-wrap: wrap;
         }
 
         .sound-file-name {
@@ -1203,35 +1195,33 @@
         .config-buttons-row .pixel-button {
             flex: 1;
             min-width: 100px;
+            white-space: nowrap;
+            font-size: 14px;
+            padding: 8px 12px;
         }
 
         /* 订单控制按钮行 */
         .orders-controls {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 15px;
             align-items: center;
-            width: 100%;
-            overflow-x: auto;
-            padding-bottom: 5px;
         }
 
         .orders-controls .pixel-button {
             flex: 0 1 auto;
-            min-width: 100px;
+            min-width: 80px;
             white-space: nowrap;
-            flex-shrink: 0;
+            font-size: 13px;
+            padding: 8px 12px;
         }
 
         #ordersCount {
             white-space: nowrap;
             font-size: 14px;
             color: #aaa;
-            margin-right: 15px;
-            flex-shrink: 0;
-            min-width: 80px;
-            text-align: center;
+            margin-right: 10px;
         }
 
         /* 响应式设计 */
@@ -1248,33 +1238,60 @@
                 font-size: 28px;
             }
             
-            .header-controls {
-                order: 2;
+            .admin-controls-row .pixel-button {
+                min-width: 80px;
+                font-size: 11px;
+                padding: 6px 8px;
             }
             
-            .logo {
-                order: 1;
+            .category-btn {
+                padding: 6px 12px;
+                font-size: 13px;
             }
             
-            .orders-controls {
-                gap: 5px;
+            .order-actions .pixel-button {
+                min-width: 60px;
+                font-size: 11px;
+                padding: 5px 6px;
+            }
+            
+            .call-customer-btn {
+                font-size: 12px;
+                padding: 3px 6px;
+            }
+            
+            .customer-phone-container {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-controls-row .pixel-button {
+                min-width: 70px;
+                font-size: 10px;
+                padding: 5px 6px;
+            }
+            
+            .category-btn {
+                padding: 5px 10px;
+                font-size: 12px;
             }
             
             .orders-controls .pixel-button {
-                min-width: 80px;
-                font-size: 12px;
-                padding: 8px 10px;
-            }
-            
-            #ordersCount {
-                font-size: 12px;
                 min-width: 70px;
+                font-size: 11px;
+                padding: 6px 8px;
             }
             
             .config-buttons-row .pixel-button {
-                min-width: 80px;
-                font-size: 12px;
-                padding: 8px 10px;
+                min-width: 70px;
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+            
+            .call-customer-btn {
+                font-size: 11px;
+                padding: 2px 5px;
             }
         }
 
@@ -1310,20 +1327,6 @@
             height: 100%;
             object-fit: contain;
             background-color: white;
-        }
-
-        .cart-control-button {
-            width: 35px;
-            height: 35px;
-            background-color: #000 !important;
-            color: white !important;
-            border: 2px solid white !important;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         body.no-scroll {
@@ -1380,7 +1383,7 @@
                     <p style="color: #aaa; margin: 0;">云同步复古风格餐厅</p>
                 </div>
             </div>
-            <!-- 导航按钮 -->
+            <!-- 导航按钮 - 自动换行 -->
             <div class="header-controls">
                 <button id="viewMenuBtn" class="pixel-button active">顾客点餐</button>
                 <button id="viewAdminBtn" class="pixel-button secondary">管理后台</button>
@@ -1396,6 +1399,7 @@
                 <h2><i class="fas fa-book"></i> 菜单浏览</h2>
                 <p style="color: #aaa; margin-bottom: 20px;">数据实时同步更新，所有设备保持一致</p>
                 
+                <!-- 分类按钮 - 自动换行 -->
                 <div class="menu-categories">
                     <button class="category-btn pixel-border active" data-category="all">全部菜品</button>
                     <button class="category-btn pixel-border" data-category="main">主菜</button>
@@ -1484,6 +1488,7 @@
                     <h2><i class="fas fa-cogs"></i> 云数据管理</h2>
                     <p style="color: #aaa; margin-bottom: 20px;">数据实时同步，所有更改立即生效到所有设备</p>
                     
+                    <!-- 管理后台按钮组 - 自动换行 -->
                     <div class="admin-controls-row">
                         <button id="addItemBtn" class="pixel-button active"><i class="fas fa-plus"></i> 新增菜品</button>
                         <button id="viewOrdersBtn" class="pixel-button secondary"><i class="fas fa-list"></i> 查看订单</button>
@@ -1574,7 +1579,7 @@
                                 <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
                             </div>
                             
-                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
                                 <button id="muteNotificationsBtn" class="pixel-button warning">
                                     <i class="fas fa-volume-mute"></i> 关闭提示音
                                 </button>
@@ -1626,7 +1631,7 @@
                                 <div class="sound-info">支持MP3、WAV、OGG格式，建议时长不超过30秒。上传后所有设备自动同步使用</div>
                             </div>
                             
-                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
                                 <button id="muteHistoryNotificationsBtn" class="pixel-button warning">
                                     <i class="fas fa-volume-mute"></i> 关闭历史订单提示音
                                 </button>
@@ -1679,7 +1684,7 @@
                                 <img id="imagePreview" class="image-preview" alt="图片预览">
                             </div>
                             
-                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
                                 <button type="submit" class="pixel-button">保存到云端</button>
                                 <button type="button" id="cancelEditBtn" class="pixel-button secondary">取消</button>
                             </div>
@@ -1689,7 +1694,7 @@
                     <!-- 菜品列表 -->
                     <div id="itemsListSection" class="admin-section">
                         <h3>云端菜品列表</h3>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                             <span id="itemsCount" style="color: #aaa;">正在加载...</span>
                             <button id="refreshItemsBtn" class="pixel-button secondary" style="padding: 8px 12px;">
                                 <i class="fas fa-sync-alt"></i> 刷新
@@ -1702,7 +1707,7 @@
                     
                     <!-- 订单列表 -->
                     <div id="ordersSection" class="admin-section" style="display: none;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                             <h3 id="ordersHeader"><i class="fas fa-receipt"></i> 云端订单列表 <span class="sync-status-badge"><i class="fas fa-sync"></i> 实时连接</span></h3>
                             <div class="auto-refresh-indicator">
                                 <div class="dot"></div>
@@ -1817,7 +1822,7 @@
     <div id="printContainer" style="display: none;"></div>
 
     <script>
-        // ==================== 像素食堂云点餐系统 - 完整功能版 ====================
+        // ==================== 像素食堂云点餐系统 - 终极修复版 ====================
         
         // 配置常量
         const SUPABASE_CONFIG_KEY = 'pixel_diner_supabase_config_v14';
@@ -1871,9 +1876,13 @@
             isRealtimeConnected: false,
             customerPhone: '',
             cache: { menuItems: null, lastUpdated: null, expires: 2 * 60 * 1000 },
-            cartButtonTimer: null,
-            cartButtonInterval: null,
-            isButtonPressed: false,
+            
+            // 长按相关状态
+            longPressTimer: null,
+            longPressInterval: null,
+            isLongPressing: false,
+            currentPressItemId: null,
+            currentPressAction: null,
             
             // 提示音相关状态
             audioContext: null,
@@ -2006,7 +2015,6 @@
 
         function playDefaultBeep(type = 'notification') {
             if (!state.audioContext) {
-                // 使用Web Audio API创建简单蜂鸣声
                 try {
                     const AudioContext = window.AudioContext || window.webkitAudioContext;
                     if (!AudioContext) return;
@@ -2085,26 +2093,23 @@
             if (state.supabaseClient && state.isOnline) {
                 state.supabaseClient
                     .from('system_settings')
-                    .upsert({ key: 'sound_settings', value: JSON.stringify(settings) })
+                    .upsert({ key: 'sound_settings', value: JSON.stringify(settings) }, { onConflict: 'key' })
                     .then(() => console.log('提示音设置已同步到云端'))
                     .catch(err => console.error('同步提示音设置失败:', err));
             }
         }
 
         function updateSoundUI() {
-            // 更新新订单提示音UI
             if (elements.muteNotificationsBtn && elements.enableNotificationsBtn) {
                 elements.muteNotificationsBtn.style.display = state.isNotificationMuted ? 'none' : 'inline-block';
                 elements.enableNotificationsBtn.style.display = state.isNotificationMuted ? 'inline-block' : 'none';
             }
             
-            // 更新历史订单提示音UI
             if (elements.muteHistoryNotificationsBtn && elements.enableHistoryNotificationsBtn) {
                 elements.muteHistoryNotificationsBtn.style.display = state.isHistoryNotificationMuted ? 'none' : 'inline-block';
                 elements.enableHistoryNotificationsBtn.style.display = state.isHistoryNotificationMuted ? 'inline-block' : 'none';
             }
             
-            // 显示自定义提示音信息
             if (state.customNotificationSound && elements.customSoundFileInfo) {
                 elements.customSoundFileName.textContent = state.customNotificationSound.filename || '自定义提示音';
                 elements.customSoundFileSize.textContent = formatFileSize(state.customNotificationSound.size);
@@ -2144,7 +2149,6 @@
             progressBar.style.width = '0%';
             
             try {
-                // 模拟上传进度
                 let progress = 0;
                 const interval = setInterval(() => {
                     progress += 10;
@@ -2163,7 +2167,6 @@
                 clearInterval(interval);
                 progressBar.style.width = '100%';
                 
-                // 解码音频
                 const audioBuffer = await decodeAudioData(base64Data);
                 
                 const soundData = {
@@ -2219,6 +2222,7 @@
             }
         }
 
+        // ==================== 事件监听 ====================
         function setupEventListeners() {
             elements.viewMenuBtn.addEventListener('click', () => switchPage('menu'));
             elements.viewAdminBtn.addEventListener('click', () => switchPage('admin'));
@@ -2275,47 +2279,40 @@
             // 管理后台按钮 - 页面跳转
             elements.addItemBtn.addEventListener('click', () => {
                 showSection('itemFormSection');
-                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('secondary');
-                });
-                elements.addItemBtn.classList.remove('secondary');
-                elements.addItemBtn.classList.add('active');
+                updateAdminButtons(elements.addItemBtn);
                 showAddItemForm();
             });
             
             elements.viewOrdersBtn.addEventListener('click', () => {
                 showSection('ordersSection');
-                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('secondary');
-                });
-                elements.viewOrdersBtn.classList.remove('secondary');
-                elements.viewOrdersBtn.classList.add('active');
+                updateAdminButtons(elements.viewOrdersBtn);
                 loadOrders();
                 startAutoRefresh();
+                
+                // 滚动到订单列表
+                setTimeout(() => {
+                    elements.ordersHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             });
             
             elements.generateQrCodeBtn.addEventListener('click', () => {
                 showSection('qrcodeSection');
-                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('secondary');
-                });
-                elements.generateQrCodeBtn.classList.remove('secondary');
-                elements.generateQrCodeBtn.classList.add('active');
+                updateAdminButtons(elements.generateQrCodeBtn);
                 if (!state.qrCodeGenerated) generateAdminQrCode();
+                
+                setTimeout(() => {
+                    elements.qrcodeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             });
             
             elements.manageConfigBtn.addEventListener('click', () => {
                 showSection('configSection');
-                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('secondary');
-                });
-                elements.manageConfigBtn.classList.remove('secondary');
-                elements.manageConfigBtn.classList.add('active');
+                updateAdminButtons(elements.manageConfigBtn);
                 showConfigSection();
+                
+                setTimeout(() => {
+                    elements.configSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             });
             
             elements.logoutBtn.addEventListener('click', adminLogout);
@@ -2326,12 +2323,7 @@
             elements.resetConfigBtn.addEventListener('click', resetConfig);
             elements.closeConfigBtn.addEventListener('click', () => {
                 showSection('itemFormSection');
-                document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('secondary');
-                });
-                elements.addItemBtn.classList.remove('secondary');
-                elements.addItemBtn.classList.add('active');
+                updateAdminButtons(elements.addItemBtn);
             });
             
             // 菜品表单
@@ -2416,6 +2408,15 @@
                 localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
                 localStorage.setItem(CUSTOMER_PHONE_KEY, state.customerPhone);
             });
+        }
+
+        function updateAdminButtons(activeButton) {
+            document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('secondary');
+            });
+            activeButton.classList.remove('secondary');
+            activeButton.classList.add('active');
         }
 
         function validatePhone(input) {
@@ -2631,7 +2632,7 @@
             } catch (error) {
                 console.error('同步失败:', error);
                 updateConnectionStatus('offline');
-                showNotification('同步失败', 'error');
+                showNotification('同步失败: ' + error.message, 'error');
             } finally {
                 hideLoading();
             }
@@ -2771,6 +2772,68 @@
             renderCartItems();
         }
 
+        // 长按功能实现
+        function setupLongPressEvents(button, itemId, change) {
+            // 清除之前的定时器
+            const clearLongPress = () => {
+                if (state.longPressTimer) {
+                    clearTimeout(state.longPressTimer);
+                    state.longPressTimer = null;
+                }
+                if (state.longPressInterval) {
+                    clearInterval(state.longPressInterval);
+                    state.longPressInterval = null;
+                }
+                state.isLongPressing = false;
+                state.currentPressItemId = null;
+                state.currentPressAction = null;
+            };
+
+            // 开始长按
+            const startLongPress = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                clearLongPress();
+                
+                state.isLongPressing = true;
+                state.currentPressItemId = itemId;
+                state.currentPressAction = change;
+                
+                // 先执行一次点击
+                updateCartItemQuantity(itemId, change);
+                
+                // 设置长按定时器
+                state.longPressTimer = setTimeout(() => {
+                    // 长按后开始连续快速增加
+                    state.longPressInterval = setInterval(() => {
+                        if (state.isLongPressing && state.currentPressItemId === itemId) {
+                            updateCartItemQuantity(itemId, change);
+                        } else {
+                            clearLongPress();
+                        }
+                    }, 100); // 每100ms触发一次
+                }, 500); // 500ms后开始连续触发
+            };
+
+            // 结束长按
+            const endLongPress = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                clearLongPress();
+            };
+
+            // 触摸事件
+            button.addEventListener('touchstart', startLongPress, { passive: false });
+            button.addEventListener('touchend', endLongPress, { passive: false });
+            button.addEventListener('touchcancel', endLongPress, { passive: false });
+            
+            // 鼠标事件
+            button.addEventListener('mousedown', startLongPress);
+            button.addEventListener('mouseup', endLongPress);
+            button.addEventListener('mouseleave', endLongPress);
+        }
+
         function renderCartItems() {
             elements.cartItemsContainer.innerHTML = '';
             
@@ -2797,29 +2860,15 @@
                 elements.cartItemsContainer.appendChild(el);
             });
             
+            // 为增减按钮添加长按事件
             document.querySelectorAll('.cart-item-decrease').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.dataset.id);
-                    const idx = state.cart.findIndex(i => i.id === id);
-                    if (idx >= 0) {
-                        state.cart[idx].quantity -= 1;
-                        if (state.cart[idx].quantity <= 0) state.cart.splice(idx, 1);
-                        updateCartDisplay();
-                        localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
-                    }
-                });
+                const id = parseInt(btn.dataset.id);
+                setupLongPressEvents(btn, id, -1);
             });
             
             document.querySelectorAll('.cart-item-increase').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.dataset.id);
-                    const idx = state.cart.findIndex(i => i.id === id);
-                    if (idx >= 0) {
-                        state.cart[idx].quantity += 1;
-                        updateCartDisplay();
-                        localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
-                    }
-                });
+                const id = parseInt(btn.dataset.id);
+                setupLongPressEvents(btn, id, 1);
             });
             
             document.querySelectorAll('.cart-item-remove').forEach(btn => {
@@ -2830,6 +2879,18 @@
                     localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
                 });
             });
+        }
+
+        function updateCartItemQuantity(id, change) {
+            const idx = state.cart.findIndex(i => i.id === id);
+            if (idx >= 0) {
+                state.cart[idx].quantity += change;
+                if (state.cart[idx].quantity <= 0) {
+                    state.cart.splice(idx, 1);
+                }
+                updateCartDisplay();
+                localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
+            }
         }
 
         function toggleCart() {
@@ -2902,7 +2963,7 @@
                 }
             } catch (error) {
                 console.error('提交订单失败:', error);
-                showNotification('订单提交失败', 'error');
+                showNotification('订单提交失败: ' + error.message, 'error');
             } finally {
                 hideLoading();
             }
@@ -3028,11 +3089,6 @@
             elements.imageUrl.value = '';
             switchImageSource('upload');
             state.editingItemId = null;
-            
-            // 滚动到表单区域
-            setTimeout(() => {
-                elements.itemFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
         }
 
         function switchImageSource(source) {
@@ -3178,16 +3234,16 @@
                 categories[cat].forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'admin-item pixel-border';
-                    itemDiv.style.cssText = 'padding:15px;background:#222;display:flex;align-items:center;margin-bottom:10px;';
+                    itemDiv.style.cssText = 'padding:15px;background:#222;display:flex;align-items:center;margin-bottom:10px;flex-wrap:wrap;';
                     itemDiv.innerHTML = `
                         <img src="${item.image || DEFAULT_IMAGE_URL}" style="width:60px;height:60px;object-fit:cover;margin-right:15px;border:2px solid var(--primary-color);" onerror="this.src='${DEFAULT_IMAGE_URL}'">
-                        <div style="flex:1;">
+                        <div style="flex:1;min-width:150px;">
                             <div style="font-weight:bold;color:var(--primary-color);">${item.name}</div>
                             <div style="color:#aaa;font-size:14px;">${item.description || ''}</div>
                             <div style="font-weight:bold;">${item.price.toFixed(2)} 元</div>
                         </div>
-                        <div>
-                            <button class="edit-item pixel-button secondary" data-id="${item.id}" style="margin-right:5px;padding:5px 10px;">编辑</button>
+                        <div style="display:flex;gap:5px;margin-top:10px;">
+                            <button class="edit-item pixel-button secondary" data-id="${item.id}" style="padding:5px 10px;">编辑</button>
                             <button class="delete-item pixel-button warning" data-id="${item.id}" style="padding:5px 10px;">删除</button>
                         </div>
                     `;
@@ -3217,13 +3273,7 @@
                     elements.imageUrl.value = item.image || '';
                     
                     showSection('itemFormSection');
-                    
-                    document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                        btn.classList.remove('active');
-                        btn.classList.add('secondary');
-                    });
-                    elements.addItemBtn.classList.remove('secondary');
-                    elements.addItemBtn.classList.add('active');
+                    updateAdminButtons(elements.addItemBtn);
                     
                     state.editingItemId = id;
                     
@@ -3257,24 +3307,6 @@
         }
 
         // ==================== 订单管理 ====================
-        function toggleOrdersView() {
-            showSection('ordersSection');
-            
-            document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('secondary');
-            });
-            elements.viewOrdersBtn.classList.remove('secondary');
-            elements.viewOrdersBtn.classList.add('active');
-            
-            loadOrders();
-            startAutoRefresh();
-            
-            setTimeout(() => {
-                elements.ordersHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
-
         function startAutoRefresh() {
             stopAutoRefresh();
             if (state.isAutoRefreshEnabled) {
@@ -3445,77 +3477,23 @@
             const orderElement = document.querySelector(`.order-item[data-order-id="${id}"]`);
             if (!orderElement) return;
             
-            // 克隆订单元素用于打印
             const printContent = orderElement.cloneNode(true);
-            
-            // 移除按钮，只保留信息
             printContent.querySelector('.order-actions').remove();
             
-            // 创建打印样式
             const printStyles = `
                 <style>
-                    body { 
-                        font-family: 'Courier New', monospace; 
-                        padding: 20px;
-                        background: white;
-                        color: black;
-                    }
-                    .order-item {
-                        border: 2px solid #d32f2f;
-                        padding: 20px;
-                        margin: 20px;
-                        background: white;
-                    }
-                    .order-header {
-                        display: flex;
-                        justify-content: space-between;
-                        border-bottom: 2px solid #d32f2f;
-                        padding-bottom: 10px;
-                        margin-bottom: 15px;
-                    }
-                    .order-number {
-                        font-size: 20px;
-                        font-weight: bold;
-                        color: #d32f2f;
-                    }
-                    .order-date {
-                        color: #666;
-                        margin-top: 5px;
-                    }
-                    .customer-phone-container {
-                        margin-top: 10px;
-                        color: #333;
-                    }
-                    .order-status {
-                        display: inline-block;
-                        padding: 5px 10px;
-                        background: #d32f2f;
-                        color: white;
-                        font-weight: bold;
-                    }
-                    .order-status.processed {
-                        background: #4caf50;
-                    }
-                    .order-items {
-                        margin-top: 15px;
-                    }
-                    .order-item-row {
-                        display: flex;
-                        justify-content: space-between;
-                        padding: 5px 0;
-                        border-bottom: 1px dashed #ccc;
-                    }
-                    .print-footer {
-                        margin-top: 30px;
-                        text-align: center;
-                        color: #666;
-                        font-size: 12px;
-                        border-top: 1px solid #ccc;
-                        padding-top: 10px;
-                    }
-                    @media print {
-                        .no-print { display: none; }
-                    }
+                    body { font-family: 'Courier New', monospace; padding: 20px; background: white; color: black; }
+                    .order-item { border: 2px solid #d32f2f; padding: 20px; margin: 20px; background: white; }
+                    .order-header { display: flex; justify-content: space-between; border-bottom: 2px solid #d32f2f; padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+                    .order-number { font-size: 20px; font-weight: bold; color: #d32f2f; }
+                    .order-date { color: #666; margin-top: 5px; }
+                    .customer-phone-container { margin-top: 10px; color: #333; }
+                    .order-status { display: inline-block; padding: 5px 10px; background: #d32f2f; color: white; font-weight: bold; }
+                    .order-status.processed { background: #4caf50; }
+                    .order-items { margin-top: 15px; }
+                    .order-item-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #ccc; }
+                    .print-footer { margin-top: 30px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #ccc; padding-top: 10px; }
+                    @media print { .no-print { display: none; } }
                 </style>
             `;
             
@@ -3622,9 +3600,7 @@
                         h1 { color: #d32f2f; }
                         img { width: 300px; height: 300px; margin: 20px; }
                         .url { margin: 20px; color: #666; word-break: break-all; }
-                        @media print {
-                            .no-print { display: none; }
-                        }
+                        @media print { .no-print { display: none; } }
                     </style>
                 </head>
                 <body>
@@ -3643,31 +3619,14 @@
 
         function showQrCodeGenerator() {
             showSection('qrcodeSection');
-            
-            document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('secondary');
-            });
-            elements.generateQrCodeBtn.classList.remove('secondary');
-            elements.generateQrCodeBtn.classList.add('active');
-            
+            updateAdminButtons(elements.generateQrCodeBtn);
             if (!state.qrCodeGenerated) generateAdminQrCode();
-            
-            setTimeout(() => {
-                elements.qrcodeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
         }
 
         // ==================== 数据库配置 ====================
         function showConfigSection() {
             showSection('configSection');
-            
-            document.querySelectorAll('.admin-controls-row .pixel-button').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('secondary');
-            });
-            elements.manageConfigBtn.classList.remove('secondary');
-            elements.manageConfigBtn.classList.add('active');
+            updateAdminButtons(elements.manageConfigBtn);
             
             const config = loadConfig();
             elements.supabaseUrl.value = config.supabaseUrl;
@@ -3680,10 +3639,6 @@
                 <p><strong>设备ID:</strong> <span style="color:#aaa;">${state.deviceId.substring(0, 20)}...</span></p>
             `;
             elements.currentConfig.innerHTML = statusHtml;
-            
-            setTimeout(() => {
-                elements.configSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
         }
 
         async function testConnectionFromUI() {
@@ -3766,7 +3721,10 @@
             elements.newOrderNotification.onclick = () => {
                 if (state.adminLoggedIn) {
                     if (elements.ordersSection.style.display === 'none') {
-                        toggleOrdersView();
+                        showSection('ordersSection');
+                        updateAdminButtons(elements.viewOrdersBtn);
+                        loadOrders();
+                        startAutoRefresh();
                     }
                     elements.ordersHeader.scrollIntoView({ behavior: 'smooth' });
                 }
