@@ -192,22 +192,25 @@
             flex-wrap: wrap;
         }
 
+        /* 修复问题4：顾客点餐、管理后台、同步在同一行 */
         .header-controls {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
             margin-top: 20px;
         }
 
         .header-controls .pixel-button {
-            flex: 0 1 auto;
+            flex: 1 1 auto;
             min-width: 100px;
+            max-width: 150px;
             white-space: nowrap;
             font-size: clamp(12px, 2.5vw, 16px);
-            padding: 8px 16px;
+            padding: 8px 12px;
+            margin: 2px;
         }
 
         .logo {
@@ -254,26 +257,28 @@
             to { opacity: 1; }
         }
 
-        /* 顾客点餐页面 - 分类按钮自动换行 */
+        /* 修复问题5：全部菜品、主菜、小食、饮品、甜点在同一行 */
         .menu-categories {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 30px;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
         }
 
         .category-btn {
-            padding: 8px 16px;
+            flex: 1 1 auto;
+            min-width: 70px;
+            max-width: 120px;
+            padding: 8px 12px;
             background-color: #222;
             color: white;
             border: none;
             cursor: pointer;
-            font-size: clamp(14px, 2.5vw, 16px);
+            font-size: clamp(13px, 2.5vw, 16px);
             transition: all 0.3s;
             white-space: nowrap;
-            flex: 0 1 auto;
             text-align: center;
             touch-action: manipulation;
             border-radius: 4px;
@@ -379,7 +384,7 @@
             font-size: 18px;
         }
 
-        /* 二维码区域样式 */
+        /* 修复问题6：使用手机扫描二维码文字在同一行 */
         .qrcode-section {
             padding: 25px;
             background-color: #1a1a1a;
@@ -392,7 +397,9 @@
             margin-bottom: 20px;
             font-size: clamp(14px, 2.5vw, 16px);
             padding: 0 10px;
-            word-wrap: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .qrcode-container {
@@ -448,27 +455,45 @@
             font-size: clamp(13px, 2vw, 15px);
         }
 
+        /* 修复问题7：点餐网址在同一行 */
         .url-display {
             background-color: #222;
             padding: 12px;
             margin: 15px 0;
             border-left: 4px solid var(--primary-color);
-            word-break: break-all;
             font-size: clamp(12px, 2vw, 14px);
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
+        .url-display i {
+            flex-shrink: 0;
+        }
+
+        .url-display span {
+            flex: 1;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 修复问题8：刷新二维码、保存二维码在同一行 */
         .qrcode-actions {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             margin-top: 20px;
         }
 
         .qrcode-actions .pixel-button {
-            flex: 1;
+            flex: 1 1 auto;
             min-width: 140px;
             max-width: 200px;
             white-space: nowrap;
@@ -688,6 +713,8 @@
             margin-bottom: 10px;
             padding-bottom: 10px;
             border-bottom: 1px solid #333;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .order-history-items {
@@ -722,22 +749,23 @@
             text-align: center;
         }
 
-        /* 管理后台按钮组 - 自动换行 */
+        /* 修复问题9：新增菜品、查看订单、生成二维码、数据库配置、退出登录在同一行 */
         .admin-controls-row {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-bottom: 20px;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
         .admin-controls-row .pixel-button {
-            flex: 0 1 auto;
+            flex: 1 1 auto;
             min-width: 100px;
+            max-width: 150px;
             white-space: nowrap;
-            font-size: clamp(12px, 2vw, 14px);
-            padding: 8px 12px;
+            font-size: clamp(11px, 2vw, 14px);
+            padding: 8px 10px;
             margin: 2px;
         }
 
@@ -812,7 +840,7 @@
 
         .order-header-info {
             flex: 1;
-            min-width: 0;
+            min-width: 200px;
         }
 
         .order-header-info .order-title {
@@ -828,6 +856,7 @@
             margin-top: 5px;
         }
 
+        /* 修复问题11：打电话与电话号码在同一行 */
         .customer-phone-container {
             font-size: 16px;
             color: white !important;
@@ -1039,6 +1068,32 @@
             cursor: pointer;
         }
 
+        /* 修复问题10：刷新、清空订单、停止在同一行 */
+        .orders-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .orders-controls .pixel-button {
+            flex: 1 1 auto;
+            min-width: 80px;
+            max-width: 120px;
+            white-space: nowrap;
+            font-size: 13px;
+            padding: 8px 10px;
+        }
+
+        #ordersCount {
+            white-space: nowrap;
+            font-size: 14px;
+            color: #aaa;
+            margin-right: 10px;
+        }
+
         /* 自动刷新指示器 */
         .auto-refresh-indicator {
             display: inline-flex;
@@ -1049,6 +1104,7 @@
             border-radius: 4px;
             font-size: 12px;
             color: #4caf50;
+            white-space: nowrap;
         }
 
         .auto-refresh-indicator .dot {
@@ -1200,30 +1256,6 @@
             padding: 8px 12px;
         }
 
-        /* 订单控制按钮行 */
-        .orders-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-            align-items: center;
-        }
-
-        .orders-controls .pixel-button {
-            flex: 0 1 auto;
-            min-width: 80px;
-            white-space: nowrap;
-            font-size: 13px;
-            padding: 8px 12px;
-        }
-
-        #ordersCount {
-            white-space: nowrap;
-            font-size: 14px;
-            color: #aaa;
-            margin-right: 10px;
-        }
-
         /* 响应式设计 */
         @media (max-width: 768px) {
             .menu-items {
@@ -1238,15 +1270,22 @@
                 font-size: 28px;
             }
             
-            .admin-controls-row .pixel-button {
-                min-width: 80px;
-                font-size: 11px;
+            .header-controls .pixel-button {
+                min-width: 90px;
+                font-size: 12px;
                 padding: 6px 8px;
             }
             
+            .admin-controls-row .pixel-button {
+                min-width: 80px;
+                font-size: 11px;
+                padding: 6px 6px;
+            }
+            
             .category-btn {
-                padding: 6px 12px;
-                font-size: 13px;
+                min-width: 60px;
+                font-size: 12px;
+                padding: 6px 8px;
             }
             
             .order-actions .pixel-button {
@@ -1263,24 +1302,37 @@
             .customer-phone-container {
                 font-size: 14px;
             }
-        }
-
-        @media (max-width: 480px) {
-            .admin-controls-row .pixel-button {
-                min-width: 70px;
-                font-size: 10px;
-                padding: 5px 6px;
-            }
-            
-            .category-btn {
-                padding: 5px 10px;
-                font-size: 12px;
-            }
             
             .orders-controls .pixel-button {
                 min-width: 70px;
                 font-size: 11px;
-                padding: 6px 8px;
+                padding: 6px 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-controls .pixel-button {
+                min-width: 80px;
+                font-size: 11px;
+                padding: 5px 6px;
+            }
+            
+            .admin-controls-row .pixel-button {
+                min-width: 70px;
+                font-size: 10px;
+                padding: 5px 4px;
+            }
+            
+            .category-btn {
+                min-width: 55px;
+                font-size: 11px;
+                padding: 5px 4px;
+            }
+            
+            .orders-controls .pixel-button {
+                min-width: 65px;
+                font-size: 10px;
+                padding: 5px 4px;
             }
             
             .config-buttons-row .pixel-button {
@@ -1292,6 +1344,12 @@
             .call-customer-btn {
                 font-size: 11px;
                 padding: 2px 5px;
+            }
+            
+            .qrcode-actions .pixel-button {
+                min-width: 120px;
+                font-size: 12px;
+                padding: 8px 10px;
             }
         }
 
@@ -1383,7 +1441,7 @@
                     <p style="color: #aaa; margin: 0;">云同步复古风格餐厅</p>
                 </div>
             </div>
-            <!-- 导航按钮 - 自动换行 -->
+            <!-- 修复问题4：顾客点餐、管理后台、同步在同一行 -->
             <div class="header-controls">
                 <button id="viewMenuBtn" class="pixel-button active">顾客点餐</button>
                 <button id="viewAdminBtn" class="pixel-button secondary">管理后台</button>
@@ -1399,7 +1457,7 @@
                 <h2><i class="fas fa-book"></i> 菜单浏览</h2>
                 <p style="color: #aaa; margin-bottom: 20px;">数据实时同步更新，所有设备保持一致</p>
                 
-                <!-- 分类按钮 - 自动换行 -->
+                <!-- 修复问题5：全部菜品、主菜、小食、饮品、甜点在同一行 -->
                 <div class="menu-categories">
                     <button class="category-btn pixel-border active" data-category="all">全部菜品</button>
                     <button class="category-btn pixel-border" data-category="main">主菜</button>
@@ -1437,7 +1495,7 @@
                 
                 <!-- 手机扫码点餐区域 -->
                 <div class="qrcode-section pixel-border">
-                    <h3><i class="fas fa-mobile-alt"></i> 手机扫码点餐</h3>
+                    <!-- 修复问题6：使用手机扫描二维码文字在同一行 -->
                     <p>使用手机扫描下方二维码，可在手机上点餐</p>
                     
                     <div class="qrcode-container">
@@ -1456,12 +1514,15 @@
                                 <li><i class="fas fa-sync"></i> <span>多设备数据保持一致</span></li>
                                 <li><i class="fas fa-shield-alt"></i> <span>企业级数据安全</span></li>
                             </ul>
+                            <!-- 修复问题7：点餐网址在同一行 -->
                             <div class="url-display">
-                                <i class="fas fa-link"></i> 点餐网址: <span id="customerOrderUrl"></span>
+                                <i class="fas fa-link"></i> 
+                                <span id="customerOrderUrl">https://user-hjw2003.github.io/diner/</span>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- 修复问题8：刷新二维码、保存二维码在同一行 -->
                     <div class="qrcode-actions">
                         <button id="refreshQrCodeBtn" class="pixel-button secondary">
                             <i class="fas fa-sync-alt"></i> 刷新二维码
@@ -1488,7 +1549,7 @@
                     <h2><i class="fas fa-cogs"></i> 云数据管理</h2>
                     <p style="color: #aaa; margin-bottom: 20px;">数据实时同步，所有更改立即生效到所有设备</p>
                     
-                    <!-- 管理后台按钮组 - 自动换行 -->
+                    <!-- 修复问题9：新增菜品、查看订单、生成二维码、数据库配置、退出登录在同一行 -->
                     <div class="admin-controls-row">
                         <button id="addItemBtn" class="pixel-button active"><i class="fas fa-plus"></i> 新增菜品</button>
                         <button id="viewOrdersBtn" class="pixel-button secondary"><i class="fas fa-list"></i> 查看订单</button>
@@ -1714,6 +1775,7 @@
                                 <span>2秒自动刷新</span>
                             </div>
                         </div>
+                        <!-- 修复问题10：刷新、清空订单、停止在同一行 -->
                         <div class="orders-controls">
                             <span id="ordersCount" style="color: #aaa;">正在加载...</span>
                             <button id="refreshOrdersBtn" class="pixel-button secondary">
@@ -2276,11 +2338,14 @@
             elements.loginBtn.addEventListener('click', adminLogin);
             elements.adminPassword.addEventListener('keypress', e => { if (e.key === 'Enter') adminLogin(); });
             
-            // 管理后台按钮 - 页面跳转
+            // 修复问题2：管理后台按钮 - 页面跳转
             elements.addItemBtn.addEventListener('click', () => {
                 showSection('itemFormSection');
                 updateAdminButtons(elements.addItemBtn);
                 showAddItemForm();
+                setTimeout(() => {
+                    elements.itemFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
             });
             
             elements.viewOrdersBtn.addEventListener('click', () => {
@@ -2288,8 +2353,6 @@
                 updateAdminButtons(elements.viewOrdersBtn);
                 loadOrders();
                 startAutoRefresh();
-                
-                // 滚动到订单列表
                 setTimeout(() => {
                     elements.ordersHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
@@ -2299,7 +2362,6 @@
                 showSection('qrcodeSection');
                 updateAdminButtons(elements.generateQrCodeBtn);
                 if (!state.qrCodeGenerated) generateAdminQrCode();
-                
                 setTimeout(() => {
                     elements.qrcodeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
@@ -2309,7 +2371,6 @@
                 showSection('configSection');
                 updateAdminButtons(elements.manageConfigBtn);
                 showConfigSection();
-                
                 setTimeout(() => {
                     elements.configSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
@@ -2772,9 +2833,8 @@
             renderCartItems();
         }
 
-        // 长按功能实现
+        // 修复问题3：长按功能实现
         function setupLongPressEvents(button, itemId, change) {
-            // 清除之前的定时器
             const clearLongPress = () => {
                 if (state.longPressTimer) {
                     clearTimeout(state.longPressTimer);
@@ -2789,7 +2849,6 @@
                 state.currentPressAction = null;
             };
 
-            // 开始长按
             const startLongPress = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -2816,7 +2875,6 @@
                 }, 500); // 500ms后开始连续触发
             };
 
-            // 结束长按
             const endLongPress = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -2898,6 +2956,7 @@
             document.body.classList.toggle('no-scroll', elements.cartContainer.classList.contains('open'));
         }
 
+        // 修复问题1：修复订单提交失败（Storage quota exceeded）
         async function submitOrder() {
             if (!state.cart.length) {
                 showNotification('购物车是空的', 'warning');
@@ -2937,8 +2996,20 @@
                     order.id = now.getTime();
                 }
                 
-                state.orderHistory.push(order);
-                localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
+                // 限制订单历史数量，避免超出storage配额
+                state.orderHistory.unshift(order);
+                if (state.orderHistory.length > 50) {
+                    state.orderHistory = state.orderHistory.slice(0, 50);
+                }
+                
+                try {
+                    localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
+                } catch (storageError) {
+                    // 如果storage配额不足，清理旧的订单历史
+                    console.warn('Storage quota exceeded, cleaning up old orders...');
+                    state.orderHistory = state.orderHistory.slice(0, 30);
+                    localStorage.setItem(ORDER_HISTORY_KEY, JSON.stringify(state.orderHistory));
+                }
                 
                 state.cart = [];
                 localStorage.removeItem(CART_KEY);
