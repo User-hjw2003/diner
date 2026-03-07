@@ -157,7 +157,7 @@
             text-shadow: 2px 2px 0 #000;
         }
 
-        /* 问题4：云点餐系统完整显示 */
+        /* 问题8：云点餐系统向右移1格 */
         .header-title {
             text-align: center;
             margin-bottom: 30px;
@@ -167,6 +167,7 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 10px;
+            padding-left: 10px; /* 向右移1格 */
         }
 
         h1 {
@@ -235,7 +236,6 @@
             flex-wrap: wrap;
         }
 
-        /* 问题4：顾客点餐、管理后台、同步在同一行 */
         .header-controls {
             display: flex;
             flex-wrap: wrap;
@@ -294,7 +294,7 @@
             to { opacity: 1; }
         }
 
-        /* 问题3：全部菜品、主菜、小食、饮品、甜点在同一行，字体增大 */
+        /* 问题4：全部菜品、主菜、小食、饮品、甜点在同一行，字体增大 */
         .menu-categories {
             display: flex;
             flex-wrap: wrap;
@@ -312,7 +312,7 @@
             color: white;
             border: none;
             cursor: pointer;
-            font-size: clamp(15px, 3.5vw, 20px);
+            font-size: clamp(16px, 3.5vw, 20px);
             font-weight: bold;
             transition: all 0.3s;
             white-space: nowrap;
@@ -688,10 +688,12 @@
             touch-action: manipulation;
             user-select: none;
             -webkit-user-select: none;
+            transition: background-color 0.1s;
         }
 
         .cart-control-button:active {
             background-color: #333 !important;
+            transform: scale(0.95);
         }
 
         .cart-item-remove {
@@ -784,7 +786,7 @@
             text-align: center;
         }
 
-        /* 管理后台按钮组 */
+        /* 问题5：新增菜品、查看订单、生成二维码、数据库配置、退出登录在同一行 */
         .admin-controls-row {
             display: flex;
             flex-wrap: wrap;
@@ -798,8 +800,8 @@
             flex: 0 1 auto;
             min-width: 100px;
             white-space: nowrap;
-            font-size: clamp(11px, 2vw, 14px);
-            padding: 8px 10px;
+            font-size: clamp(12px, 2.5vw, 14px);
+            padding: 8px 12px;
             margin: 2px;
         }
 
@@ -863,7 +865,7 @@
             border-left: 4px solid var(--primary-color);
         }
 
-        /* 问题5：订单头部样式，状态和总价在右上角 */
+        /* 问题1：订单头部样式，状态和总价在右上角 */
         .order-header {
             display: flex;
             justify-content: space-between;
@@ -917,13 +919,14 @@
             height: 28px;
         }
 
-        /* 问题5：状态和总价在右上角 */
+        /* 问题1：状态和总价在右上角 */
         .order-header-status {
             text-align: right;
             min-width: 120px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
+            justify-content: flex-start;
         }
 
         .order-status {
@@ -1289,15 +1292,15 @@
             }
             
             .admin-controls-row .pixel-button {
-                min-width: 80px;
-                font-size: 11px;
-                padding: 6px 6px;
+                min-width: 85px;
+                font-size: 12px;
+                padding: 8px 10px;
             }
             
             .category-btn {
-                min-width: 75px;
-                font-size: 14px;
-                padding: 8px 10px;
+                min-width: 80px;
+                font-size: 15px;
+                padding: 10px 12px;
             }
             
             .order-actions .pixel-button {
@@ -1317,8 +1320,8 @@
             
             .orders-controls .pixel-button {
                 min-width: 70px;
-                font-size: 11px;
-                padding: 6px 8px;
+                font-size: 12px;
+                padding: 8px 10px;
             }
             
             .connection-status {
@@ -1335,21 +1338,21 @@
             }
             
             .admin-controls-row .pixel-button {
-                min-width: 70px;
-                font-size: 10px;
-                padding: 5px 4px;
+                min-width: 75px;
+                font-size: 11px;
+                padding: 6px 8px;
             }
             
             .category-btn {
-                min-width: 65px;
-                font-size: 13px;
-                padding: 6px 6px;
+                min-width: 70px;
+                font-size: 14px;
+                padding: 8px 10px;
             }
             
             .orders-controls .pixel-button {
                 min-width: 65px;
-                font-size: 10px;
-                padding: 5px 6px;
+                font-size: 11px;
+                padding: 6px 8px;
             }
             
             .config-buttons-row .pixel-button {
@@ -1376,6 +1379,10 @@
             .connection-status {
                 font-size: 9px;
                 padding: 2px 4px;
+            }
+            
+            .order-header-status {
+                min-width: 100px;
             }
         }
 
@@ -1407,7 +1414,7 @@
             height: 100%;
         }
 
-        /* 打印样式 */
+        /* 打印样式 - 修复问题7 */
         @media print {
             .print-only {
                 display: block !important;
@@ -1424,10 +1431,15 @@
                 display: none !important;
             }
         }
+
+        .print-button-active {
+            background-color: #1976d2 !important;
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
-    <!-- 问题4：云点餐系统完整显示 -->
+    <!-- 问题8：云点餐系统向右移1格 -->
     <div class="header-title">
         <h1><i class="fas fa-cloud"></i> 云点餐系统</h1>
         <div id="connectionStatus" class="connection-status offline">
@@ -1476,7 +1488,7 @@
                 <h2><i class="fas fa-book"></i> 菜单浏览</h2>
                 <p style="color: #aaa; margin-bottom: 20px;">数据实时同步更新，所有设备保持一致</p>
                 
-                <!-- 问题3：全部菜品、主菜、小食、饮品、甜点在同一行，字体增大 -->
+                <!-- 问题4：全部菜品、主菜、小食、饮品、甜点在同一行，字体增大 -->
                 <div class="menu-categories">
                     <button class="category-btn pixel-border active" data-category="all">全部菜品</button>
                     <button class="category-btn pixel-border" data-category="main">主菜</button>
@@ -1565,7 +1577,7 @@
                     <h2><i class="fas fa-cogs"></i> 云数据管理</h2>
                     <p style="color: #aaa; margin-bottom: 20px;">数据实时同步，所有更改立即生效到所有设备</p>
                     
-                    <!-- 管理后台按钮组 -->
+                    <!-- 问题5：新增菜品、查看订单、生成二维码、数据库配置、退出登录在同一行 -->
                     <div class="admin-controls-row">
                         <button id="addItemBtn" class="pixel-button active"><i class="fas fa-plus"></i> 新增菜品</button>
                         <button id="viewOrdersBtn" class="pixel-button secondary"><i class="fas fa-list"></i> 查看订单</button>
@@ -2354,7 +2366,7 @@
             elements.loginBtn.addEventListener('click', adminLogin);
             elements.adminPassword.addEventListener('keypress', e => { if (e.key === 'Enter') adminLogin(); });
             
-            // 问题1：管理后台按钮 - 页面跳转（一次点击跳转）
+            // 问题2：管理后台按钮 - 页面跳转（一次点击跳转）
             elements.addItemBtn.addEventListener('click', () => {
                 showSection('itemFormSection');
                 updateAdminButtons(elements.addItemBtn);
@@ -2850,7 +2862,7 @@
             renderCartItems();
         }
 
-        // 问题2：长按功能实现 - 适用于所有菜品（包括新增的）
+        // 问题3：长按功能实现 - 适用于所有菜品（包括新增的）
         function setupLongPressEvents(button, itemId, change) {
             const clearLongPress = () => {
                 if (state.longPressTimer) {
@@ -3569,7 +3581,7 @@
             }
         }
 
-        // 问题7：修复打印功能 - 荣耀浏览器兼容
+        // 问题7：修复打印功能 - 兼容所有安卓浏览器
         function printOrder(id) {
             const orderElement = document.querySelector(`.order-item[data-order-id="${id}"]`);
             if (!orderElement) {
@@ -3577,24 +3589,17 @@
                 return;
             }
             
-            // 克隆订单元素用于打印
-            const printContent = orderElement.cloneNode(true);
-            
-            // 移除按钮，只保留信息
-            const actions = printContent.querySelector('.order-actions');
-            if (actions) actions.remove();
-            
             // 获取订单信息
-            const orderNumber = printContent.querySelector('.order-number')?.textContent || `订单 #${id}`;
-            const orderDate = printContent.querySelector('.order-date')?.textContent || '';
-            const customerPhoneElement = printContent.querySelector('.customer-phone-container');
+            const orderNumber = orderElement.querySelector('.order-number')?.textContent || `订单 #${id}`;
+            const orderDate = orderElement.querySelector('.order-date')?.textContent || '';
+            const customerPhoneElement = orderElement.querySelector('.customer-phone-container');
             const customerPhone = customerPhoneElement ? customerPhoneElement.textContent.replace('打电话', '').trim() : '未提供';
-            const orderStatus = printContent.querySelector('.order-status')?.textContent || '待处理';
-            const orderTotal = printContent.querySelector('.order-header-status div:last-child')?.textContent || '0.00元';
+            const orderStatus = orderElement.querySelector('.order-status')?.textContent || '待处理';
+            const orderTotal = orderElement.querySelector('.order-header-status div:last-child')?.textContent || '0.00元';
             
             // 获取订单项
             const items = [];
-            printContent.querySelectorAll('.order-item-row').forEach(row => {
+            orderElement.querySelectorAll('.order-item-row').forEach(row => {
                 const cols = row.querySelectorAll('div');
                 if (cols.length >= 2) {
                     items.push({
@@ -3607,8 +3612,8 @@
             // 创建打印窗口 - 兼容所有浏览器
             const printWindow = window.open('', '_blank');
             if (!printWindow) {
-                // 如果弹出窗口被阻止，尝试直接打印
-                showNotification('请允许弹出窗口，或使用浏览器打印功能', 'warning');
+                // 如果弹出窗口被阻止，提示用户
+                showNotification('请允许浏览器弹出窗口', 'warning');
                 return;
             }
             
@@ -3706,6 +3711,33 @@
                             border-radius: 3px;
                             font-size: 12px;
                         }
+                        .button-container {
+                            text-align: center;
+                            margin-top: 30px;
+                        }
+                        .print-button, .close-button {
+                            padding: 12px 24px;
+                            font-size: 16px;
+                            border: none;
+                            cursor: pointer;
+                            border-radius: 4px;
+                            margin: 0 10px;
+                            font-weight: bold;
+                        }
+                        .print-button {
+                            background: #d32f2f;
+                            color: white;
+                        }
+                        .print-button:hover {
+                            background: #b71c1c;
+                        }
+                        .close-button {
+                            background: #666;
+                            color: white;
+                        }
+                        .close-button:hover {
+                            background: #444;
+                        }
                         @media print {
                             .no-print { display: none; }
                             body { padding: 10px; }
@@ -3778,14 +3810,24 @@
                         <p>像素食堂云点餐系统 · 数据实时同步</p>
                     </div>
                     
-                    <div class="no-print" style="text-align: center; margin-top: 30px;">
-                        <button onclick="window.print()" style="padding: 10px 20px; background: #d32f2f; color: white; border: none; cursor: pointer; margin-right: 10px; border-radius: 4px; font-size: 16px;">
-                            <i class="fas fa-print"></i> 打印订单
+                    <div class="button-container no-print">
+                        <button class="print-button" onclick="window.print()">
+                            <i class="fas fa-print"></i> 开始打印
                         </button>
-                        <button onclick="window.close()" style="padding: 10px 20px; background: #666; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 16px;">
+                        <button class="close-button" onclick="window.close()">
                             <i class="fas fa-times"></i> 关闭窗口
                         </button>
                     </div>
+                    
+                    <script>
+                        // 自动聚焦到打印按钮
+                        window.onload = function() {
+                            var printBtn = document.querySelector('.print-button');
+                            if (printBtn) {
+                                printBtn.focus();
+                            }
+                        }
+                    <\/script>
                 </body>
                 </html>
             `);
@@ -3912,6 +3954,26 @@
                             margin-right: auto;
                             border-left: 4px solid #d32f2f;
                         }
+                        .button-container {
+                            margin-top: 30px;
+                        }
+                        .print-button, .close-button {
+                            padding: 12px 24px;
+                            font-size: 16px;
+                            border: none;
+                            cursor: pointer;
+                            border-radius: 4px;
+                            margin: 0 10px;
+                            font-weight: bold;
+                        }
+                        .print-button {
+                            background: #d32f2f;
+                            color: white;
+                        }
+                        .close-button {
+                            background: #666;
+                            color: white;
+                        }
                         @media print {
                             .no-print { display: none; }
                         }
@@ -3934,11 +3996,11 @@
                     <div class="print-footer" style="margin-top: 30px; color: #888;">
                         <p>打印时间：${new Date().toLocaleString('zh-CN')}</p>
                     </div>
-                    <div class="no-print" style="margin-top: 30px;">
-                        <button onclick="window.print()" style="padding: 10px 20px; background: #d32f2f; color: white; border: none; cursor: pointer; margin-right: 10px; border-radius: 4px; font-size: 16px;">
+                    <div class="button-container no-print">
+                        <button class="print-button" onclick="window.print()">
                             <i class="fas fa-print"></i> 打印二维码
                         </button>
-                        <button onclick="window.close()" style="padding: 10px 20px; background: #666; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 16px;">
+                        <button class="close-button" onclick="window.close()">
                             <i class="fas fa-times"></i> 关闭
                         </button>
                     </div>
